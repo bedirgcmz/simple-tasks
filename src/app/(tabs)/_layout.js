@@ -1,9 +1,32 @@
 import React from 'react'
 import { Tabs } from 'expo-router'
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const TabsLayout = () => {
   return (
-    <Tabs>
+    <Tabs
+    screenOptions={
+      ({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'index') {
+          iconName = focused
+              ? 'list-circle'
+              : 'list-circle-outline';
+          } else if (route.name === 'add/index') {
+          iconName = focused ? 'add-circle' : 'add-circle-outline';
+          } else if (route.name === 'todos') {
+          iconName = focused ? 'checkmark-circle' : 'checkmark-circle-outline';
+          }
+
+          return <Ionicons name={iconName}  size={size} color={color} />;
+      },
+      tabBarActiveTintColor: 'tomato',
+      tabBarInactiveTintColor: 'gray',
+      })
+}
+    >
       <Tabs.Screen 
         name="index" 
         options={{ headerShown: true, headerTitle: 'Home', title: 'Home' }} 
