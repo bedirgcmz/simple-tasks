@@ -1,13 +1,15 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { Stack } from 'expo-router'
+import React from 'react';
+import { Stack } from 'expo-router';
+import { TodoListProvider } from '../context/todos-context';
 
 const RootLayout = () => {
   return (
-    <Stack>
-     <Stack.Screen name="(tabs)" options={{ headerShown: false }}/>
-    </Stack>
-  )
-}
+    <TodoListProvider>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+    </TodoListProvider>
+  );
+};
 
-export default RootLayout
+export default RootLayout;
