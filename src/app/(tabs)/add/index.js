@@ -6,7 +6,7 @@ import myTodos from '../../../../assets/data/todo-list'
 const AddTodoScreen = () => {
   console.log(myTodos)
   return (
-    <View>
+    <View className="bg-white flex-1">
       <Text>AddTodoScreen</Text>
     </View>
   )

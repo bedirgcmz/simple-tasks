@@ -6,24 +6,55 @@ export const TodoListContext = createContext();
 // 2. Provider bileşeni
 export const TodoListProvider = ({ children }) => {
   // Todos state
-  const [todos, setTodos] = useState([
-    {
-      id: '1',
-      title: 'Learn React Native',
-      description: 'Practice building a simple app',
-      createdAt: '2025-01-01',
-      dueDate: '2025-01-10',
-      completedAt: null,
-    },
-    {
-      id: '2',
-      title: 'Read a book',
-      description: 'Complete reading "Clean Code"',
-      createdAt: '2025-01-02',
-      dueDate: '2025-01-15',
-      completedAt: '2025-01-14',
-    },
-  ]);
+  const [todos, setTodos] = useState(
+    [
+      {
+        id: '1',
+        title: 'Learn React Native',
+        description: 'Practice building a simple app',
+        status: "done",
+        createdAt: '2025-01-01T00:00:00.000Z',
+        dueDate: '2025-01-10T00:00:00.000Z',
+        completedAt: null,
+      },
+      {
+        id: '2',
+        title: 'Read a book',
+        description: 'Complete reading "Clean Code"',
+        status: "done",
+        createdAt: '2025-01-02T00:00:00.000Z',
+        dueDate: '2025-01-15T00:00:00.000Z',
+        completedAt: '2025-01-14T00:00:00.000Z',
+      },
+      {
+        id: '3',
+        title: 'Buy a computer',
+        description: 'Complete last project',
+        status: "pending",
+        createdAt: '2025-01-05T00:00:00.000Z',
+        dueDate: '2025-01-10T00:00:00.000Z',
+        completedAt: '2025-01-09T00:00:00.000Z',
+      },
+      {
+        id: '4',
+        title: 'Buy a computer',
+        description: 'Complete last project',
+        status: "pending",
+        createdAt: '2025-01-05T00:00:00.000Z',
+        dueDate: '2025-01-10T00:00:00.000Z',
+        completedAt: '2025-01-09T00:00:00.000Z',
+      },
+      {
+        id: '5',
+        title: 'Buy a computer',
+        description: 'Complete last project',
+        status: "pending",
+        createdAt: '2025-01-05T00:00:00.000Z',
+        dueDate: '2025-01-10T00:00:00.000Z',
+        completedAt: '2025-01-09T00:00:00.000Z',
+      },
+    ]
+  );
 
   // Todo ekleme fonksiyonu
   const addTodo = (newTodo) => {
