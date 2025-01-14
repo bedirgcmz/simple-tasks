@@ -1,9 +1,10 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { useTodoListContext } from '../../../context/todos-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; // Expo'dan vektör ikonları
-import Ionicons from '@expo/vector-icons/Ionicons';
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { useTodoListContext } from "../../../context/todos-context";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; // Expo'dan vektör ikonları
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { formatToShortDate } from "../../../utils/date-utils";
 
 const TaskScreen = () => {
   const { id } = useLocalSearchParams();
@@ -11,7 +12,7 @@ const TaskScreen = () => {
   const todo = todos.find((todo) => todo.id === id);
 
   function calculateDaysLeft(todo) {
-    const createdAt = new Date(todo.createdAt);
+    const createdAt = new Date();
     const dueDate = new Date(todo.dueDate);
 
     // Calculate the difference in milliseconds
@@ -32,64 +33,74 @@ const TaskScreen = () => {
 
   return (
     <View className="flex-1 p-5 bg-[#fff]">
-      {/* <Text className="text-2xl font-semibold text-center text-gray-800 mb-4">Todo Details</Text> */}
+      
       {/* Task Title */}
-      <TouchableOpacity className="border border-[#e9ecef] p-2 rounded-md shadow-lg bg-white">
-      <View className="mb-4 flex-row items-center justify-start gap-2">
-      <Ionicons name="ellipse" size={12} color="#6c757d" />
-        <Text className="text-xl font-bold text-[#495057]">{todo.title}</Text>
-      </View>
+      <TouchableOpacity
+        className={`border-2 rounded-md shadow-lg bg-white ${
+          todo.status === "done" ? "border-[#fe9092]" : "border-[#6c757d]"
+        }`}
+      >
+         <TouchableOpacity className="p-2 absolute bottom-[0] left-[0] ">
+            {todo.status === "done" ? (
+              <Ionicons name="checkbox" size={32} color="#fe9092" />
+            ) : (
+              <Ionicons name="square-outline" size={32} color="gray" />
+            )}
+          </TouchableOpacity>
 
-      {/* Task Description */}
-      <View className="mb-4 flex-row items-center justify-start gap-2">
-      <Ionicons name="document-text-outline" size={18} color="black" />
-        <Text className="text-base text-gray-600">{todo.description}</Text>
-      </View>
+            {/* Days Left */}
+        <View className={`mb-3 border border-[#e9ecef] rounded-t-md items-center 
+        ${todo.status === "done" ? "bg-[#fe9092]" : "bg-[#6c757d]"}
+        `}>
+          <Text className="text-lg text-white">{calculateDaysLeft(todo)}</Text>
+        </View>
 
-      {/* Task Dates */}
-      <View className="mb-4">
-        <Text className="text-sm text-gray-500">Created At: {new Date(todo.createdAt).toLocaleDateString()}</Text>
-        <Text className="text-sm text-gray-500">Due Date: {new Date(todo.dueDate).toLocaleDateString()}</Text>
-      </View>
+        <View className="p-2">
+            {/* Task Title */}
+            <View className="mb-2 flex-row items-center justify-start gap-2">
+              <Ionicons name="ellipse" size={12} color="#6c757d" />
+              <Text className="text-xl font-bold text-[#495057]">{todo.title}</Text>
+            </View>
 
-      {/* Days Left */}
-      <View className="mb-6 border border-[#e9ecef] rounded-[30px] bg-[#6c757d] items-center">
-        <Text className="text-lg text-white">{calculateDaysLeft(todo)}</Text>
-      </View>
+            {/* Task Description */}
+            <View className="mb-4 flex-row items-center justify-start gap-2">
+              <Ionicons name="document-text-outline" size={18} color="black" />
+              <Text className="text-base text-gray-600">{todo.description}</Text>
+            </View>
 
-      {/* Task Status */}
-      <View className="mb-6 flex-row items-center justify-between">
-        <Text className="text-sm text-gray-700">Status: {todo.status.charAt(0).toUpperCase() + todo.status.slice(1).toLowerCase()
-}</Text>
-        <TouchableOpacity className="p-2 ">
-                {todo.status === "done" ? 
-                <Ionicons name="checkbox" size={20} color="#fe9092" /> :
-                <Ionicons name="square-outline" size={20} color="gray" /> }
-                {/* <Ionicons name="checkbox" size={24} color="black" /> */}
-            </TouchableOpacity>
-      </View>
+            {/* Task Dates */}
+            <View className="mb-4 flex-row justify-between px-2">
+              <Text className="text-sm text-gray-500">
+                Created At: {formatToShortDate(todo.createdAt)}
+              </Text>
+              <Text className="text-sm text-gray-500">
+                Due Date: {formatToShortDate(todo.dueDate)}
+              </Text>
+            </View>
+            
+            <View className="flex-row justify-end gap-2">
+              {/* Edit Button */}
+              <TouchableOpacity
+                onPress={() => console.log("Edit Task Function Here")}
+                className="flex-row items-center space-x-2 p-2 bg-blue-500 rounded-full bg-[#f4a261]"
+              >
+                <Text className="text-white text-[14px]">Edit</Text>
+                <MaterialCommunityIcons name="pencil" size={16} color="white" />
+              </TouchableOpacity>
 
-      {/* Action Buttons (Edit, Delete) */}
-      <View className="flex-row justify-between">
-        {/* Edit Button */}
-        <TouchableOpacity
-          onPress={() => console.log("Edit Task Function Here")}
-          className="flex-row items-center space-x-2 p-2 bg-blue-500 rounded-full"
-        >
-          <Text className="text-white">Edit</Text>
-          <MaterialCommunityIcons name="pencil" size={20} color="white" />
-        </TouchableOpacity>
+              {/* Delete Button */}
+              <TouchableOpacity
+                onPress={() => console.log("Delete Task Function Here")}
+                className="flex-row items-center space-x-2 p-2 bg-red-500 rounded-full bg-[#ff4d6d]"
+              >
+                <MaterialCommunityIcons name="trash-can" size={16} color="white" />
+                <Text className="text-white  text-[14px]">Delete</Text>
+              </TouchableOpacity>
+            </View>
 
-        {/* Delete Button */}
-        <TouchableOpacity
-          onPress={() => console.log("Delete Task Function Here")}
-          className="flex-row items-center space-x-2 p-2 bg-red-500 rounded-full"
-        >
-          <MaterialCommunityIcons name="trash-can" size={20} color="white" />
-          <Text className="text-white">Delete</Text>
-        </TouchableOpacity>
-      </View>
+        </View>
       </TouchableOpacity>
+      
     </View>
   );
 };
