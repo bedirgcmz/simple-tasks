@@ -11,13 +11,14 @@ const TabsLayout = () => {
           let iconName;
 
           if (route.name === 'index') {
-          iconName = focused
-              ? 'list-circle'
-              : 'list-circle-outline';
+          iconName = focused 
+              ? 'home' : 'home-outline';
+              // ? 'checkmark-circle' : 'checkmark-circle-outline';
           } else if (route.name === 'add/index') {
           iconName = focused ? 'add-circle' : 'add-circle-outline';
           } else if (route.name === 'todos') {
-          iconName = focused ? 'checkmark-circle' : 'checkmark-circle-outline';
+          iconName = focused ? 'list-circle'
+          : 'list-circle-outline'; 
           }
 
           return <Ionicons name={iconName}  size={size} color={color} />;
