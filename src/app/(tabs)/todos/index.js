@@ -1,27 +1,33 @@
-import { View, Text, Pressable } from 'react-native'
-import React from 'react'
-import { Link, router } from 'expo-router'
-import myTodos from '../../../../assets/data/todo-list';
+// import { View, Text, Pressable } from 'react-native'
+// import React from 'react'
+// import { Link, router } from 'expo-router'
+// import myTodos from '../../../../assets/data/todo-list';
 
+
+import React from 'react';
+import { View, Text, FlatList, ScrollView } from 'react-native';
+import { useTodoListContext } from '../../../context/todos-context';
+import Todo from '../../../components/todo';
 
 const TodosScreen = () => {
-  const firstTodo = myTodos[0]; 
+  const { todos } = useTodoListContext();
+console.log(todos[0]);
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>All Todos Screen</Text>
-      <Link href="/todos/1">Task 1</Link>
-      <Pressable onPress={() => router.push('/todos/2')}>
-        <Text>Task 2</Text>
-      </Pressable>
+    <ScrollView>
+      <Todo todo={todos[0]} />
+      <FlatList
+        data={todos}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View>
+            <Text>{item.title}</Text>
+            <Text>{item.description}</Text>
+          </View>
+        )}
+      />
+    </ScrollView>
+  );
+};
 
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>{firstTodo.title}</Text>
-      <Text>{firstTodo.description}</Text>
-      <Text>{firstTodo.dueDate}</Text>
-    </View>
-      
-    </View>
-  )
-}
+export default TodosScreen;
 
-export default TodosScreen

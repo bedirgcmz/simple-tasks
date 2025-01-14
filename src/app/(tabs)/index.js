@@ -4,7 +4,7 @@ import { Link, router } from 'expo-router'
 
 const HomeScreen = () => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View className="flex-1 items-center justify-center bg-white">
       <Text>HomeScreen</Text>
       <Link href="/tasks/1">Go Task Page 1</Link>
       <Pressable onPress={() => router.push("/tasks/2")}> 
