@@ -68,11 +68,11 @@ const TodoBoardScreen = () => {
     </View>
   );
  
-  const bgImages = {
-    "bg-next.jpg": require("../../../../assets/images/bg-next.jpg"),
-    "bg-today.jpg": require("../../../../assets/images/bg-today.jpg"),
-    "bg-tomorrow.jpg": require("../../../../assets/images/bg-tomorrow.jpg"),
-  };
+  // const bgImages = {
+  //   "bg-next.jpg": require("../../../../assets/images/bg-next.jpg"),
+  //   "bg-today.jpg": require("../../../../assets/images/bg-today.jpg"),
+  //   "bg-tomorrow.jpg": require("../../../../assets/images/bg-tomorrow.jpg"),
+  // };
  
   const renderTodoSection = (title, todos, key, image, message, cardBgColor, bgImage) => (
       <View key={key} className="p-4 pb-8 border-gray-300">
@@ -110,17 +110,20 @@ const TodoBoardScreen = () => {
           translucent={true} // Status barı saydam yapar
         />
           {/* Today's ToDo */}
-          {renderTodoSection("Today's ToDo", todaysTodos, "today", "get-rest.png", "Enjoy yourself today, you don't have any todo.", "bg-[#90e0ef]", "bg-today.jpg")}
+          {renderTodoSection("Today's ToDos", todaysTodos, "today", "get-rest.png", "Enjoy yourself today, you don't have any todo.", "bg-[#90e0ef]", "bg-today.jpg")}
             {/* <View className="h-1 w-[80%] bg-[#d4d700] self-center rounded-full"></View> */}
           {/* Tomorrow's ToDo */}
-          {renderTodoSection("Tomorrow's ToDo", tomorrowsTodos, "tomorrow", "have-fun.png", "You'll have time to have fun tomorrow.", "bg-[#f7b267]", "bg-tomorrow.jpg")}
+          {renderTodoSection("Tomorrow's ToDos", tomorrowsTodos, "tomorrow", "have-fun.png", "You'll have time to have fun tomorrow.", "bg-[#f7b267]", "bg-tomorrow.jpg")}
           {/* <View className="h-1 w-[80%] bg-[#d4d700] self-center rounded-full"></View> */}
           {/* Next Days ToDo */}
-          {renderTodoSection("Next Days ToDo", nextDaysTodos, "next-days", "find-something.png", "You should find something to do.", "bg-[#07beb8]", "bg-next.jpg")}
+          {renderTodoSection("Next Days' ToDos", nextDaysTodos, "next-days", "find-something.png", "You should find something to do.", "bg-[#07beb8]", "bg-next.jpg")}
           {/* <View className="h-1 w-[80%] bg-[#d4d700] self-center rounded-full"></View> */}
           {/* Completed ToDos */}
             <View className="p-4 pb-6">
-              <Text className="text-lg font-bold mb-2">Completed ToDos</Text>
+              <Text className="text-lg font-bold  text-blue-500">Completed ToDos</Text>
+              <Text className="text-gray-500 mb-4 pl-1">
+              {completedTodos.length}{completedTodos.length > 1 ? " ToDos are done" : " ToDo is done"} 
+            </Text>
               {completedTodos.length > 0 ? (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {completedTodos.map((todo) => (

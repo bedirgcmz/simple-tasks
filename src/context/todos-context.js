@@ -39,9 +39,9 @@ export const TodoListProvider = ({ children }) => {
         id: '4',
         title: 'Buy a computer',
         description: 'Complete last project, Complete last project, Complete last project, Complete last project, Complete last project',
-        status: "pending",
+        status: "done",
         createdAt: '2025-01-05T00:00:00.000Z',
-        dueDate: '2025-01-16T00:00:00.000Z',
+        dueDate: '2025-01-08T00:00:00.000Z',
         completedAt: '2025-01-09T00:00:00.000Z',
       },
       {
@@ -51,7 +51,7 @@ export const TodoListProvider = ({ children }) => {
         status: "pending",
         createdAt: '2025-01-05T00:00:00.000Z',
         dueDate: '2025-01-16T00:00:00.000Z',
-        completedAt: '2025-01-09T00:00:00.000Z',
+        completedAt: '2025-01-19T00:00:00.000Z',
       },
     ]
   );
