@@ -5,7 +5,6 @@ import Todo from '../../../components/todo';
 
 const TodosScreen = () => {
   const { todos } = useTodoListContext();
-console.log(todos[0]);
   return (
       <FlatList
       className="p-2 bg-white"

@@ -15,10 +15,10 @@ const TabsLayout = () => {
               ? 'home' : 'home-outline';
               // ? 'checkmark-circle' : 'checkmark-circle-outline';
           } else if (route.name === 'add/index') {
-          iconName = focused ? 'add-circle' : 'add-circle-outline';
-          } else if (route.name === 'todos') {
           iconName = focused ? 'list-circle'
           : 'list-circle-outline'; 
+          } else if (route.name === 'todos') {
+          iconName = focused ?  'add-circle' : 'add-circle-outline';
           }
 
           return <Ionicons name={iconName}  size={size} color={color} />;
@@ -34,11 +34,11 @@ const TabsLayout = () => {
       />
         <Tabs.Screen 
           name="add/index" 
-          options={{ headerShown: true, headerTitle: 'Add Todo', tabBarLabel: 'Add', }} 
+          options={{ headerShown: false, headerTitle: 'Add Todo', tabBarLabel: 'ToDos', }} 
         />
       <Tabs.Screen 
         name="todos" 
-        options={{ headerShown: false, headerTitle: 'Todos', title: 'ToDo' }} 
+        options={{ headerShown: false, headerTitle: 'Add New Todo', title: 'Add' }} 
       />
     </Tabs>
   )
