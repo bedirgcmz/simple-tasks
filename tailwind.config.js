@@ -12,6 +12,12 @@ module.exports = {
         customCoffe: '#78290f',
         customPurple: '#89023e',
       },
+      backgroundImage: {
+        'custom-gradient': "linear-gradient(90deg, rgba(1,6,27,1) 0%, rgba(67,17,39,1) 34%, rgba(147,30,54,1) 100%)",
+      },
+      spacing: {
+        'custom-right': 'calc(50% - 110px)',
+      },
     },
   },
   plugins: [],

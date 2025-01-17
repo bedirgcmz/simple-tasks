@@ -15,4 +15,7 @@ export function formatToShortDate(dateString) {
   
     return `${day} ${month}`;
   }
+
+  export const truncateText = (pText, pNumber) =>
+  pText.length > pNumber ? `${pText.slice(0, pNumber)}...` : pText;
   

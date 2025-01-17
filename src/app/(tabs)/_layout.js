@@ -15,10 +15,10 @@ const TabsLayout = () => {
           iconName = focused 
               ? 'home' : 'home-outline';
               // ? 'checkmark-circle' : 'checkmark-circle-outline';
-          } else if (route.name === 'add/index') {
+          } else if (route.name === 'list') {
           iconName = focused ? 'list-circle'
           : 'list-circle-outline'; 
-          } else if (route.name === 'todos') {
+          } else if (route.name === 'add') {
           iconName = focused ?  'add-circle' : 'add-circle-outline';
           }
 
@@ -30,7 +30,7 @@ const TabsLayout = () => {
         backgroundColor: '#0d1b2a', // Tab bar arka plan rengi
         height: 45,              // Tab bar yüksekliği
         position: "absolute",
-        bottom: 40,              // Tab barın alt kenarı
+        bottom: 20,              // Tab barın alt kenarı
         borderWidth: 1,       
         borderTopWidth: 0.5,       // Tab barın üstündeki sınır
         borderTopColor: '#adb5bd',  // Sınır rengi
@@ -60,15 +60,15 @@ const TabsLayout = () => {
       <Tabs.Screen 
         name="index" 
         
-        options={{ headerShown: false, headerTitle: 'Home', title: 'Home', tabBarShowLabel: false}} 
+        options={{ headerShown: false, headerTitle: 'Home', tabBarLabel: 'Home', tabBarShowLabel: false}} 
       />
         <Tabs.Screen 
-          name="add/index" 
+          name="list" 
           options={{ headerShown: false, headerTitle: 'Add Todo', tabBarLabel: 'ToDos', tabBarShowLabel: false }} 
         />
       <Tabs.Screen 
-        name="todos" 
-        options={{ headerShown: false, headerTitle: 'Add New Todo', title: 'Add', tabBarShowLabel: false }} 
+        name="add" 
+        options={{ headerShown: false, headerTitle: 'Add New Todo', tabBarLabel: 'Add', tabBarShowLabel: false }} 
       />
     </Tabs>
   )

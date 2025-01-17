@@ -125,7 +125,7 @@ export const TodoListProvider = ({ children }) => {
         category: 'Friends',
         status: "pending",
         createdAt: '2025-01-14T00:00:00.000Z',
-        dueDate: '2025-01-20T00:00:00.000Z',
+        dueDate: '2025-02-20T00:00:00.000Z',
         completedAt: null,
       },
       {

@@ -1,7 +1,7 @@
 import { View, Text, Pressable, TouchableOpacity } from 'react-native'
 import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Link, router } from 'expo-router'
+import { router } from 'expo-router'
 
 
 const Todo = ({todo, index}) => {
@@ -27,14 +27,14 @@ const Todo = ({todo, index}) => {
     
     
   return (
-    <TouchableOpacity onPress={() => router.push(`/todos/${todo.id}`)} className={`flex-1 flex-row items-center justify-between my-1 border border-[#f3e9dc] rounded-lg shadow bg-[#f8f9fa] ${index % 2 !== 0 && "bg-[#fff]"}`}>
+    <TouchableOpacity onPress={() => router.push({ pathname: `/add/${todo.id}`, params: { from: 'add' } })} className={`flex-1 flex-row items-center justify-between my-2 border-b border-[#6c757d] rounded-lg shadow bg-[#6c757d36] ${index % 2 !== 0 && "bgg-[#343a40]"}`}>
         <View className="flex-1 flex-row items-center gap-1 justify-start">
             <TouchableOpacity className="p-2 ">
                 {todo.status === "done" ? 
                 <Ionicons name="checkbox" size={20} color="#fe9092" /> :
                 <Ionicons name="square-outline" size={20} color="gray" /> }
             </TouchableOpacity>
-        <Text className="text-gray-600 flex-1 py-2" style={todo.status === "done" ?  { textDecorationLine: 'line-through' }: null}>{todo.title}</Text>
+        <Text className="text-gray-600 flex-1 py-2 text-white" style={todo.status === "done" ?  { textDecorationLine: 'line-through' }: null}>{todo.title}</Text>
         </View>
         {
             todo.status !== "done" ?

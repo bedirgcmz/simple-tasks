@@ -1,26 +1,29 @@
-import { View, Text, Pressable, Image, Button, ImageBackground, StatusBar } from "react-native";
+import { View, Text, Pressable, Image, Button, ImageBackground, StatusBar, ScrollView } from "react-native";
 import React, { useEffect } from "react";
 import { Link, router } from "expo-router";
 import Header from "../../components/Header";
 import ChartSection from "../../components/ChartSection";
 import CategoriesReport from "../../components/CategoriesReport";
+import Calender from "../../components/Calender";
 
 const HomeScreen = () => {
  
   return (
     
 
-    <ImageBackground source={require("../../../assets/images/home-bg-2.jpg")} resizeMode="cover" className="flex-1  pt-12">
-      <View className="items-center justify-between h-52 ">
-        <Header />
-        <ChartSection />
-        {/* <Link href="/tasks/1">Go Task Page 1</Link>
-        <Pressable onPress={() => router.push("/tasks/2")}> 
-        <Text>Go Task Page 2</Text>
-      </Pressable> */}
-      </View>
-      <CategoriesReport />
-      <StatusBar style="light"/>
+    <ImageBackground source={require("../../../assets/images/home-bg-2.jpg")} resizeMode="cover" className="flex-1  pt-12 pb-20">
+      <ScrollView className="flex-1">
+        <View className="items-center justify-start h-[320px]">
+          <Header />
+          <ChartSection />
+        <CategoriesReport />
+        </View>
+        <Calender />
+      </ScrollView>
+      <StatusBar style="light"
+       backgroundColor="transparent"
+       translucent={true}
+      />
     </ImageBackground>
   );
 };

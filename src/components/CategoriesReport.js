@@ -13,7 +13,7 @@ const CategoriesReport = () => {
 const categoryNames = Array.from(new Set(todos.map((item) => item.category)));
 
   return (
-    <View horizontal showsHorizontalScrollIndicator={false} className="px-4">
+    <View horizontal showsHorizontalScrollIndicator={false} className="px-4 mt-4">
       <Text className="text-white text-lg font-bold mb-2">
         Categories Report
       </Text>
