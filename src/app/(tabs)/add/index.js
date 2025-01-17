@@ -111,14 +111,14 @@ const TodoBoardScreen = () => {
         />
           {/* Today's ToDo */}
           {renderTodoSection("Today's ToDos", todaysTodos, "today", "get-rest.png", "Enjoy yourself today, you don't have any todo.", "bg-[#90e0ef]", "bg-today.jpg")}
-            {/* <View className="h-1 w-[80%] bg-[#d4d700] self-center rounded-full"></View> */}
-          {/* Tomorrow's ToDo */}
+         
+         {/* Tomorrow's ToDo */}
           {renderTodoSection("Tomorrow's ToDos", tomorrowsTodos, "tomorrow", "have-fun.png", "You'll have time to have fun tomorrow.", "bg-[#f7b267]", "bg-tomorrow.jpg")}
-          {/* <View className="h-1 w-[80%] bg-[#d4d700] self-center rounded-full"></View> */}
+         
           {/* Next Days ToDo */}
           {renderTodoSection("Next Days' ToDos", nextDaysTodos, "next-days", "find-something.png", "You should find something to do.", "bg-[#07beb8]", "bg-next.jpg")}
-          {/* <View className="h-1 w-[80%] bg-[#d4d700] self-center rounded-full"></View> */}
-          {/* Completed ToDos */}
+         
+         {/* Completed ToDos */}
             <View className="p-4 pb-6">
               <Text className="text-lg font-bold  text-blue-500">Completed ToDos</Text>
               <Text className="text-gray-500 mb-4 pl-1">
@@ -137,10 +137,11 @@ const TodoBoardScreen = () => {
                 </ScrollView>
               ) : (
                 <View className="items-center mt-4">
-                  <Text className="text-gray-500 text-center">Tamamlanmış görev yok</Text>
+                  <Text className="text-gray-500 text-center">You don't have completed ToDo yet!</Text>
                 </View>
               )}
             </View>
+        <View className="h-20"></View>
         </ScrollView>
     </ImageBackground>
 

@@ -5,6 +5,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 const TabsLayout = () => {
   return (
     <Tabs
+    
     screenOptions={
       ({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
@@ -25,20 +26,49 @@ const TabsLayout = () => {
       },
       tabBarActiveTintColor: 'tomato',
       tabBarInactiveTintColor: 'gray',
-      })
+      tabBarStyle: {
+        backgroundColor: '#0d1b2a', // Tab bar arka plan rengi
+        height: 45,              // Tab bar yüksekliği
+        position: "absolute",
+        bottom: 40,              // Tab barın alt kenarı
+        borderWidth: 1,       
+        borderTopWidth: 0.5,       // Tab barın üstündeki sınır
+        borderTopColor: '#adb5bd',  // Sınır rengi
+        borderColor: '#495057',  // Sınır rengi
+        shadowColor: '#fff',     // Gölge rengi
+        shadowOpacity: 0.2,      // Gölge opaklığı
+        shadowRadius: 10,        // Gölge yayılımı
+        elevation: 5,            // Android için gölge
+        marginHorizontal: 100,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderRadius: 50,        // Yuvarlak köşeler
+      },
+      tabBarLabelStyle: {
+        fontSize: 12,           // Tab etiketi font boyutu
+        fontWeight: '600',      // Font ağırlığı
+        marginBottom: 5,        // Tab ikonu ile metin arasındaki mesafe
+      },
+      tabBarIconStyle: {
+        marginTop: 2,           // İkonun yukarıdaki mesafesi
+      },
+      }
+      
+      )
 }
     >
       <Tabs.Screen 
         name="index" 
-        options={{ headerShown: true, headerTitle: 'Home', title: 'Home' }} 
+        
+        options={{ headerShown: false, headerTitle: 'Home', title: 'Home', tabBarShowLabel: false}} 
       />
         <Tabs.Screen 
           name="add/index" 
-          options={{ headerShown: false, headerTitle: 'Add Todo', tabBarLabel: 'ToDos', }} 
+          options={{ headerShown: false, headerTitle: 'Add Todo', tabBarLabel: 'ToDos', tabBarShowLabel: false }} 
         />
       <Tabs.Screen 
         name="todos" 
-        options={{ headerShown: false, headerTitle: 'Add New Todo', title: 'Add' }} 
+        options={{ headerShown: false, headerTitle: 'Add New Todo', title: 'Add', tabBarShowLabel: false }} 
       />
     </Tabs>
   )
