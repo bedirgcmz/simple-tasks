@@ -4,7 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router'
 
 
-const Todo = ({todo, index}) => {
+const Todo = ({todo, index, fromText}) => {
     function calculateDaysLeft(todo) {
         const createdAt = new Date(todo.createdAt);
         const dueDate = new Date(todo.dueDate);
@@ -25,9 +25,8 @@ const Todo = ({todo, index}) => {
         }
     }
     
-    
   return (
-    <TouchableOpacity onPress={() => router.push({ pathname: `/add/${todo.id}`, params: { from: 'add' } })} className={`flex-1 flex-row items-center justify-between my-2 border-b border-[#6c757d] rounded-lg shadow bg-[#6c757d36] ${index % 2 !== 0 && "bgg-[#343a40]"}`}>
+    <TouchableOpacity onPress={() => router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: fromText } })} className={`flex-1 flex-row items-center justify-between my-2 border-b border-[#6c757d] rounded-lg shadow bg-[#6c757d36] ${index % 2 !== 0 && "bgg-[#343a40]"}`}>
         <View className="flex-1 flex-row items-center gap-1 justify-start">
             <TouchableOpacity className="p-2 ">
                 {todo.status === "done" ? 

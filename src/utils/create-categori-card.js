@@ -13,7 +13,7 @@ export const createCategoryCard = (pCategoryName) => {
     const total = data.length;
     
     return (
-        <CategoryCard key={data[0].id} category={data[0].category} completed={completedTodos} total={total} percentage={percentage} />
+        <CategoryCard key={data[0].id} category={pCategoryName} completed={completedTodos} total={total} percentage={percentage} />
     )
 
 }

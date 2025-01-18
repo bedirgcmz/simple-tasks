@@ -13,7 +13,7 @@ const TodoCard = ({ todo, bgColor }) => {
     <TouchableOpacity
       className={`p-4 mr-4 w-44 min-h-[200px] flex-col justify-between
       rounded-lg shadow-lg border border-gray-500 ${bgColor} `}
-      onPress={() => router.push({ pathname: `/add/${todo.id}`, params: { from: 'list' } })}
+      onPress={() => router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: 'list' } })}
     >
          <TouchableOpacity className="absolute bottom-[12px] left-[12px] ">
             {todo.status === "done" ? (
@@ -27,7 +27,7 @@ const TodoCard = ({ todo, bgColor }) => {
       </View>
       <Text className="text-white mb-2 flex-1">{truncateText(todo.description, 60)}</Text>
       <Text className="text-[12px] mb-1 text-white">
-        Created At: {new Date(todo.createdAt).toLocaleDateString()}
+        Created At: {todo.createdAt}
       </Text>
       <View className="flex-row mt-2 items-center justify-end">
         <TouchableOpacity className="mr-4">

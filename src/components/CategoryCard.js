@@ -1,5 +1,6 @@
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 const CategoryCard = ({ category, completed, total, percentage }) => {
     const [bgColor, setBgColor] = useState('');
@@ -9,7 +10,6 @@ const CategoryCard = ({ category, completed, total, percentage }) => {
             setBgColor('bg-customBlue');
         }else if(category === "School"){
             setBgColor('bg-customPurple');
-            console.log(bgColor);
         }else if(category === "Shopping"){
             setBgColor('bg-customGreen');
         }else if(category === "Fun"){
@@ -23,13 +23,12 @@ const CategoryCard = ({ category, completed, total, percentage }) => {
         }
     }, []);
 
-
   return (
-    <View  className={`items-center justify-between py-2 rounded-lg mb-4 shadow-md border border-[#373f51] w-24 h-28 mr-4 mt-2 ${bgColor}`}>
+    <TouchableOpacity onPress={() => router.push({ pathname: `/filter`, params: { from: category } })}  className={`items-center justify-between py-2 rounded-lg mb-4 shadow-md border border-[#373f51] w-24 h-28 mr-4 mt-2 ${bgColor}`}>
       <Text className='text-lg font-bold text-white'>{category}</Text>
       <Text className='text-white font-bold'>{completed}/{total}</Text>
       <Text className='text-white font-bold text-md'>{percentage}%</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, ScrollView } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { useTodoListContext } from "../context/todos-context";
-import generateCategoryReport from '../utils/get-category-report';
-import CategoryCard from './CategoryCard'; 
 import {createCategoryCard} from '../utils/create-categori-card';
 
 const CategoriesReport = () => {
   const { todos } = useTodoListContext();
-  const report = generateCategoryReport(todos);
+  // const report = generateCategoryReport(todos);
 
 
 const categoryNames = Array.from(new Set(todos.map((item) => item.category)));

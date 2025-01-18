@@ -48,8 +48,7 @@ const Calender = () => {
           
         }}
         onDayPress={(day) => {
-          console.log(day.dateString);
-          router.push({ pathname: `list/${day.dateString}`, params: { from: 'home' } })
+          router.push({ pathname: `dynamicday/${day.dateString}`, params: { from: 'home' } })
         }}
         markedDates={markedDates} // İşlenmiş markedDates'i ekle
         theme={{

@@ -122,7 +122,6 @@ const TodoBoardScreen = () => {
                     <TodoCard
                       key={todo.id}
                       todo={todo}
-                      onPress={() => router.push(`/add/${todo.id}`)}
                       bgColor={"bg-customGreen"}
                     />
                   ))}
