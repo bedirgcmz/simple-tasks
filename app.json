@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "test-2",
-    "slug": "test-2",
+    "name": "simple-task",
+    "slug": "simple-task",
     "scheme": "your-app-scheme",
     "version": "1.0.0",
     "orientation": "portrait",
