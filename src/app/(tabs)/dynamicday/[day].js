@@ -19,7 +19,7 @@ const DaysTodos = () => {
 
   useEffect(() => {
     ThisDayTodos();
-  }, [day])
+  }, [day, todos])
 
   return (
     <LinearGradient
@@ -27,9 +27,10 @@ const DaysTodos = () => {
       style={{ flex: 1, padding: 7, justifyContent: "center" }}
     >
     <ScrollView className="mt-12 flex-1">
-      <Text>DaysTodos {day} {from}</Text>
+      {thisDaysTodos.length !== 0 && <Text className="text-white text-lg text-center pt-4 pb-2">ToDos for {day}</Text>}
+      
       {thisDaysTodos.map((todo, index) => (
-        <Todo key={todo.id} todo={todo} index={index} fromText={`/list/${day}`}/>
+        <Todo key={todo.id} todo={todo} index={index} fromText={`${day}`}/>
       ))}
       {
         thisDaysTodos.length === 0 && (
@@ -44,13 +45,6 @@ const DaysTodos = () => {
             className="bg-[#001d3d] h-10 w-[110px] pb-2 pr-4 rounded-full items-center flex-row gap-2 justify-center absolute bottom-[100px] right-[36%]" 
             onPress={() => {
               router.push('/');
-              // if (from === 'home') {
-              //   router.push('/'); 
-              // } else if (from === 'add') {
-              //   router.push('/add'); 
-              // } else {
-              //   router.back(); // Varsayılan olarak bir önceki ekrana git
-              // }
             }}
           >
             <Ionicons name="chevron-back-outline" size={24} color="white" />

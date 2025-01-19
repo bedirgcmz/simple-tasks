@@ -17,7 +17,6 @@ useEffect(() => {
   }
 }, [from]);
 
-console.log(from);
 
 // const filteredTodos = from === undefined || selectedCategory === "All" ? todos : todos.filter((todo) => todo.category === selectedCategory);
 let filteredTodos;

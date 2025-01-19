@@ -1,5 +1,6 @@
-import { View, Text, Image, Pressable } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
+import { router } from 'expo-router'
 
 const Header = () => {
   return (
@@ -15,11 +16,12 @@ const Header = () => {
       </View>
     </View>
       <View>
-        <Pressable
+        <TouchableOpacity
           className="text-gray-500 border border-gray-500 rounded-md px-2 py-1"
+          onPress={() => router.push("/add")}
         >
           <Text className="text-[12px] text-white ">Add New ToDo</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
   </View>
   )

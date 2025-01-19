@@ -6,56 +6,56 @@ import {
   TouchableOpacity,
   StatusBar,
   ImageBackground,
-  
 } from "react-native";
-import { Picker, } from "@react-native-picker/picker";
+import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useTodoListContext } from "../../context/todos-context";
-import uuid from "react-native-uuid"; // UUID oluşturmak için
+import { useLocalSearchParams, router } from "expo-router";
+import { useTodoListContext } from "../../../context/todos-context";
 
-const AddTodoPage = () => {
-  const { addTodo } = useTodoListContext();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [dueDate, setDueDate] = useState(new Date());
+const EditTodoPage = () => {
+  const { id } = useLocalSearchParams();
+  const { todos, updateTodo } = useTodoListContext();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const categories = ["Family", "Fun", "School", "Work", "Shopping", "Friends", "Others"]; 
+  // Düzenlenecek ToDo'yu bulma
+  const todo = todos.find((todo) => todo.id === id);
 
-  const handleAddTodo = () => {
+  // Form state'leri
+  const [title, setTitle] = useState(todo.title);
+  const [description, setDescription] = useState(todo.description);
+  const [category, setCategory] = useState(todo.category);
+  const [dueDate, setDueDate] = useState(new Date(todo.dueDate));
+
+  const categories = ["Family", "Fun", "School", "Work", "Shopping", "Friends", "Others"];
+
+  const handleUpdateTodo = () => {
     if (!title || !category) {
       alert("Başlık ve kategori alanları zorunludur!");
       return;
     }
 
-    const newTodo = {
-      id: uuid.v4(), // UUID oluşturulur
+    // Güncellenmiş ToDo objesi
+    const updatedTodo = {
+      ...todo,
       title,
       description,
       category,
-      status: "pending",
-      createdAt: new Date().toISOString().split("T")[0], 
-      dueDate: dueDate.toISOString().split("T")[0], 
-      completedAt: "", // Başlangıçta boş
+      dueDate: dueDate.toISOString().split("T")[0],
     };
 
-    addTodo(newTodo); // Context'e eklenir
-    setTitle(""); // Input'ları temizle
-    setDescription("");
-    setCategory("");
-    setDueDate(new Date());
+    updateTodo(todo.id, updatedTodo); // Context üzerinden güncelle
+    router.push("/list"); // Listeye geri dön
   };
 
   return (
     <ImageBackground
-      source={require("../../../assets/images/bg-add.jpg")}
+      source={require("../../../../assets/images/bg-add.jpg")}
       resizeMode="cover"
       className="flex-1 pt-10 pb-20"
     >
       <View className="px-4 flex-1">
         <Text className="text-[#d7c8f3] text-2xl font-bold text-center mb-4 mt-4">
-          Add New ToDo
+          Edit ToDo
         </Text>
 
         {/* Başlık */}
@@ -82,17 +82,28 @@ const AddTodoPage = () => {
           <Picker
             selectedValue={category}
             onValueChange={(itemValue) => setCategory(itemValue)}
-            style={{  }}
           >
             <Picker.Item label="Select Category" value="" />
             {categories.map((cat) => (
-              <Picker.Item key={cat} label={cat} value={cat} className="text-white" style={{ color: "black" }}/>
+              <Picker.Item key={cat} label={cat} value={cat} />
             ))}
           </Picker>
         </View>
 
         {/* Son Tarih Seçimi */}
-        <Text className="text-[#d7c8f3] text-md text-center font-bold mb-2">
+        {/* <TouchableOpacity
+          onPress={() => setShowDatePicker(true)}
+          className="bg-[#d7c8f3] py-3 rounded-md mb-4"
+        >
+          <Text className="text-gray-700 text-center">
+            {dueDate.toISOString().split("T")[0]}
+          </Text>
+        </TouchableOpacity> */}
+
+
+
+   {/* Son Tarih Seçimi */}
+   <Text className="text-[#d7c8f3] text-md text-center font-bold mb-2">
           Select Due Date
         </Text>
         <TouchableOpacity
@@ -116,12 +127,14 @@ const AddTodoPage = () => {
           />
         )}
 
-        {/* ToDo Ekle */}
+
+
+        {/* Kaydet Butonu */}
         <TouchableOpacity
-          onPress={handleAddTodo}
-          className="bg-red-400 py-4 rounded-md mt-6"
+          onPress={handleUpdateTodo}
+          className="bg-green-500 py-4 rounded-md mt-6"
         >
-          <Text className="text-white text-center font-bold">Add ToDo</Text>
+          <Text className="text-white text-center font-bold">Save Changes</Text>
         </TouchableOpacity>
       </View>
       <StatusBar style="light" backgroundColor="transparent" translucent />
@@ -129,4 +142,4 @@ const AddTodoPage = () => {
   );
 };
 
-export default AddTodoPage;
+export default EditTodoPage;

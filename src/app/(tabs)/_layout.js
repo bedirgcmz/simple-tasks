@@ -114,6 +114,18 @@ const TabsLayout = () => {
           
         }}
       />
+      <Tabs.Screen
+        name="edit/[id]"
+        options={{
+          href: null,
+          headerShown: false,
+          headerTitle: "Filter",
+          tabBarLabel: "Filter",
+          tabBarShowLabel: false,
+          // tabBarStyle: { display: "none" },
+          
+        }}
+      />
     </Tabs>
   );
 };

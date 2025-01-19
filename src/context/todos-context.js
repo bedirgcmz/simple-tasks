@@ -21,7 +21,7 @@ export const TodoListProvider = ({ children }) => {
       {
         id: '2',
         title: 'Read a book',
-        description: 'Complete reading "Clean Code"',
+        description: 'Complete reading "Clean Code" Complete reading "Clean Code" Complete reading "Clean Code" Complete reading "Clean Code" Complete reading "Clean Code"',
         category: 'School',
         status: "done",
         createdAt: '2025-01-02',
@@ -178,6 +178,7 @@ export const TodoListProvider = ({ children }) => {
       prevTodos.map((todo) => (todo.id === id ? { ...todo, ...updatedTodo } : todo))
     );
   };
+  
 
   // Context value
   const value = {

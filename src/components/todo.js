@@ -2,9 +2,10 @@ import { View, Text, Pressable, TouchableOpacity } from 'react-native'
 import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router'
-
+import { useTodoListContext } from '../context/todos-context';
 
 const Todo = ({todo, index, fromText}) => {
+  const { todos, deleteTodo, updateTodo } = useTodoListContext();
     function calculateDaysLeft(todo) {
         const createdAt = new Date(todo.createdAt);
         const dueDate = new Date(todo.dueDate);
@@ -24,11 +25,13 @@ const Todo = ({todo, index, fromText}) => {
             return `${daysLeft} days left`;
         }
     }
-    
   return (
     <TouchableOpacity onPress={() => router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: fromText } })} className={`flex-1 flex-row items-center justify-between my-2 border-b border-[#6c757d] rounded-lg shadow bg-[#6c757d36] ${index % 2 !== 0 && "bgg-[#343a40]"}`}>
         <View className="flex-1 flex-row items-center gap-1 justify-start">
-            <TouchableOpacity className="p-2 ">
+            <TouchableOpacity className="p-2"
+        onPress={() => updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })} 
+            
+            >
                 {todo.status === "done" ? 
                 <Ionicons name="checkbox" size={20} color="#fe9092" /> :
                 <Ionicons name="square-outline" size={20} color="gray" /> }
@@ -40,7 +43,9 @@ const Todo = ({todo, index, fromText}) => {
             <Text className="text-red-400">{calculateDaysLeft(todo)}</Text> :
             <Text className="text-green-600">Great!</Text>
         }
-        <TouchableOpacity className="p-2">
+        <TouchableOpacity className="p-2"
+                onPress={() => deleteTodo(todo.id)}
+        >
             <Ionicons name="trash-outline" size={18} color="gray" />
         </TouchableOpacity>
     </TouchableOpacity>
