@@ -1,8 +1,7 @@
 import React from "react";
-import { View, Text, ScrollView, Image, ImageBackground, SafeAreaView, StatusBar } from "react-native";
+import { View, Text, ScrollView, Image, ImageBackground, StatusBar } from "react-native";
 import { useTodoListContext } from "../../../context/todos-context";
 import TodoCard from "../../../components/TodoCard";
-import { Link } from "expo-router";
 
 const TodoBoardScreen = () => {
   const { todos } = useTodoListContext();
@@ -97,7 +96,7 @@ const TodoBoardScreen = () => {
     <ImageBackground source={require("../../../../assets/images/bg-list3.jpg")} resizeMode="cover" className="flex-1 pt-10 ">
       <ScrollView className="flex-1">
           <StatusBar
-          barStyle="light-content" // Yazı rengi: "dark-content", "light-content" veya "default"
+          barStyle="light-content" 
           backgroundColor="transparent" // Status bar arka planı
           translucent={true} // Status barı saydam yapar
         />

@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 
 const CategoryCard = ({ category, completed, total, percentage }) => {
     const [bgColor, setBgColor] = useState('');

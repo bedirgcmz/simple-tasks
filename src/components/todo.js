@@ -1,11 +1,13 @@
-import { View, Text, Pressable, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Alert } from 'react-native'
 import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
+import { showConfirmAlert } from '../utils/alerts';
+
 
 const Todo = ({todo, index, fromText}) => {
-  const { todos, deleteTodo, updateTodo } = useTodoListContext();
+  const {  deleteTodo, updateTodo } = useTodoListContext();
     function calculateDaysLeft(todo) {
         const createdAt = new Date(todo.createdAt);
         const dueDate = new Date(todo.dueDate);
@@ -44,7 +46,7 @@ const Todo = ({todo, index, fromText}) => {
             <Text className="text-green-600">Great!</Text>
         }
         <TouchableOpacity className="p-2"
-                onPress={() => deleteTodo(todo.id)}
+                onPress={() => showConfirmAlert("You want to DELETE this ToDo!","Are you sure?",deleteTodo, todo.id)}
         >
             <Ionicons name="trash-outline" size={18} color="gray" />
         </TouchableOpacity>

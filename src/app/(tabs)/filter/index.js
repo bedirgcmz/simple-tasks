@@ -18,7 +18,6 @@ useEffect(() => {
 }, [from]);
 
 
-// const filteredTodos = from === undefined || selectedCategory === "All" ? todos : todos.filter((todo) => todo.category === selectedCategory);
 let filteredTodos;
 if (selectedCategory === "All") {
   filteredTodos = todos;
@@ -45,7 +44,6 @@ if (selectedCategory === "All") {
       </TouchableOpacity>
 
     </View>
-    {/* <Text className="text-lg text-white text-center mt-2">Your All ToDos</Text> */}
     <FlatList
       className="p-2 "
         data={filteredTodos}

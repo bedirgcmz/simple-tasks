@@ -12,7 +12,6 @@ const TaskScreen = () => {
   const todo = todos.find((todo) => todo.id === id);
 
 
-// const pageTitle = from === 'list' || from === 'filter' ? "ToDo Details" : "ToDo's Found for This Date";
   return (
     <LinearGradient
     colors={["#01061b", "#431127", "#931e36"]}
@@ -21,7 +20,6 @@ const TaskScreen = () => {
       {
         todo ? (
           <View className="flex-1 p-3 pt-20">
-            {/* <Text className="text-white text-lg text-center pt-4 pb-2">{pageTitle}</Text> */}
             <ToDoDetailsCard pTodoId={id} pPageTitle="ToDo Details"/>
             <TouchableOpacity
               className="bg-[#001d3d] h-10 w-[110px] pb-2 pr-4 rounded-full items-center flex-row gap-2 justify-center absolute bottom-[100px] right-[36%]"

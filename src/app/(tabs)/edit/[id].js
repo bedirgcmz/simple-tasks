@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useLocalSearchParams, router } from "expo-router";
 import { useTodoListContext } from "../../../context/todos-context";
+import { showSaveChangesAlert } from '../../../utils/alerts';
 
 const EditTodoPage = () => {
   const { id } = useLocalSearchParams();
@@ -21,10 +22,10 @@ const EditTodoPage = () => {
   const todo = todos.find((todo) => todo.id === id);
 
   // Form state'leri
-  const [title, setTitle] = useState(todo.title);
-  const [description, setDescription] = useState(todo.description);
-  const [category, setCategory] = useState(todo.category);
-  const [dueDate, setDueDate] = useState(new Date(todo.dueDate));
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [dueDate, setDueDate] = useState(new Date());
 
   const categories = ["Family", "Fun", "School", "Work", "Shopping", "Friends", "Others"];
 
@@ -44,8 +45,23 @@ const EditTodoPage = () => {
     };
 
     updateTodo(todo.id, updatedTodo); // Context üzerinden güncelle
-    router.push("/list"); // Listeye geri dön
+    router.push(`/dynamicid/${todo.id}`); // Listeye geri dön
   };
+
+  useEffect(() => {
+    if (!todo) {
+      setTitle("");
+      setDescription("");
+      setCategory("");
+      setDueDate(new Date());
+    } else {
+      setTitle(todo.title);
+      setDescription(todo.description);
+      setCategory(todo.category);
+      setDueDate(new Date(todo.dueDate));
+    }
+  }, [todo]);
+  
 
   return (
     <ImageBackground
@@ -90,18 +106,6 @@ const EditTodoPage = () => {
           </Picker>
         </View>
 
-        {/* Son Tarih Seçimi */}
-        {/* <TouchableOpacity
-          onPress={() => setShowDatePicker(true)}
-          className="bg-[#d7c8f3] py-3 rounded-md mb-4"
-        >
-          <Text className="text-gray-700 text-center">
-            {dueDate.toISOString().split("T")[0]}
-          </Text>
-        </TouchableOpacity> */}
-
-
-
    {/* Son Tarih Seçimi */}
    <Text className="text-[#d7c8f3] text-md text-center font-bold mb-2">
           Select Due Date
@@ -131,7 +135,7 @@ const EditTodoPage = () => {
 
         {/* Kaydet Butonu */}
         <TouchableOpacity
-          onPress={handleUpdateTodo}
+          onPress={()=> showSaveChangesAlert("You want to UPDATE this ToDo!", "Are you sure?",handleUpdateTodo) }
           className="bg-green-500 py-4 rounded-md mt-6"
         >
           <Text className="text-white text-center font-bold">Save Changes</Text>

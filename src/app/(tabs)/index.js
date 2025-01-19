@@ -1,6 +1,5 @@
-import { View, Text, Pressable, Image, Button, ImageBackground, StatusBar, ScrollView } from "react-native";
-import React, { useEffect } from "react";
-import { Link, router } from "expo-router";
+import { View, ImageBackground, StatusBar, ScrollView } from "react-native";
+import React from "react";
 import Header from "../../components/Header";
 import ChartSection from "../../components/ChartSection";
 import CategoriesReport from "../../components/CategoriesReport";
@@ -16,7 +15,10 @@ const HomeScreen = () => {
         <View className="items-center justify-start h-[320px]">
           <Header />
           <ChartSection />
-        <CategoriesReport />
+          <View className="items-start justify-start w-full h-[190px]">
+            <CategoriesReport />
+          </View>
+            
         </View>
         <Calender />
       </ScrollView>

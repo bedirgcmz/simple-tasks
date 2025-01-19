@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { formatToShortDate } from "../utils/date-utils";
 import { router } from "expo-router";
+import { showConfirmAlert } from '../utils/alerts';
 
 const ToDoDetailsCard = ({pTodoId, pPageTitle}) => {
 
@@ -97,7 +98,7 @@ const ToDoDetailsCard = ({pTodoId, pPageTitle}) => {
 
             {/* Delete Button */}
             <TouchableOpacity
-                onPress={() => deleteTodo(todo.id)}
+                onPress={() => showConfirmAlert("You want to DELETE this ToDo!","Are you sure?",deleteTodo, todo.id)}
                 className="flex-row items-center space-x-2 p-2 bg-red-500 rounded-full bg-[#ff4d6d]"
             >
                 <MaterialCommunityIcons name="trash-can" size={16} color="white" />

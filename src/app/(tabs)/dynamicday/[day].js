@@ -8,7 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 
 const DaysTodos = () => {
-  const { day, from } = useLocalSearchParams();
+  const { day } = useLocalSearchParams();
   const [thisDaysTodos, setThisDaysTodos] = useState([])
   const { todos } = useTodoListContext();
 
