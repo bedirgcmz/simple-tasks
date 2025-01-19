@@ -1,5 +1,5 @@
 {
-  "name": "test-2",
+  "name": "simple-task",
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
