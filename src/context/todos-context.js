@@ -56,7 +56,8 @@ export const TodoListProvider = ({ children }) => {
 
   // Todo ekleme fonksiyonu
   const addTodo = (newTodo) => {
-    const updatedTodos = [...todos, newTodo];
+    // const updatedTodos = [...todos, newTodo];
+    const updatedTodos = [newTodo, ...todos];
     setTodos(updatedTodos);
     saveTodos(updatedTodos);
   };

@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   StatusBar,
   ImageBackground,
-  
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { Picker, } from "@react-native-picker/picker";
+import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTodoListContext } from "../../context/todos-context";
-import uuid from "react-native-uuid"; // UUID oluşturmak için
+import uuid from "react-native-uuid";
+import { router } from "expo-router";
 
 const AddTodoPage = () => {
   const { addTodo } = useTodoListContext();
@@ -21,7 +23,7 @@ const AddTodoPage = () => {
   const [dueDate, setDueDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const categories = ["Family", "Fun", "School", "Work", "Shopping", "Friends", "Others"]; 
+  const categories = ["Family", "Fun", "School", "Work", "Shopping", "Friends", "Others"];
 
   const handleAddTodo = () => {
     if (!title || !category) {
@@ -30,103 +32,116 @@ const AddTodoPage = () => {
     }
 
     const newTodo = {
-      id: uuid.v4(), // UUID oluşturulur
+      id: uuid.v4(),
       title,
       description,
       category,
       status: "pending",
-      createdAt: new Date().toISOString().split("T")[0], 
-      dueDate: dueDate.toISOString().split("T")[0], 
-      completedAt: "", // Başlangıçta boş
+      createdAt: new Date().toISOString().split("T")[0],
+      dueDate: dueDate.toISOString().split("T")[0],
+      completedAt: "",
     };
 
-    addTodo(newTodo); // Context'e eklenir
-    setTitle(""); // Input'ları temizle
+    addTodo(newTodo);
+    setTitle("");
     setDescription("");
     setCategory("");
     setDueDate(new Date());
+    router.push("/filter")
   };
 
   return (
-    <ImageBackground
-      source={require("../../../assets/images/bg-add.jpg")}
-      resizeMode="cover"
-      className="flex-1 pt-10 pb-20"
-    >
-      <View className="px-4 flex-1">
-        <Text className="text-[#d7c8f3] text-2xl font-bold text-center mb-4 mt-4">
-          Add New ToDo
-        </Text>
-
-        {/* Başlık */}
-        <TextInput
-          placeholder="Enter Title"
-          placeholderTextColor="#6c757d"
-          value={title}
-          onChangeText={setTitle}
-          className="bg-[#d7c8f3] p-3 rounded-md mb-4 text-gray-800"
-        />
-
-        {/* Açıklama */}
-        <TextInput
-          placeholder="Enter Description"
-          placeholderTextColor="#6c757d"
-          value={description}
-          onChangeText={setDescription}
-          className="bg-[#d7c8f3] p-3 rounded-md mb-4 text-gray-800"
-          multiline
-        />
-
-        {/* Kategori Seçimi */}
-        <View className="bg-[#d7c8f3] rounded-md mb-4 text-white">
-          <Picker
-            selectedValue={category}
-            onValueChange={(itemValue) => setCategory(itemValue)}
-            style={{  }}
-          >
-            <Picker.Item label="Select Category" value="" />
-            {categories.map((cat) => (
-              <Picker.Item key={cat} label={cat} value={cat} className="text-white" style={{ color: "black" }}/>
-            ))}
-          </Picker>
-        </View>
-
-        {/* Son Tarih Seçimi */}
-        <Text className="text-[#d7c8f3] text-md text-center font-bold mb-2">
-          Select Due Date
-        </Text>
-        <TouchableOpacity
-          onPress={() => setShowDatePicker(true)}
-          className="bg-[#d7c8f3] py-3 rounded-md mb-4"
-        >
-          <Text className="text-gray-700 text-center">
-            {dueDate.toISOString().split("T")[0]}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ImageBackground
+        source={require("../../../assets/images/bg-add.jpg")}
+        resizeMode="cover"
+        className="flex-1 pt-10 pb-20"
+      >
+        <View className="px-4 flex-1">
+          <Text className="text-[#d7c8f3] text-2xl font-bold text-center mb-4 mt-4">
+            Add New ToDo
           </Text>
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            value={dueDate}
-            mode="date"
-            display="default"
-            style={{ backgroundColor: "#d7c8f3",  borderRadius: 6, marginBottom:16}}
-            onChange={(event, selectedDate) => {
-              setShowDatePicker(false);
-              if (selectedDate) setDueDate(selectedDate);
-            }}
-          />
-        )}
 
-        {/* ToDo Ekle */}
-        <TouchableOpacity
-          onPress={handleAddTodo}
-          className="bg-red-400 py-4 rounded-md mt-6"
-        >
-          <Text className="text-white text-center font-bold">Add ToDo</Text>
-        </TouchableOpacity>
-      </View>
-      <StatusBar style="light" backgroundColor="transparent" translucent />
-    </ImageBackground>
+          {/* Başlık */}
+          <TextInput
+            placeholder="Enter Title"
+            placeholderTextColor="#6c757d"
+            value={title}
+            onChangeText={setTitle}
+            className="bg-[#d7c8f3] p-3 rounded-md mb-4 text-gray-800"
+            autoFocus
+          />
+
+          {/* Açıklama */}
+          <TextInput
+            placeholder="Enter Description"
+            placeholderTextColor="#6c757d"
+            value={description}
+            onChangeText={setDescription}
+            className="bg-[#d7c8f3] p-3 rounded-md mb-4 text-gray-800"
+            multiline
+          />
+
+          {/* Kategori Seçimi */}
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View className="bg-[#d7c8f3] rounded-md mb-4 text-white">
+                  <Picker
+                    selectedValue={category}
+                    onValueChange={(itemValue) => setCategory(itemValue)}
+                    style={{}}
+                  >
+                    <Picker.Item label="Select Category" value="" />
+                    {categories.map((cat) => (
+                      <Picker.Item key={cat} label={cat} value={cat} className="text-white" style={{ color: "black" }} />
+                    ))}
+                  </Picker>
+                </View>
+          </TouchableWithoutFeedback>
+
+          {/* Son Tarih Seçimi */}
+            <View>
+              <Text className="text-[#d7c8f3] text-md text-center font-bold mb-2">
+                Select Due Date
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  Keyboard.dismiss(); // Klavyeyi kapatır
+                  setShowDatePicker(true); // DatePicker'ı açar
+                }}
+                className="bg-[#d7c8f3] py-3 rounded-md mb-4"
+              >
+                <Text className="text-gray-700 text-center">
+                  {dueDate.toISOString().split("T")[0]}
+                </Text>
+              </TouchableOpacity>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={dueDate}
+                  mode="date"
+                  display="default"
+                  style={{ backgroundColor: "#d7c8f3", borderRadius: 6, marginBottom: 16 }}
+                  onChange={(event, selectedDate) => {
+                    setShowDatePicker(false);
+                    if (selectedDate) setDueDate(selectedDate);
+                  }}
+                />
+              )}
+
+            </View>
+
+          {/* ToDo Ekle */}
+          <TouchableOpacity
+            onPress={handleAddTodo}
+            className="bg-red-400 py-4 rounded-md mt-6"
+          >
+            <Text className="text-white text-center font-bold">Add ToDo</Text>
+          </TouchableOpacity>
+        </View>
+        <StatusBar style="light" backgroundColor="transparent" translucent />
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 };
 
 export default AddTodoPage;
+

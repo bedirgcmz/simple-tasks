@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "simple-task",
+    "name": "SimpleTasks",
     "slug": "simple-task",
     "scheme": "your-app-scheme",
     "version": "1.0.0",
@@ -20,13 +20,23 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.bedirsweden.simpletask"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "865f00a7-e8be-4a82-817c-3a6ad5ca21b6"
+      }
+    }
   }
 }
