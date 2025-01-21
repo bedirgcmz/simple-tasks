@@ -54,7 +54,7 @@ const TodoBoardScreen = () => {
   };
   
   const renderRestState = (pImage, pMessage) => (
-    <View className="items-center">
+    <View className="items-start">
       <Text className="text-gray-500 text-center">
         {pMessage}
       </Text>

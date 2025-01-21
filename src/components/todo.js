@@ -38,7 +38,7 @@ const Todo = ({todo, index, fromText}) => {
                 <Ionicons name="checkbox" size={20} color="#fe9092" /> :
                 <Ionicons name="square-outline" size={20} color="gray" /> }
             </TouchableOpacity>
-        <Text className="text-gray-600 flex-1 py-2 text-white" style={todo.status === "done" ?  { textDecorationLine: 'line-through' }: null}>{todo.title}</Text>
+        <Text className="flex-1 py-2 text-white pr-2" style={todo.status === "done" ?  { textDecorationLine: 'line-through' }: null}>{todo.title}</Text>
         </View>
         {
             todo.status !== "done" ?

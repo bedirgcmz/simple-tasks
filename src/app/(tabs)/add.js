@@ -27,7 +27,7 @@ const AddTodoPage = () => {
 
   const handleAddTodo = () => {
     if (!title || !category) {
-      alert("Başlık ve kategori alanları zorunludur!");
+      alert("Title and category fields are required!");
       return;
     }
 
@@ -88,9 +88,8 @@ const AddTodoPage = () => {
                   <Picker
                     selectedValue={category}
                     onValueChange={(itemValue) => setCategory(itemValue)}
-                    style={{}}
                   >
-                    <Picker.Item label="Select Category" value="" />
+                    <Picker.Item label="Select Category" value=""  />
                     {categories.map((cat) => (
                       <Picker.Item key={cat} label={cat} value={cat} className="text-white" style={{ color: "black" }} />
                     ))}

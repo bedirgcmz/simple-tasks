@@ -10,7 +10,7 @@ import { showConfirmAlert } from '../utils/alerts';
 
 const TodoCard = ({ todo, bgColor }) => {
   const {  deleteTodo, updateTodo } = useTodoListContext();
-
+  
   return (
     <TouchableOpacity
       className={`p-4 mr-4 w-44 min-h-[200px] flex-col justify-between
@@ -24,13 +24,13 @@ const TodoCard = ({ todo, bgColor }) => {
             {todo.status === "done" ? (
               <Ionicons name="checkbox" size={20} color="#fe9092" />
             ) : (
-              <Ionicons name="square-outline" size={20} color="gray" />
+              <Ionicons name="square-outline" size={20} color="#e9ecef" />
             )}
           </TouchableOpacity>
       <View className="flex-row justify-between items-center mb-2">
-        <Text className="text-lg font-bold text-white">{truncateText(todo.title, 20)}</Text>
+        <Text className="text-[15px] font-bold text-white">{truncateText(todo.title, 24)}</Text>
       </View>
-      <Text className="text-white mb-2 flex-1">{truncateText(todo.description, 60)}</Text>
+      <Text className="text-[#f8f9fa] text-[13px] mb-2 flex-1">{truncateText(todo.description, 60)}</Text>
       <Text className="text-[12px] mb-1 text-white">
         Created At: {todo.createdAt}
       </Text>
@@ -38,13 +38,13 @@ const TodoCard = ({ todo, bgColor }) => {
         <TouchableOpacity className="mr-4"
           onPress={() => router.push(`/edit/${todo.id}`)} // Edit ekranına yönlendirme
         >
-          <FontAwesome5 name="edit" size={16} color="#f4a261" />
+          <FontAwesome5 name="edit" size={16} color="#e9ecef" />
         </TouchableOpacity>
         <TouchableOpacity 
          onPress={() => showConfirmAlert("You want to DELETE this ToDo!","Are you sure?",deleteTodo, todo.id)}
         
         >
-          <FontAwesome5 name="trash" size={16} color="#ff4d6d" />
+          <FontAwesome5 name="trash" size={16} color="#e9ecef" />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

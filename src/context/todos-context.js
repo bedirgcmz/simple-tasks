@@ -12,6 +12,12 @@ export const TodoListProvider = ({ children }) => {
   // AsyncStorage anahtar
   const STORAGE_KEY = 'user_todos';
 
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ayları 01, 02, ..., 12 formatında yapar
+    const day = String(date.getDate()).padStart(2, '0'); // Günleri 01, 02, ..., 31 formatında yapar
+    return `${year}-${month}-${day}`;
+  };
   // Initial data
   const initialTodo = {
     id: '0',
@@ -19,10 +25,11 @@ export const TodoListProvider = ({ children }) => {
     description: 'This is your first todo!',
     category: 'Others',
     status: 'pending',
-    createdAt: new Date().toISOString(),
+    createdAt: formatDate(new Date()),
     dueDate: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString(),
     completedAt: null,
   };
+
 
   // Verileri AsyncStorage'dan yükleme
   const loadTodos = async () => {

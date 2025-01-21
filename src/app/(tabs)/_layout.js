@@ -12,7 +12,8 @@ const TabsLayout = () => {
           if (route.name === "index") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "list") {
-            iconName = focused ? "list-circle" : "list-circle-outline";
+            iconName = focused ? "calendar-number" : "calendar-number-outline";
+            // iconName = focused ? "list-circle" : "list-circle-outline";
           } else if (route.name === "add") {
             iconName = focused ? "add-circle" : "add-circle-outline";
           } else if (route.name === "filter") {
@@ -36,7 +37,7 @@ const TabsLayout = () => {
           shadowOpacity: 0.2, // Gölge opaklığı
           shadowRadius: 10, // Gölge yayılımı
           elevation: 5, // Android için gölge
-          marginHorizontal: 100,
+          marginHorizontal: 90,
           paddingHorizontal: 10,
           paddingVertical: 8,
           borderRadius: 50, // Yuvarlak köşeler

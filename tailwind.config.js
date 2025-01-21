@@ -7,7 +7,7 @@ module.exports = {
         customRed: '#9b2226',
         customBlue: '#3a0ca3',
         customLila: '#5a189a',
-        customGreen: '#008000',
+        customGreen: '#006400',
         customOrange: '#ff7d00',
         customCoffe: '#78290f',
         customPurple: '#89023e',

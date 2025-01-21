@@ -67,7 +67,7 @@ const ToDoDetailsCard = ({pTodoId, pPageTitle}) => {
             {/* ToDo Title */}
             <View className="mb-2 flex-row items-center justify-start gap-2">
             <Ionicons name="ellipse" size={12} color="#6c757d" />
-            <Text className="text-xl font-bold text-[#495057]">{todo.title}</Text>
+            <Text className="text-xl font-bold text-[#495057] pr-2">{todo.title}</Text>
             </View>
 
             {/* ToDo Description */}
