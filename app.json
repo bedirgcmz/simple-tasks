@@ -14,7 +14,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bgSweden.simpletask",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +24,7 @@
         "backgroundColor": "#ffffff"
       },
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.bedirsweden.simpletask"
+      "package": "com.bgSweden.simpletask"
     },
     "web": {
       "favicon": "./assets/favicon.png"
