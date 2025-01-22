@@ -68,9 +68,13 @@ const AddTodoPage = () => {
             placeholderTextColor="#6c757d"
             value={title}
             onChangeText={setTitle}
-            className="bg-[#d7c8f3] p-3 rounded-md mb-4 text-gray-800"
+            className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800"
             autoFocus
+            maxLength={60}
           />
+          <Text className="text-gray-400 text-right text-[12px] mb-2">
+            {title.length}/60
+          </Text>
 
           {/* Açıklama */}
           <TextInput
@@ -78,9 +82,13 @@ const AddTodoPage = () => {
             placeholderTextColor="#6c757d"
             value={description}
             onChangeText={setDescription}
-            className="bg-[#d7c8f3] p-3 rounded-md mb-4 text-gray-800"
+            className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800"
             multiline
+            maxLength={200}
           />
+          <Text className="text-gray-400 text-right text-[12px] mb-2">
+            {description.length}/200
+          </Text>
 
           {/* Kategori Seçimi */}
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

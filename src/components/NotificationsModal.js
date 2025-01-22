@@ -12,15 +12,15 @@ const NotificationModal = () => {
   const STORAGE_KEY = 'reminder_time';
 
   // For clearing asyncstorage..
-//   const clearReminder = async () => {
-//     try {
-//       await AsyncStorage.removeItem('daily_notification');
-//       console.log('Reminder cleared from AsyncStorage');
-//     } catch (error) {
-//       console.error('Error clearing reminder:', error);
-//     }
-//   };
-//   clearReminder();
+  // const clearReminder = async () => {
+  //   try {
+  //     await AsyncStorage.removeItem('daily_notification');
+  //     console.log('Reminder cleared from AsyncStorage');
+  //   } catch (error) {
+  //     console.error('Error clearing reminder:', error);
+  //   }
+  // };
+  // clearReminder();
 
   const today = new Date().toISOString().split('T')[0]; // Bugünün tarihi
 
@@ -56,8 +56,8 @@ const NotificationModal = () => {
   const remindMeAgain = async () => {
     try {
       const remindTime = new Date();
-    //   remindTime.setHours(remindTime.getHours() + 2); // Şimdiden 2 saat sonrası
-      remindTime.setMinutes(remindTime.getMinutes() + 1); // Şimdiden 1 dakika sonrası
+      remindTime.setHours(remindTime.getHours() + 2); // Şimdiden 2 saat sonrası
+      // remindTime.setMinutes(remindTime.getMinutes() + 1); // Şimdiden 1 dakika sonrası
       await AsyncStorage.setItem(STORAGE_KEY, remindTime.toISOString());
       setShowModal(false); // Modalı kapat
     } catch (error) {
