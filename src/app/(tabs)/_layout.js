@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useTodoListContext } from './../../context/todos-context';
+import { View } from 'react-native';
 
 const TabsLayout = () => {
+  const { todos } = useTodoListContext(); // Context'ten todos alınıyor
+  const [todayToDos, setTodayToDos] = useState([])
+
+  const today = new Date().toISOString().split('T')[0]; // Bugünün tarihi
+ 
+
+  useEffect(() => {
+    const findTodayToDos = todos.filter(
+      (todo) => todo.dueDate.split('T')[0] === today && todo.status === "pending"
+    );
+    setTodayToDos(findTodayToDos)
+  }, [todos])
+
+  console.log(todayToDos.length);
+
   return (
     <Tabs
       screenOptions={({ route }) => ({
@@ -11,16 +28,33 @@ const TabsLayout = () => {
 
           if (route.name === "index") {
             iconName = focused ? "home" : "home-outline";
+            return <Ionicons name={iconName} size={size} color={color} />
           } else if (route.name === "list") {
             iconName = focused ? "calendar-number" : "calendar-number-outline";
+            return (
+              <View className="relative">
+                {/* Asıl İkon */}
+                <Ionicons name={iconName} size={size} color={color} />
+                {/* Kırmızı Nokta */}
+                {todayToDos.length > 0 && (
+                  <View
+                    className="absolute top-0 right-0 h-2 w-2 bg-[#ff5400] rounded-full"
+                    style={{ transform: [{ translateX: 6 }, { translateY: -6 }] }} // Noktayı daha iyi konumlandırma
+                  />
+                )}
+              </View>
+            )
             // iconName = focused ? "list-circle" : "list-circle-outline";
           } else if (route.name === "add") {
             iconName = focused ? "add-circle" : "add-circle-outline";
+            return <Ionicons name={iconName} size={size} color={color} />
           } else if (route.name === "filter") {
             iconName = focused ? "filter-circle" : "filter-circle-outline";
+            return <Ionicons name={iconName} size={size} color={color} />
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />},
+          // return <Ionicons name={iconName} size={size} color={color} />
+        },
     
         tabBarActiveTintColor: "tomato",
         tabBarInactiveTintColor: "gray",

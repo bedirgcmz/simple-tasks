@@ -42,10 +42,10 @@ const Todo = ({todo, index, fromText}) => {
         </View>
         {
             todo.status !== "done" ?
-            <Text className="text-red-400">{calculateDaysLeft(todo)}</Text> :
-            <Text className="text-green-600">Great!</Text>
+            <Text className="text-red-400 text-[12px] tracking-tighter">{calculateDaysLeft(todo)}</Text> :
+            <Text className="text-green-600 text-[12px] tracking-tighter">Great!</Text>
         }
-        <TouchableOpacity className="p-2"
+        <TouchableOpacity className="p-2 pl-1"
                 onPress={() => showConfirmAlert("You want to DELETE this ToDo!","Are you sure?",deleteTodo, todo.id)}
         >
             <Ionicons name="trash-outline" size={18} color="gray" />

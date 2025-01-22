@@ -12,9 +12,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useLocalSearchParams, router } from "expo-router";
 import { useTodoListContext } from "../../../context/todos-context";
 import { showSaveChangesAlert } from '../../../utils/alerts';
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const EditTodoPage = () => {
-  const { id } = useLocalSearchParams();
+  const { id, from } = useLocalSearchParams();
   const { todos, updateTodo } = useTodoListContext();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -140,6 +141,21 @@ const EditTodoPage = () => {
         >
           <Text className="text-white text-center font-bold">Save Changes</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+              className="bg-[#001d3d] h-10 w-[110px] pb-2 pr-4 rounded-full items-center flex-row gap-2 justify-center absolute bottom-[100px] right-[36%]"
+              onPress={() => {
+                if (from === 'list') {
+                  router.push('/list')
+                } else if (from === 'details'){
+                  router.push(`/dynamicid/${todo.id}`); 
+                } else {
+                  router.back();
+                }
+              }}
+            >
+              <Ionicons name="chevron-back-outline" size={24} color="white" />
+              <Text className="text-white text-md font-bold">Back</Text>
+            </TouchableOpacity>
       </View>
       <StatusBar style="light" backgroundColor="transparent" translucent />
     </ImageBackground>

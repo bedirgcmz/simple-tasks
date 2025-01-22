@@ -89,7 +89,7 @@ const ToDoDetailsCard = ({pTodoId, pPageTitle}) => {
             {/* Edit Button */}
             <View className="flex-row justify-end gap-2">
             <TouchableOpacity
-                 onPress={() => router.push(`/edit/${todo.id}`)} // Edit ekranına yönlendirme
+                 onPress={() => router.push({ pathname: `/edit/${todo.id}`, params: { from: 'details' } })} // Edit ekranına yönlendirme
                 className="flex-row items-center space-x-2 p-2 bg-blue-500 rounded-full bg-[#f4a261]"
             >
                 <Text className="text-white text-[14px]">Edit</Text>

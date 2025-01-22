@@ -21,8 +21,8 @@ export const TodoListProvider = ({ children }) => {
   // Initial data
   const initialTodo = {
     id: '0',
-    title: 'Welcome Task',
-    description: 'This is your first todo!',
+    title: 'Welcome Simple Tasks',
+    description: 'Lets create new ToDos. This is your first ToDo!',
     category: 'Others',
     status: 'pending',
     createdAt: formatDate(new Date()),

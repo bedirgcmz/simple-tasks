@@ -36,7 +36,7 @@ const TodoCard = ({ todo, bgColor }) => {
       </Text>
       <View className="flex-row mt-2 items-center justify-end">
         <TouchableOpacity className="mr-4"
-          onPress={() => router.push(`/edit/${todo.id}`)} // Edit ekranına yönlendirme
+          onPress={() => router.push({ pathname: `/edit/${todo.id}`, params: { from: 'list' } })} // Edit ekranına yönlendirme
         >
           <FontAwesome5 name="edit" size={16} color="#e9ecef" />
         </TouchableOpacity>
