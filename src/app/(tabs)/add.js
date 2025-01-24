@@ -43,11 +43,11 @@ const AddTodoPage = () => {
     };
 
     addTodo(newTodo);
+    router.push({ pathname: `/filter`, params: { from: category } })
     setTitle("");
     setDescription("");
     setCategory("");
     setDueDate(new Date());
-    router.push("/filter")
   };
 
   return (

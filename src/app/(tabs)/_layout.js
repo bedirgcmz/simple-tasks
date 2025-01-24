@@ -7,18 +7,19 @@ import { View } from 'react-native';
 const TabsLayout = () => {
   const { todos } = useTodoListContext(); // Context'ten todos alınıyor
   const [todayToDos, setTodayToDos] = useState([])
+  const [todayDate, setTodayDate] = useState(""); // Başlangıçta boş bir değer
 
-  const today = new Date().toISOString().split('T')[0]; // Bugünün tarihi
- 
+useEffect(() => {
+  const today = new Date().toISOString().split('T')[0]; // Bugünün tarihini al
+  setTodayDate(today); 
+}, []);
 
-  useEffect(() => {
-    const findTodayToDos = todos.filter(
-      (todo) => todo.dueDate.split('T')[0] === today && todo.status === "pending"
-    );
-    setTodayToDos(findTodayToDos)
-  }, [todos])
-
-  console.log(todayToDos.length);
+useEffect(() => {
+  const findTodayToDos = todos.filter(
+    (todo) => todo.dueDate.split('T')[0] === todayDate && todo.status === "pending"
+  );
+  setTodayToDos(findTodayToDos);
+}, [todos, todayDate]); // todos veya todayDate değiştiğinde çalışır
 
   return (
     <Tabs
@@ -44,7 +45,6 @@ const TabsLayout = () => {
                 )}
               </View>
             )
-            // iconName = focused ? "list-circle" : "list-circle-outline";
           } else if (route.name === "add") {
             iconName = focused ? "add-circle" : "add-circle-outline";
             return <Ionicons name={iconName} size={size} color={color} />
