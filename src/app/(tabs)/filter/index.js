@@ -40,7 +40,7 @@ if (selectedCategory === "All") {
         ))
       }
       <TouchableOpacity onPress={() => setSelectedCategory("All")} >
-         <Text className={`text-gray-600 bg-white px-3 py-[2px] mb-2 rounded-md text-[16px] mx-1 ${selectedCategory === "All" ? "bg-gray-600 text-white" : ""}`}>All ToDos</Text>
+         <Text className={`text-gray-600 bg-[#d7c8f3]  px-3 py-[2px] mb-1 rounded-md text-[14px] mx-1 ${selectedCategory === "All" ? "bg-gray-600 text-white" : ""}`}>All ToDos</Text>
       </TouchableOpacity>
 
     </View>

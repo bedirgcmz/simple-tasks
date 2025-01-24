@@ -1,0 +1,44 @@
+import React, { useState } from 'react';
+import { Modal, Text, View, TouchableOpacity, FlatList } from 'react-native';
+
+const CustomRemindPicker = ({ options, selectedValue, onValueChange }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  return (
+    <View>
+      <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-[#d7c8f3] p-3 rounded-md">
+        <Text className="text-center text-gray-600">{selectedValue || "Select an option"}</Text>
+      </TouchableOpacity>
+
+      <Modal visible={modalVisible} transparent animationType="slide">
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white w-4/5 p-4 rounded-md">
+            <FlatList
+              data={options}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    onValueChange(item);
+                    setModalVisible(false);
+                  }}
+                  className="p-4 border-b border-gray-200"
+                >
+                  <Text>{item}</Text>
+                </TouchableOpacity>
+              )}
+            />
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              className="bg-red-400 p-3 mt-2 rounded-md"
+            >
+              <Text className="text-white text-center">Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+export default CustomRemindPicker;
