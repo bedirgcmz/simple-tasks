@@ -1,17 +1,16 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTodoListContext } from "../context/todos-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { formatToShortDate } from "../utils/date-utils";
 import { router } from "expo-router";
 import { showConfirmAlert } from '../utils/alerts';
+import {playSuccessSound} from '../utils/play-success-sound';
 
 const ToDoDetailsCard = ({pTodoId, pPageTitle}) => {
-
-  const { todos, deleteTodo, updateTodo } = useTodoListContext();
+  const { todos, deleteTodo, updateTodo, setShowCongrats } = useTodoListContext();
   const todo = todos.find((todo) => todo.id === pTodoId);
-
   function calculateDaysLeft(todo) {
     const createdAt = new Date();
     const dueDate = new Date(todo.dueDate);
@@ -41,7 +40,13 @@ const ToDoDetailsCard = ({pTodoId, pPageTitle}) => {
         }`}
     >
         <TouchableOpacity 
-        onPress={() => updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })} 
+        onPress={() => 
+          {
+            updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })
+            setShowCongrats(todo.status === "done" ? false : true)
+            todo.status === "done" ?  "" : playSuccessSound()
+          }
+        } 
         className="p-2 absolute bottom-[0] left-[0]">
             {todo.status === "done" ? (
             <Ionicons name="checkbox" size={32} color="#fe9092" />
@@ -78,28 +83,28 @@ const ToDoDetailsCard = ({pTodoId, pPageTitle}) => {
 
             {/* ToDo Dates */}
             <View className="mb-4 flex-row justify-between px-2">
-            <Text className="text-sm text-gray-500">
-                Created At: {formatToShortDate(todo.createdAt)}
-            </Text>
-            <Text className="text-sm text-gray-500">
-                Due Date: {formatToShortDate(todo.dueDate)}
-            </Text>
+            <View className="flex-row items-center text-sm text-gray-500">
+            <Ionicons name="calendar" size={18} color="#495057" /> <Text className="ml-1">{formatToShortDate(todo.dueDate)}</Text>
+            </View>
+            <View className="flex-row items-center text-sm text-gray-500">
+            <Ionicons name="time" size={18} color="#495057" /> <Text className="ml-1">{todo.dueTime.slice(0,5)}</Text>
+            </View>
             </View>
             
             {/* Edit Button */}
             <View className="flex-row justify-end gap-2">
             <TouchableOpacity
                  onPress={() => router.push({ pathname: `/edit/${todo.id}`, params: { from: 'details' } })} // Edit ekranına yönlendirme
-                className="flex-row items-center space-x-2 p-2 bg-blue-500 rounded-full bg-[#f4a261]"
+                className="flex-row items-center space-x-2 px-2 py-1 bg-blue-500 rounded-lg bg-[#f4a261]"
             >
                 <Text className="text-white text-[14px]">Edit</Text>
-                <MaterialCommunityIcons name="pencil" size={16} color="white" />
+                <MaterialCommunityIcons name="pencil" size={14} color="white" />
             </TouchableOpacity>
 
             {/* Delete Button */}
             <TouchableOpacity
                 onPress={() => showConfirmAlert("You want to DELETE this ToDo!","Are you sure?",deleteTodo, todo.id)}
-                className="flex-row items-center space-x-2 p-2 bg-red-500 rounded-full bg-[#ff4d6d]"
+                className="flex-row items-center space-x-2 px-2 py-1 bg-red-500 rounded-lg bg-[#ff4d6d]"
             >
                 <MaterialCommunityIcons name="trash-can" size={16} color="white" />
                 <Text className="text-white  text-[14px]">Delete</Text>

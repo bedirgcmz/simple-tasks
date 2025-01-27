@@ -6,19 +6,27 @@ import { truncateText } from "../utils/date-utils";
 import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
 import { showConfirmAlert } from '../utils/alerts';
+import {playSuccessSound} from "../utils/play-success-sound";
 
 
 const TodoCard = ({ todo, bgColor }) => {
-  const {  deleteTodo, updateTodo } = useTodoListContext();
+  const {  deleteTodo, updateTodo, setShowCongrats } = useTodoListContext();
+
   
   return (
     <TouchableOpacity
-      className={`p-4 mr-4 w-44 min-h-[200px] flex-col justify-between
+      className={`p-3 mr-4 w-44 min-h-[200px] flex-col justify-between z-10 relative
       rounded-lg shadow-lg border border-gray-500 ${bgColor} `}
       onPress={() => router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: 'list' } })}
     >
          <TouchableOpacity className="absolute bottom-[12px] left-[12px]"
-        onPress={() => updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })} 
+        onPress={() => 
+          {
+            updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })
+            setShowCongrats(todo.status === "done" ? false : true)
+            todo.status === "done" ?  "" : playSuccessSound()
+          }
+        } 
          
          >
             {todo.status === "done" ? (
@@ -31,9 +39,15 @@ const TodoCard = ({ todo, bgColor }) => {
         <Text className="text-[15px] font-bold text-white">{truncateText(todo.title, 24)}</Text>
       </View>
       <Text className="text-[#f8f9fa] text-[13px] mb-2 flex-1">{truncateText(todo.description, 60)}</Text>
-      <Text className="text-[12px] mb-1 text-white">
+      {/* <Text className="text-[12px] mb-1 text-white">
         Created At: {todo.createdAt}
-      </Text>
+      </Text> */}
+      <View className="text-[12px] mb-1 text-white justify-start items-center flex-row">
+        <Ionicons name="time" size={22} color="white" />
+        <Text className="text-[12px] text-white pl-1">
+          {todo.dueDate} - <Text className="font-bold">{todo.dueTime?.slice(0, 5)}</Text>
+        </Text>
+      </View>
       <View className="flex-row mt-2 items-center justify-end">
         <TouchableOpacity className="mr-4"
           onPress={() => router.push({ pathname: `/edit/${todo.id}`, params: { from: 'list' } })} // Edit ekranına yönlendirme

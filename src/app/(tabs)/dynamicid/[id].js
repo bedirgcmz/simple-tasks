@@ -5,6 +5,7 @@ import { useTodoListContext } from "../../../context/todos-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import ToDoDetailsCard from "../../../components/ToDoDetailsCard";
+import TodoDoneAnimation from "../../../components/TodoDoneAnimation";
 
 const TaskScreen = () => {
   const { id, from } = useLocalSearchParams();
@@ -45,7 +46,7 @@ const TaskScreen = () => {
           </View>
         )
       }
-
+    <TodoDoneAnimation  />
     </LinearGradient>
   );
 };

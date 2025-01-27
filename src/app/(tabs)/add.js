@@ -12,20 +12,23 @@ import {
   KeyboardAvoidingView,
   Platform
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+// import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTodoListContext } from "../../context/todos-context";
 import uuid from "react-native-uuid";
 import { router } from "expo-router";
 import CustomRemindPicker from "../../components/CustomRemindPicker";
-import CustomCategoryPicker from "../../components/CustomCategoryPicker";
 import FilterByCategory from "../../components/FilterByCategory";
+// import ModernDatePicker from "../../components/ModernDatePicker";
+import TimePicker from "../../components/TimePicker";
+// import CustomTimePicker from "../../components/CustomTimePicker";
 
 const AddTodoPage = () => {
   const { addTodo, scheduleNotification, todos } = useTodoListContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [dueTime, setDueTime] = useState('');
   const [dueDate, setDueDate] = useState(new Date());
   const [reminderTime, setReminderTime] = useState("2 hours before");
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -46,8 +49,11 @@ const AddTodoPage = () => {
   
   const reminderOptions = [
     "5 minutes before",
+    "10 minutes before",
+    "30 minutes before",
     "1 hour before",
     "2 hours before",
+    "6 hours before",
     "1 day before",
     "1 week before",
   ];
@@ -66,10 +72,11 @@ const AddTodoPage = () => {
       status: "pending",
       createdAt: new Date().toISOString().split("T")[0],
       dueDate: dueDate.toISOString().split("T")[0],
+      dueTime: dueTime,
       reminderTime, // Kullanıcı tarafından seçilen hatırlatma zamanı
       completedAt: "",
     };
-
+console.log("add dosyasindan eklenen ToDo:",newTodo);
     addTodo(newTodo);
 
     // Bildirim zamanlama
@@ -140,11 +147,6 @@ const AddTodoPage = () => {
                     <Picker.Item key={cat} label={cat} value={cat} />
                   ))}
                 </Picker>
-                <CustomCategoryPicker
-                    options={categories}
-                    selectedValue={category}
-                    onValueChange={(value) => setCategory(value)}
-                  />
               </View> */}
 
               <View className="flex-col flex-wrap items-center justify-center mb-3">
@@ -171,7 +173,7 @@ const AddTodoPage = () => {
               {/* Son Tarih Seçimi */}
               <View>
                 <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
-                  Select Due Date
+                  Select a due date
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -197,22 +199,17 @@ const AddTodoPage = () => {
                   />
                 )}
               </View>
+              {/* Zaman Seçimi */}
+              <View className=" ">
+              
+              {/* <CustomTimePicker time={time} setTime={setTime} /> */}
+              <TimePicker  setDueTime={setDueTime} defaultTime={false}/>
 
-              {/* Hatırlatma Seçimi */}
-              {/* <View className="bg-[#d7c8f3] rounded-md mb-4 w-[200px] h-[120px]">
-                <Picker
-                  selectedValue={reminderTime}
-                  onValueChange={(itemValue) => setReminderTime(itemValue)}
-                >
-                  {reminderOptions.map((option) => (
-                    <Picker.Item key={option} label={option} value={option} />
-                  ))}
-                </Picker>
-              </View> */}
+              </View>
 
               {/* Hatırlatma Seçimi */}
               <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
-                  Select remind time!
+                  Select a remind time!
                 </Text>
               <CustomRemindPicker
                 options={reminderOptions} // Seçenekler

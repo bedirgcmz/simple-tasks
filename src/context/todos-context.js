@@ -1,64 +1,87 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
+import moment from 'moment';
 
+// TodoListContext oluşturuluyor
 export const TodoListContext = createContext();
 
 export const TodoListProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
+  const [showCongrats, setShowCongrats] = useState(false); // Animasyon componentini kontrol etmek icin
+  const [dueTime, setDueTime] = useState('00:00'); // New state for dueTime
   const STORAGE_KEY = 'user_todos';
-console.log(todos);
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
 
+  // Varsayılan ilk görev
   const initialTodo = {
     id: '0',
     title: 'Welcome Simple Tasks',
     description: 'Lets create new ToDos. This is your first ToDo!',
     category: 'Others',
     status: 'pending',
-    createdAt: formatDate(new Date()),
-    dueDate: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString(),
+    createdAt: moment().format('YYYY-MM-DD'), // Use moment.js to format date
+    dueDate: moment().add(7, 'days').toISOString(), // Add 7 days for due date
     reminderTime: '1 day before',
     completedAt: null,
   };
 
-  const calculateReminderTime = (dueDate, reminderOption) => {
-    const dueDateObj = new Date(dueDate);
+  // Reminder time calculation using moment.js
+  const calculateReminderTime = (dueDate, dueTime, reminderOption) => {
+    // dueDate: '2025-01-30' (YYYY-MM-DD format)
+    // dueTime: '10:06' (HH:mm format)
+    // reminderOption: '1 hour before' gibi bir değer
+  // console.log("son saat",dueTime);
+    // İlk olarak, dueDate ve dueTime'ı birleştiriyoruz
+    const dueDateTime = moment(dueDate + 'T' + dueTime, 'YYYY-MM-DD HH:mm');
+    // console.log('Son tarih (momentjs):', dueDateTime.format()); // Son tarihi logluyoruz
+    
+  
+    // reminderOption'ı dakika cinsinden eşleştiren bir map oluşturuyoruz
     const reminderMap = {
-      "5 minutes before": 5 * 60 * 1000,
-      "10 minutes before": 5 * 60 * 1000,
-      "30 minutes before": 5 * 60 * 1000,
-      "1 hour before": 1 * 60 * 60 * 1000,
-      "2 hours before": 2 * 60 * 60 * 1000,
-      "5 hours before": 2 * 60 * 60 * 1000,
-      "1 day before": 24 * 60 * 60 * 1000,
+      "5 minutes before": 5,
+      "10 minutes before": 10,
+      "30 minutes before": 30,
+      "1 hour before": 60,
+      "2 hours before": 120,
+      "6 hours before": 360,
+      "1 day before": 1440,
+      "1 week before": 10080,
     };
-    const reminderOffset = reminderMap[reminderOption || "2 hours before"];
-    return new Date(dueDateObj.getTime() - reminderOffset);
+  
+    // Eğer reminderOption doğru gelirse, onu kullanıyoruz
+    const reminderOffset = reminderMap[reminderOption] || 120; // Default olarak 2 saat önceyi seçiyoruz
+  
+    // Reminder time'ı hesaplıyoruz
+    const reminderTime = dueDateTime.subtract(reminderOffset, 'minutes');
+  
+    // console.log('Hatırlatıcı zamanı (momentjs):', reminderTime.format()); // Hatırlatıcı zamanını logluyoruz
+  
+    return reminderTime; // Hatırlatıcı zamanını döndürüyoruz
   };
+  
 
+
+  // Bildirim zamanlama fonksiyonu
   const scheduleNotification = async (todo) => {
     try {
-      const reminderTime = calculateReminderTime(todo.dueDate, todo.reminderTime);
-
+      const reminderTime = calculateReminderTime(todo.dueDate, todo.dueTime, todo.reminderTime);
+      console.log("Reminder time:", reminderTime.format()); // Log reminder time
       await Notifications.scheduleNotificationAsync({
         content: {
           title: `Reminder: ${todo.title}`,
-          body: `Don't forget your task: ${todo.description}`,
+          body: `Don't forget your task...`,
           sound: true,
         },
-        trigger: reminderTime,
+        trigger: {
+          seconds: reminderTime.diff(moment(), 'seconds'),
+        },
       });
     } catch (error) {
       console.error('Error scheduling notification:', error);
     }
   };
 
+  // AsyncStorage'den görevleri yükleme
   const loadTodos = async () => {
     try {
       const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
@@ -73,6 +96,7 @@ console.log(todos);
     }
   };
 
+  // Görevleri AsyncStorage'e kaydetme
   const saveTodos = async (updatedTodos) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTodos));
@@ -81,49 +105,59 @@ console.log(todos);
     }
   };
 
+  // Bildirim izni isteme
   useEffect(() => {
     loadTodos();
     const requestNotificationPermission = async () => {
       const { status } = await Notifications.requestPermissionsAsync();
       if (status !== 'granted') {
-        alert('Notification permissions are required.');
+        alert('Please allow notifications so that you do not miss your tasks.');
       }
     };
     requestNotificationPermission();
   }, []);
 
+  // Yeni görev ekleme
   const addTodo = async (newTodo) => {
     const updatedTodos = [newTodo, ...todos];
     setTodos(updatedTodos);
     saveTodos(updatedTodos);
-    await scheduleNotification(newTodo);
+    await scheduleNotification(newTodo); // Bildirim planlama
   };
 
+  // Görev silme
   const deleteTodo = (id) => {
     const updatedTodos = todos.filter((todo) => todo.id !== id);
     setTodos(updatedTodos);
     saveTodos(updatedTodos);
   };
 
+  // Görev güncelleme
   const updateTodo = (id, updatedTodo) => {
     const updatedTodos = todos.map((todo) =>
       todo.id === id ? { ...todo, ...updatedTodo } : todo
     );
+    
     setTodos(updatedTodos);
     saveTodos(updatedTodos);
   };
 
+  // Context değerlerini sağlayan obje
   const value = {
     todos,
     addTodo,
     deleteTodo,
     updateTodo,
-    scheduleNotification
+    setDueTime, // Provide the setter for dueTime to be used in the TimePicker
+    scheduleNotification,
+    showCongrats, 
+    setShowCongrats
   };
 
   return <TodoListContext.Provider value={value}>{children}</TodoListContext.Provider>;
 };
 
+// TodoListContext kullanımı için özel hook
 export const useTodoListContext = () => {
   const context = useContext(TodoListContext);
   if (context === undefined) {

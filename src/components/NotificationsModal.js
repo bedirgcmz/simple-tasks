@@ -72,7 +72,6 @@ const NotificationModal = () => {
       endOfDay.setHours(23, 59, 59, 999); // Gün sonuna kadar ertele
       await AsyncStorage.setItem(STORAGE_KEY, endOfDay.toISOString());
       setShowModal(false);
-      console.log("calisti");
     } catch (error) {
       console.error('Error saving reminder status:', error);
     }

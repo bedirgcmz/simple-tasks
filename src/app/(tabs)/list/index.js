@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, ScrollView, Image, ImageBackground, StatusBar } from "react-native";
 import { useTodoListContext } from "../../../context/todos-context";
 import TodoCard from "../../../components/TodoCard";
+import TodoDoneAnimation from "../../../components/TodoDoneAnimation";
 
 const TodoBoardScreen = () => {
   const { todos } = useTodoListContext();
@@ -133,6 +134,7 @@ const TodoBoardScreen = () => {
             </View>
         <View className="h-20"></View>
         </ScrollView>
+    <TodoDoneAnimation  />
     </ImageBackground>
 
   );
