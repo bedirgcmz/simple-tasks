@@ -91,8 +91,8 @@ const EditTodoPage = () => {
     };
 
     updateTodo(todo.id, updatedTodo);
-    alert("ToDo updated successfully!");
     playCorrectSound()
+    alert("ToDo updated successfully!");
     router.push({ pathname: `/filter`, params: { from: category } });
   };
 

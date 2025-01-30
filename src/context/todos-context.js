@@ -1,87 +1,232 @@
+// import React, { createContext, useContext, useState, useEffect } from 'react';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import moment from 'moment';
+// import * as Localization from "expo-localization";
+// import translations from "../locales/translations";
+// import { scheduleNotification, cancelNotification } from "../utils/notificationUtils"; 
+// // notificationUtils.js dosyasında bildirimleri yöneteceğiz
+// import * as Notifications from "expo-notifications";
+
+// import { Platform } from "react-native";
+
+// // Bildirimlerin nasıl işleneceğini tanımla
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldShowAlert: true,
+//     shouldPlaySound: true,
+//     shouldSetBadge: false,
+//   }),
+// });
+
+// // Android için özel kanal oluştur (Zorunlu olabilir)
+// async function configureAndroidChannel() {
+//   if (Platform.OS === "android") {
+//     await Notifications.setNotificationChannelAsync("default", {
+//       name: "default",
+//       importance: Notifications.AndroidImportance.MAX,
+//       vibrationPattern: [0, 250, 250, 250],
+//       lightColor: "#FF231F7C",
+//     });
+//   }
+// }
+
+// configureAndroidChannel();
+
+// async function getScheduledNotifications() {
+//   const notifications = await Notifications.getAllScheduledNotificationsAsync();
+//   console.log("Scheduled Notifications:", notifications);
+// }
+
+// getScheduledNotifications();
+
+// async function checkScheduledNotifications() {
+//   const notifications = await Notifications.getAllScheduledNotificationsAsync();
+//   console.log("Currently Scheduled Notifications:", notifications);
+// }
+
+// checkScheduledNotifications();
+ 
+// async function checkNotificationPermissions() {
+//   const { status } = await Notifications.getPermissionsAsync();
+//   console.log("Notification Permission Status:", status);
+// }
+
+// checkNotificationPermissions();
+
+// export const TodoListContext = createContext();
+
+// export const TodoListProvider = ({ children }) => {
+//   const [todos, setTodos] = useState([]);
+//   const [showCongrats, setShowCongrats] = useState(false);
+//   const [dueTime, setDueTime] = useState('00:00');
+//   const STORAGE_KEY = 'user_todos';
+//   const deviceLanguage = Localization.locale.split("-")[0];
+//   const [language, setLanguage] = useState(deviceLanguage || "en");
+
+//   const t = (key) => translations[language][key] || key;
+
+//   const initialTodo = {
+//     id: '0',
+//     title: 'Welcome Simple Tasks',
+//     description: 'Lets create new ToDos. This is your first ToDo!',
+//     category: 'Others',
+//     status: 'pending',
+//     createdAt: moment().format('YYYY-MM-DD'),
+//     dueDate: moment().add(7, 'days').format('YYYY-MM-DD'), 
+//     dueTime: "09:00:00",
+//     reminderTime: '1 day before',
+//     completedAt: null,
+//   };
+
+//   const loadTodos = async () => {
+//     try {
+//       const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
+//       if (storedTodos) {
+//         setTodos(JSON.parse(storedTodos));
+//       } else {
+//         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([initialTodo]));
+//         setTodos([initialTodo]);
+//       }
+//     } catch (error) {
+//       console.error('Error loading todos:', error);
+//     }
+//   };
+
+//   const saveTodos = async (updatedTodos) => {
+//     try {
+//       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTodos));
+//     } catch (error) {
+//       console.error('Error saving todos:', error);
+//     }
+//   };
+
+//   // 📌 **Yeni görev ekleme ve bildirim zamanlama**
+//   const addTodo = async (newTodo) => {
+//     const updatedTodos = [newTodo, ...todos];
+//     setTodos(updatedTodos);
+//     saveTodos(updatedTodos);
+
+//     // **Bildirim zamanla**
+//     await scheduleNotification(newTodo);
+//   };
+
+//   // 📌 **Görev silme ve bildirim iptal etme**
+//   const deleteTodo = async (id) => {
+//     const todoToDelete = todos.find((todo) => todo.id === id);
+
+//     if (todoToDelete) {
+//       await cancelNotification(todoToDelete.id); // Bildirimi iptal et
+//     }
+
+//     const updatedTodos = todos.filter((todo) => todo.id !== id);
+//     setTodos(updatedTodos);
+//     saveTodos(updatedTodos);
+//   };
+
+//   // 📌 **Görev güncelleme ve bildirim yönetimi**
+//   const updateTodo = async (id, updatedTodo) => {
+//     const updatedTodos = todos.map((todo) =>
+//       todo.id === id ? { ...todo, ...updatedTodo } : todo
+//     );
+
+//     setTodos(updatedTodos);
+//     saveTodos(updatedTodos);
+
+//     // **Eğer görev tamamlandıysa bildirim iptal et**
+//     if (updatedTodo.status === "done") {
+//       await cancelNotification(id);
+//     } else if (updatedTodo.reminderTime || updatedTodo.dueDate || updatedTodo.dueTime) {
+//       // **Eğer hatırlatma süresi veya tarih değiştiyse, eski bildirimi silip yenisini oluştur**
+//       await cancelNotification(id);
+//       await scheduleNotification(updatedTodo);
+//     }
+//   };
+
+//   useEffect(() => {
+//     loadTodos();
+//   }, []);
+
+//   const value = {
+//     todos,
+//     addTodo,
+//     deleteTodo,
+//     updateTodo,
+//     setDueTime, 
+//     showCongrats, 
+//     setShowCongrats,
+//     language, 
+//     setLanguage, 
+//     t
+//   };
+
+//   return <TodoListContext.Provider value={value}>{children}</TodoListContext.Provider>;
+// };
+
+// export const useTodoListContext = () => {
+//   const context = useContext(TodoListContext);
+//   if (context === undefined) {
+//     throw new Error('useTodoListContext must be used within a TodoListProvider');
+//   }
+//   return context;
+// };
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
-import moment from 'moment';
+import moment from 'moment-timezone'; // moment-timezone'ı kullandık
+import * as Localization from "expo-localization";
+import translations from "../locales/translations";
+import { scheduleNotification, cancelNotification } from "../utils/notificationUtils"; 
+import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
 
-// TodoListContext oluşturuluyor
+// Bildirimlerin nasıl işleneceğini tanımla
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
+// Android için özel kanal oluştur
+async function configureAndroidChannel() {
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+}
+
+configureAndroidChannel();
+
 export const TodoListContext = createContext();
 
 export const TodoListProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
-  const [showCongrats, setShowCongrats] = useState(false); // Animasyon componentini kontrol etmek icin
-  const [dueTime, setDueTime] = useState('00:00'); // New state for dueTime
+  const [showCongrats, setShowCongrats] = useState(false);
+  const [dueTime, setDueTime] = useState('00:00');
   const STORAGE_KEY = 'user_todos';
+  const deviceLanguage = Localization.locale.split("-")[0];
+  const [language, setLanguage] = useState(deviceLanguage || "en");
 
-  // Varsayılan ilk görev
+  const t = (key) => translations[language][key] || key;
+
   const initialTodo = {
     id: '0',
     title: 'Welcome Simple Tasks',
     description: 'Lets create new ToDos. This is your first ToDo!',
     category: 'Others',
     status: 'pending',
-    createdAt: moment().format('YYYY-MM-DD'), // Use moment.js to format date
-    dueDate: moment().add(7, 'days').toISOString(), // Add 7 days for due date
+    createdAt: moment().format('YYYY-MM-DD'),
+    dueDate: moment().add(7, 'days').format('YYYY-MM-DD'), 
+    dueTime: "09:00:00",
     reminderTime: '1 day before',
     completedAt: null,
   };
 
-  // Reminder time calculation using moment.js
-  const calculateReminderTime = (dueDate, dueTime, reminderOption) => {
-    // dueDate: '2025-01-30' (YYYY-MM-DD format)
-    // dueTime: '10:06' (HH:mm format)
-    // reminderOption: '1 hour before' gibi bir değer
-  // console.log("son saat",dueTime);
-    // İlk olarak, dueDate ve dueTime'ı birleştiriyoruz
-    const dueDateTime = moment(dueDate + 'T' + dueTime, 'YYYY-MM-DD HH:mm');
-    // console.log('Son tarih (momentjs):', dueDateTime.format()); // Son tarihi logluyoruz
-    
-  
-    // reminderOption'ı dakika cinsinden eşleştiren bir map oluşturuyoruz
-    const reminderMap = {
-      "5 minutes before": 5,
-      "10 minutes before": 10,
-      "30 minutes before": 30,
-      "1 hour before": 60,
-      "2 hours before": 120,
-      "6 hours before": 360,
-      "1 day before": 1440,
-      "1 week before": 10080,
-    };
-  
-    // Eğer reminderOption doğru gelirse, onu kullanıyoruz
-    const reminderOffset = reminderMap[reminderOption] || 120; // Default olarak 2 saat önceyi seçiyoruz
-  
-    // Reminder time'ı hesaplıyoruz
-    const reminderTime = dueDateTime.subtract(reminderOffset, 'minutes');
-  
-    // console.log('Hatırlatıcı zamanı (momentjs):', reminderTime.format()); // Hatırlatıcı zamanını logluyoruz
-  
-    return reminderTime; // Hatırlatıcı zamanını döndürüyoruz
-  };
-  
-
-
-  // Bildirim zamanlama fonksiyonu
-  const scheduleNotification = async (todo) => {
-    try {
-      const reminderTime = calculateReminderTime(todo.dueDate, todo.dueTime, todo.reminderTime);
-      console.log("Reminder time:", reminderTime.format()); // Log reminder time
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Reminder: ${todo.title}`,
-          body: `Don't forget your task...`,
-          sound: true,
-        },
-        trigger: {
-          seconds: reminderTime.diff(moment(), 'seconds'),
-        },
-      });
-    } catch (error) {
-      console.error('Error scheduling notification:', error);
-    }
-  };
-
-  // AsyncStorage'den görevleri yükleme
   const loadTodos = async () => {
     try {
       const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
@@ -96,7 +241,6 @@ export const TodoListProvider = ({ children }) => {
     }
   };
 
-  // Görevleri AsyncStorage'e kaydetme
   const saveTodos = async (updatedTodos) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTodos));
@@ -105,59 +249,84 @@ export const TodoListProvider = ({ children }) => {
     }
   };
 
-  // Bildirim izni isteme
-  useEffect(() => {
-    loadTodos();
-    const requestNotificationPermission = async () => {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Please allow notifications so that you do not miss your tasks.');
-      }
-    };
-    requestNotificationPermission();
-  }, []);
-
-  // Yeni görev ekleme
+  // Yeni görev ekleme ve bildirim zamanlama
   const addTodo = async (newTodo) => {
     const updatedTodos = [newTodo, ...todos];
     setTodos(updatedTodos);
     saveTodos(updatedTodos);
-    await scheduleNotification(newTodo); // Bildirim planlama
+
+    // Bildirim zamanla
+    await scheduleNotification(newTodo);
   };
 
-  // Görev silme
-  const deleteTodo = (id) => {
-    const updatedTodos = todos.filter((todo) => todo.id !== id);
-    setTodos(updatedTodos);
-    saveTodos(updatedTodos);
+  const deleteTodo = async (id) => {
+    try {
+      console.log(`🗑 Deleting todo: ${id}`);
+  
+      const todoToDelete = todos.find((todo) => todo.id === id);
+      if (todoToDelete) {
+        console.log(todoToDelete);
+        await cancelNotification(id); // 📌 Önce bildirimi iptal et
+      }
+  
+      const updatedTodos = todos.filter((todo) => todo.id !== id);
+      setTodos(updatedTodos);
+      await saveTodos(updatedTodos);
+  
+      // 📋 **Silinen todo’nun bildirim kayıtlarını tekrar kontrol et**
+      const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
+      console.log("📋 Scheduled Notifications AFTER DELETE:", JSON.stringify(scheduledNotifications, null, 2));
+  
+    } catch (error) {
+      console.log("❌ Error in deleteTodo:", error);
+    }
   };
+  
 
-  // Görev güncelleme
-  const updateTodo = (id, updatedTodo) => {
+  const updateTodo = async (id, updatedTodo) => {
     const updatedTodos = todos.map((todo) =>
       todo.id === id ? { ...todo, ...updatedTodo } : todo
     );
-    
+  
     setTodos(updatedTodos);
     saveTodos(updatedTodos);
+  
+    if (updatedTodo.status === "done") {
+      await cancelNotification(id);
+    } else if (updatedTodo.reminderTime || updatedTodo.dueDate || updatedTodo.dueTime) {
+      console.log(`🔄 Güncellenen Todo için Bildirim Yönetimi: ${id}`);
+      
+      // **ÖNCE** eski bildirimi iptal et
+      await cancelNotification(id);
+      
+      // **SONRA** yeni bildirimi oluştur
+      setTimeout(async () => {
+        await scheduleNotification(updatedTodo);
+      }, 1000); // 1 saniye gecikme ile yeni bildirimi planla
+    }
   };
+  
 
-  // Context değerlerini sağlayan obje
+  useEffect(() => {
+    loadTodos();
+  }, []);
+
   const value = {
     todos,
     addTodo,
     deleteTodo,
     updateTodo,
-    setDueTime, // Provide the setter for dueTime to be used in the TimePicker
-    scheduleNotification,
+    setDueTime, 
     showCongrats, 
-    setShowCongrats
+    setShowCongrats,
+    language, 
+    setLanguage, 
+    t
   };
 
   return <TodoListContext.Provider value={value}>{children}</TodoListContext.Provider>;
 };
 
-// TodoListContext kullanımı için özel hook
 export const useTodoListContext = () => {
   const context = useContext(TodoListContext);
   if (context === undefined) {

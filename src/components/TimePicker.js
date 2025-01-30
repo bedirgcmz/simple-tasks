@@ -9,9 +9,9 @@ const TimePicker = ({ setDueTime, defaultTime }) => {
   const [isPickerVisible, setPickerVisible] = useState(false);
 
   useEffect(() => {
-setHours(defaultTime ? defaultTime.slice(0, 2) : "00");
-setMinutes(defaultTime ? defaultTime.slice(3, 5) : "00");
-  },[defaultTime])
+      setHours(defaultTime ? defaultTime.slice(0, 2) : "00");
+      setMinutes(defaultTime ? defaultTime.slice(3, 5) : "00");
+  },[defaultTime, setDueTime])
 
   const handleConfirm = () => {
     // Kullanıcının seçtiği saat ve dakika bilgisi

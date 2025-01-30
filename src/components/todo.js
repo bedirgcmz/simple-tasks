@@ -4,10 +4,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
 import { showConfirmAlert } from '../utils/alerts';
+import { playSuccessSound } from '../utils/play-success-sound';
 
 
 const Todo = ({todo, index, fromText}) => {
-  const {  deleteTodo, updateTodo } = useTodoListContext();
+  const {  deleteTodo, updateTodo, setShowCongrats } = useTodoListContext();
     function calculateDaysLeft(todo) {
         const createdAt = new Date(todo.createdAt);
         const dueDate = new Date(todo.dueDate);
@@ -31,7 +32,12 @@ const Todo = ({todo, index, fromText}) => {
     <TouchableOpacity onPress={() => router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: fromText } })} className={`flex-1 flex-row items-center justify-between my-2 border-b border-[#6c757d] rounded-lg shadow bg-[#6c757d36] ${index % 2 !== 0 && "bgg-[#343a40]"}`}>
         <View className="flex-1 flex-row items-center gap-1 justify-start">
             <TouchableOpacity className="p-2"
-        onPress={() => updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })} 
+        onPress={() => {
+            updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })
+            todo.status === "done" ?  "" : playSuccessSound()
+            setShowCongrats(todo.status === "done" ? false : true)
+        }
+        } 
             
             >
                 {todo.status === "done" ? 

@@ -46,7 +46,7 @@ const TaskScreen = () => {
           </View>
         )
       }
-    <TodoDoneAnimation  />
+    {/* <TodoDoneAnimation  /> */}
     </LinearGradient>
   );
 };

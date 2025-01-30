@@ -23,11 +23,10 @@ const TodoCard = ({ todo, bgColor }) => {
         onPress={() => 
           {
             updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })
-            setShowCongrats(todo.status === "done" ? false : true)
             todo.status === "done" ?  "" : playSuccessSound()
+            setShowCongrats(todo.status === "done" ? false : true)
           }
-        } 
-         
+        }
          >
             {todo.status === "done" ? (
               <Ionicons name="checkbox" size={20} color="#fe9092" />
@@ -39,14 +38,12 @@ const TodoCard = ({ todo, bgColor }) => {
         <Text className="text-[15px] font-bold text-white">{truncateText(todo.title, 24)}</Text>
       </View>
       <Text className="text-[#f8f9fa] text-[13px] mb-2 flex-1">{truncateText(todo.description, 60)}</Text>
-      {/* <Text className="text-[12px] mb-1 text-white">
-        Created At: {todo.createdAt}
-      </Text> */}
+      
       <View className="text-[12px] mb-1 text-white justify-start items-center flex-row">
-        <Ionicons name="time" size={22} color="white" />
-        <Text className="text-[12px] text-white pl-1">
-          {todo.dueDate} - <Text className="font-bold">{todo.dueTime?.slice(0, 5)}</Text>
-        </Text>
+        <Ionicons name="time" size={20} color="white" />
+        <View className=" pl-2 flex-1 flex-row justify-between">
+          <Text className="text-[12px] text-white tracking-tighter ">{todo.dueDate}</Text><Text className="font-bold tracking-tighter  text-[12px] text-white">{todo.dueTime?.slice(0, 5)}</Text>
+        </View>
       </View>
       <View className="flex-row mt-2 items-center justify-end">
         <TouchableOpacity className="mr-4"

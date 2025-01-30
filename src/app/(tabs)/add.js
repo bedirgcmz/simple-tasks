@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -21,7 +21,7 @@ import CustomRemindPicker from "../../components/CustomRemindPicker";
 import FilterByCategory from "../../components/FilterByCategory";
 // import ModernDatePicker from "../../components/ModernDatePicker";
 import TimePicker from "../../components/TimePicker";
-// import CustomTimePicker from "../../components/CustomTimePicker";
+import LottieView from "lottie-react-native";
 
 const AddTodoPage = () => {
   const { addTodo, scheduleNotification, todos } = useTodoListContext();
@@ -32,7 +32,7 @@ const AddTodoPage = () => {
   const [dueDate, setDueDate] = useState(new Date());
   const [reminderTime, setReminderTime] = useState("2 hours before");
   const [showDatePicker, setShowDatePicker] = useState(false);
-
+  const [opacity, setOpacity] = useState(0);
   const categories = [
     "School", 
     "Finance", 
@@ -63,34 +63,58 @@ const AddTodoPage = () => {
       alert("Title and category fields are required!");
       return;
     }
-
+  
+    // Kullanıcının seçtiği tarihi UTC formatına çevir
+    const utcDueDate = new Date(
+      dueDate.getFullYear(),
+      dueDate.getMonth(),
+      dueDate.getDate(),
+      12, 0, 0 // Saat 00:00 UTC olarak kaydedilir
+    ).toISOString();
+  
     const newTodo = {
       id: uuid.v4(),
       title,
       description,
       category,
       status: "pending",
-      createdAt: new Date().toISOString().split("T")[0],
-      dueDate: dueDate.toISOString().split("T")[0],
-      dueTime: dueTime,
-      reminderTime, // Kullanıcı tarafından seçilen hatırlatma zamanı
+      createdAt: new Date().toISOString(), // UTC formatında kaydediyoruz
+      dueDate: utcDueDate, // UTC olarak kaydediliyor
+      dueTime: dueTime, // Zaman seçimi ayrıca kaydediliyor
+      reminderTime, // Kullanıcının seçtiği hatırlatma süresi
       completedAt: "",
     };
-console.log("add dosyasindan eklenen ToDo:",newTodo);
+
+    console.log("Added new todo:", newTodo);
+  
     addTodo(newTodo);
-
-    // Bildirim zamanlama
-    scheduleNotification(newTodo);
-
+  
     // State sıfırlama
     setTitle("");
     setDescription("");
     setCategory("");
     setDueDate(new Date());
+    setDueTime("");
     setReminderTime("2 hours before");
-
-    router.push({ pathname: `/filter`, params: { from: category } });
+  
+    setTimeout(() => {
+      router.push({ pathname: `/filter`, params: { from: category } });
+    }, 2000);
   };
+  
+  const successRef = useRef()
+
+  const playSuccess = () => {
+    if (title && category) {
+      setOpacity(1); // Görünür yap
+      successRef?.current?.reset();
+      successRef?.current?.play();
+  
+      setTimeout(() => {
+        setOpacity(0); // Opaklık sıfırlanır, gizlenir
+      }, 1500); // Animasyonun süresine göre ayarla
+    }
+  }
 
   return (
     <KeyboardAvoidingView
@@ -136,19 +160,6 @@ console.log("add dosyasindan eklenen ToDo:",newTodo);
               />
               <Text className="text-gray-400 text-right text-[12px]">{description.length}/200</Text>
 
-              {/* Kategori Seçimi */}
-              {/* <View className="bg-[#d7c8f3] rounded-md mb-4 text-white">
-                <Picker
-                  selectedValue={category}
-                  onValueChange={(itemValue) => setCategory(itemValue)}
-                >
-                  <Picker.Item label="Select Category" value="" />
-                  {categories.map((cat) => (
-                    <Picker.Item key={cat} label={cat} value={cat} />
-                  ))}
-                </Picker>
-              </View> */}
-
               <View className="flex-col flex-wrap items-center justify-center mb-3">
                 <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
                   Select a category
@@ -182,8 +193,15 @@ console.log("add dosyasindan eklenen ToDo:",newTodo);
                   }}
                   className="bg-[#d7c8f3] py-3 rounded-md mb-3"
                 >
-                  <Text className="text-gray-700 text-center">
+                  {/* <Text className="text-gray-700 text-center">
                     {dueDate.toISOString().split("T")[0]}
+                  </Text> */}
+                  <Text className="text-gray-700 text-center">
+                    {dueDate.toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                    })}
                   </Text>
                 </TouchableOpacity>
                 {showDatePicker && (
@@ -194,7 +212,12 @@ console.log("add dosyasindan eklenen ToDo:",newTodo);
                     style={{ backgroundColor: "#d7c8f3", borderRadius: 6, marginBottom: 16 }}
                     onChange={(event, selectedDate) => {
                       setShowDatePicker(false);
-                      if (selectedDate) setDueDate(selectedDate);
+                      if (selectedDate) {
+                        // Tarihi kaydetmeden önce cihazın zaman dilimine uygun hale getiriyoruz
+                        const localDate = new Date(selectedDate);
+                        setDueDate(localDate);
+                        console.log("Selected Local Date:", localDate.toISOString());
+                      }
                     }}
                   />
                 )}
@@ -202,7 +225,6 @@ console.log("add dosyasindan eklenen ToDo:",newTodo);
               {/* Zaman Seçimi */}
               <View className=" ">
               
-              {/* <CustomTimePicker time={time} setTime={setTime} /> */}
               <TimePicker  setDueTime={setDueTime} defaultTime={false}/>
 
               </View>
@@ -219,17 +241,30 @@ console.log("add dosyasindan eklenen ToDo:",newTodo);
 
               {/* ToDo Ekle */}
               <TouchableOpacity
-                onPress={handleAddTodo}
-                className="bg-red-400 py-4 rounded-md mt-6"
+                onPress={ () => {
+                  playSuccess()
+                  handleAddTodo()
+                  Keyboard.dismiss() }
+                  }
+                className="bg-red-400 py-4 rounded-md mt-6 flex-row items-center justify-center"
               >
                 <Text className="text-white text-center font-bold">Add ToDo</Text>
+                 <LottieView
+                  style={{ width: 45, height: 45, opacity: opacity}}
+                  className="absolute right-0"
+                  source={require('../../../assets/data/success.json')}
+                  ref={successRef}
+                  loop={false}
+                  autoPlay={false}
+                  speed={1}
+                  />
               </TouchableOpacity>
             </View>
             <StatusBar style="light" backgroundColor="transparent" translucent />
       </ScrollView>
           </ImageBackground>
         </TouchableWithoutFeedback>
-
+       
   </KeyboardAvoidingView>
   );
 };
