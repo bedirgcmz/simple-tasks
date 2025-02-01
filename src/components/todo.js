@@ -4,11 +4,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
 import { showConfirmAlert } from '../utils/alerts';
-import { playSuccessSound } from '../utils/play-success-sound';
+import { playCorrectSound, playSuccessSound } from '../utils/play-success-sound';
 
 
 const Todo = ({todo, index, fromText}) => {
-  const {  deleteTodo, updateTodo, setShowCongrats } = useTodoListContext();
+  const {  deleteTodo, updateTodo, setShowCongrats, t } = useTodoListContext();
     function calculateDaysLeft(todo) {
         const createdAt = new Date(todo.createdAt);
         const dueDate = new Date(todo.dueDate);
@@ -21,11 +21,11 @@ const Todo = ({todo, index, fromText}) => {
     
         // Check if due date has passed
         if (daysLeft < 0) {
-            return `${Math.abs(daysLeft)} days ago.`;
+            return `${Math.abs(daysLeft)} ${t("calculateDays_text_5")}`;
         } else if (daysLeft === 0) {
-            return "Today!";
+            return t("calculateDays_text_6");
         } else {
-            return `${daysLeft} days left`;
+            return `${daysLeft} ${t("calculateDays_text_7")}`;
         }
     }
   return (
@@ -34,7 +34,7 @@ const Todo = ({todo, index, fromText}) => {
             <TouchableOpacity className="p-2"
         onPress={() => {
             updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })
-            todo.status === "done" ?  "" : playSuccessSound()
+            todo.status === "done" ?  "" : playCorrectSound()
             setShowCongrats(todo.status === "done" ? false : true)
         }
         } 
@@ -49,10 +49,10 @@ const Todo = ({todo, index, fromText}) => {
         {
             todo.status !== "done" ?
             <Text className="text-red-400 text-[12px] tracking-tighter">{calculateDaysLeft(todo)}</Text> :
-            <Text className="text-green-600 text-[12px] tracking-tighter">Great!</Text>
+            <Text className="text-green-600 text-[12px] tracking-tighter">{t("Great")}</Text>
         }
         <TouchableOpacity className="p-2 pl-1"
-                onPress={() => showConfirmAlert("You want to DELETE this ToDo!","Are you sure?",deleteTodo, todo.id)}
+                onPress={() => showConfirmAlert("You want to DELETE this ToDo!","Are you sure?",deleteTodo, todo.id, t)}
         >
             <Ionicons name="trash-outline" size={18} color="gray" />
         </TouchableOpacity>

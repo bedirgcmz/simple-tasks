@@ -5,7 +5,7 @@ import TodoCard from "../../../components/TodoCard";
 import TodoDoneAnimation from "../../../components/TodoDoneAnimation";
 
 const TodoBoardScreen = () => {
-  const { todos } = useTodoListContext();
+  const { todos, t } = useTodoListContext();
 
   // Helper functions to filter todos
   const isToday = (date) => {
@@ -31,6 +31,13 @@ const TodoBoardScreen = () => {
   
     return new Date(date) > tomorrow;
   };
+  const isPastDays = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+  
+    return new Date(date).setHours(0, 0, 0, 0) < today.getTime();
+  };
+  
   
 
   const todaysTodos = todos.filter(
@@ -44,6 +51,9 @@ const TodoBoardScreen = () => {
       isNextDays(todo.dueDate) &&
       !isTomorrow(todo.dueDate) &&
       todo.status !== "done"
+  );
+  const pastDaysTodos = todos.filter(
+    (todo) => isPastDays(todo.dueDate)
   );
   const completedTodos = todos.filter((todo) => todo.status === "done");
 
@@ -69,12 +79,12 @@ const TodoBoardScreen = () => {
  
   const renderTodoSection = (title, todos, key, image, message, cardBgColor) => (
       <View key={key} className="p-4 pb-8 border-gray-300">
-        <Text className="text-lg font-bold text-blue-500">{title}</Text>
+        <Text className="text-lg font-bold text-[#ef6351]">{title}</Text>
         {todos.length > 0 ? (
           <>
             <Text className="text-gray-500 mb-4 pl-1">
               {todos.filter((t) => t.status === "done").length}/{todos.length}{" "}
-              Done
+              {t("Done")}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {todos.map((todo) => (
@@ -92,9 +102,22 @@ const TodoBoardScreen = () => {
       </View>
     
   );
+
+  //dil dosyasindan alinan bolum title bilgileri
+  const todayTodosTitle = t("todayTodosTitle")
+  const tomorrowTodosTitle = t("tomorrowTodosTitle")
+  const nextDaysTodosTitle = t("nextDaysTodosTitle")
+  const pastDaysTodosTitle = t("pastDaysTodosTitle")
+  const completedTodosTitle = t("completedTodosTitle")
+  //dil dosyasindan alinan "todo yoksa mesaj text" bilgileri
+  const todayTodosMessage = t("todayTodosMessage")
+  const tomorrowTodosMessage = t("tomorrowTodosMessage")
+  const nextDaysTodosMessage = t("nextDaysTodosMessage")
+  const pastDaysTodosMessage = t("pastDaysTodosMessage")
+  const completedTodosMessage = t("completedTodosMessage")
   
   return (
-    <ImageBackground source={require("../../../../assets/images/bg-list3.jpg")} resizeMode="cover" className="flex-1 pt-10 ">
+    <ImageBackground source={require("../../../../assets/images/home-bg-2.jpg")} resizeMode="cover" className="flex-1 pt-10 ">
       <ScrollView className="flex-1">
           <StatusBar
           barStyle="light-content" 
@@ -102,19 +125,23 @@ const TodoBoardScreen = () => {
           translucent={true} // Status barı saydam yapar
         />
           {/* Today's ToDo */}
-          {renderTodoSection("Today's ToDos", todaysTodos, "today", "get-rest.png", "Enjoy yourself today, you don't have any todo.", "bg-customLila")}
+          {renderTodoSection(todayTodosTitle, todaysTodos, "today", "get-rest.png", todayTodosMessage, "bg-customLila")}
          
          {/* Tomorrow's ToDo */}
-          {renderTodoSection("Tomorrow's ToDos", tomorrowsTodos, "tomorrow", "have-fun.png", "You'll have time to have fun tomorrow.", "bg-customPurple")}
+          {renderTodoSection(tomorrowTodosTitle, tomorrowsTodos, "tomorrow", "have-fun.png", tomorrowTodosMessage, "bg-customPurple")}
          
           {/* Next Days ToDo */}
-          {renderTodoSection("Next Days' ToDos", nextDaysTodos, "next-days", "find-something.png", "You should find something to do.", "bg-customOrange",)}
+          {renderTodoSection(nextDaysTodosTitle, nextDaysTodos, "next-days", "find-something.png", nextDaysTodosMessage, "bg-customTurkuaz",)}
+          
+          {/* Past Days ToDo */}
+          {renderTodoSection(pastDaysTodosTitle, pastDaysTodos, "past-days", "find-something.png", pastDaysTodosMessage, "bg-customOrangeDark",)}
          
          {/* Completed ToDos */}
             <View className="p-4 pb-6">
-              <Text className="text-lg font-bold  text-blue-500">Completed ToDos</Text>
+              <Text className="text-lg font-bold  text-[#ef6351]">{completedTodosTitle}</Text>
               <Text className="text-gray-500 mb-4 pl-1">
-              {completedTodos.length}{completedTodos.length > 1 ? " ToDos are done" : " ToDo is done"} 
+              {/* {completedTodos.length}{completedTodos.length > 1 ? " ToDos are done" : " ToDo is done"}   */}
+              {completedTodos.length} {t("Done")}
             </Text>
               {completedTodos.length > 0 ? (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -122,13 +149,14 @@ const TodoBoardScreen = () => {
                     <TodoCard
                       key={todo.id}
                       todo={todo}
-                      bgColor={"bg-customGreen"}
+                      // bgColor={"bg-customGreen"}
+                      bgColor={"bg-[#343a40]"}
                     />
                   ))}
                 </ScrollView>
               ) : (
                 <View className="items-center mt-4">
-                  <Text className="text-gray-500 text-center">You don't have completed ToDo yet!</Text>
+                  <Text className="text-gray-500 text-center">{completedTodosMessage}</Text>
                 </View>
               )}
             </View>

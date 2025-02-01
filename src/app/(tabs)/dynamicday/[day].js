@@ -10,10 +10,10 @@ import { LinearGradient } from "expo-linear-gradient";
 const DaysTodos = () => {
   const { day } = useLocalSearchParams();
   const [thisDaysTodos, setThisDaysTodos] = useState([])
-  const { todos } = useTodoListContext();
+  const { todos, t } = useTodoListContext();
 
   const ThisDayTodos = () => {
-    const filteredTodos = todos.filter((todo) => todo.dueDate === day);
+    const filteredTodos = todos.filter((todo) => todo.dueDate.split("T")[0] === day);
     setThisDaysTodos(filteredTodos) ;
   }
 
@@ -28,7 +28,10 @@ const DaysTodos = () => {
       style={{ flex: 1, padding: 7, justifyContent: "center" }}
     >
     <ScrollView className="mt-12 flex-1">
-      {thisDaysTodos.length !== 0 && <Text className="text-white text-lg text-center pt-4 pb-2">ToDos for <Text className="font-bold text-yellow-600">{day}</Text></Text>}
+      {thisDaysTodos.length !== 0 && <View className="text-center pt-4 pb-2 flex-col items-center justify-center">
+        <Text className="font-bold text-yellow-600 text-lg">{day}</Text>
+        <Text className="text-white text-lg ">{t("todos_of_the_day")}</Text>
+        </View>}
       
       {thisDaysTodos.map((todo, index) => (
         <Todo key={todo.id} todo={todo} index={index} fromText={`${day}`}/>
@@ -36,7 +39,7 @@ const DaysTodos = () => {
       {
         thisDaysTodos.length === 0 && (
           <View className="flex-1 items-center justify-center pt-8">
-            <Text className="text-2xl text-white">No ToDos found for this date</Text>
+            <Text className="text-2xl text-white">{t("No_ToDos_found")}</Text>
             <Text className="text-2xl text-yellow-600">{day}</Text>
           </View>
         )
@@ -49,7 +52,7 @@ const DaysTodos = () => {
             }}
           >
             <Ionicons name="chevron-back-outline" size={24} color="white" />
-            <Text className="text-white text-md font-bold">Back</Text>
+            <Text className="text-white text-md font-bold">{t("Back_Button")}</Text>
       </TouchableOpacity>
     </LinearGradient>
 

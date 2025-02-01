@@ -24,28 +24,70 @@ import TimePicker from "../../components/TimePicker";
 import LottieView from "lottie-react-native";
 
 const AddTodoPage = () => {
-  const { addTodo, scheduleNotification, todos } = useTodoListContext();
+  const { addTodo, t, language } = useTodoListContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [dueTime, setDueTime] = useState('');
+  const [dueTime, setDueTime] = useState('12:00');
   const [dueDate, setDueDate] = useState(new Date());
   const [reminderTime, setReminderTime] = useState("2 hours before");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [opacity, setOpacity] = useState(0);
-  const categories = [
-    "School", 
-    "Finance", 
-    "Shopping", 
-    "Family", 
-    "Travel",
-    "Health", 
-    "Home", 
-    "Friends", 
-    "Work", 
-    "Fun", 
-    "Others", 
-  ];
+
+  const categories = {
+    en: [
+      "School",
+      "Finance",
+      "Shopping",
+      "Family",
+      "Travel",
+      "Health",
+      "Home",
+      "Friends",
+      "Work",
+      "Fun",
+      "Others",
+    ],
+    tr: [
+      "Okul",
+      "Finans",
+      "Alışveriş",
+      "Aile",
+      "Seyahat",
+      "Sağlık",
+      "Ev",
+      "Arkadaşlar",
+      "İş",
+      "Eğlence",
+      "Diğerleri",
+    ],
+    sv: [
+      "Skola",
+      "Ekonomi",
+      "Shopping",
+      "Familj",
+      "Resa",
+      "Hälsa",
+      "Hem",
+      "Vänner",
+      "Arbete",
+      "Nöje",
+      "Övrigt",
+    ],
+    de: [
+      "Schule",
+      "Finanzen",
+      "Einkaufen",
+      "Familie",
+      "Reisen",
+      "Gesundheit",
+      "Zuhause",
+      "Freunde",
+      "Arbeit",
+      "Spaß",
+      "Sonstiges",
+    ],
+  };
   
   const reminderOptions = [
     "5 minutes before",
@@ -60,11 +102,11 @@ const AddTodoPage = () => {
 
   const handleAddTodo = () => {
     if (!title || !category) {
-      alert("Title and category fields are required!");
+      alert(t("Alert_in_handle_add_todo"));
       return;
     }
   
-    // Kullanıcının seçtiği tarihi UTC formatına çevir
+    // Kullanıcının seçtiği tarihi UTC formatına çevir 
     const utcDueDate = new Date(
       dueDate.getFullYear(),
       dueDate.getMonth(),
@@ -133,24 +175,24 @@ const AddTodoPage = () => {
             >
             <View className="px-4 flex-1">
               <Text className="text-[#d7c8f3] text-2xl font-bold text-center mb-4 mt-4">
-                Add New ToDo
+                {t("Add_New_ToDo_Page_Title")}
               </Text>
 
               {/* Başlık */}
               <TextInput
-                placeholder="Enter Title"
+                placeholder={t("Title_input")}
                 placeholderTextColor="#6c757d"
                 value={title}
                 onChangeText={setTitle}
                 className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800"
-                autoFocus
+                // autoFocus
                 maxLength={60}
               />
               <Text className="text-gray-400 text-right text-[12px] mb-2">{title.length}/60</Text>
 
               {/* Açıklama */}
               <TextInput
-                placeholder="Enter Description"
+                placeholder={t("Description_input")}
                 placeholderTextColor="#6c757d"
                 value={description}
                 onChangeText={setDescription}
@@ -162,11 +204,11 @@ const AddTodoPage = () => {
 
               <View className="flex-col flex-wrap items-center justify-center mb-3">
                 <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
-                  Select a category
+                  {t("Select_a_category")}
                 </Text>
                 <View className="flex-row flex-wrap items-center justify-start bg-[#d7c8f3] py-2 rounded-lg">
                     {
-                      categories.map((item) => (
+                      categories[language]?.map((item) => (
                         <TouchableOpacity onPress={() => 
                           {
                           setCategory(item)
@@ -184,7 +226,7 @@ const AddTodoPage = () => {
               {/* Son Tarih Seçimi */}
               <View>
                 <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
-                  Select a due date
+                  {t("Select_a_due_date")}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -193,9 +235,6 @@ const AddTodoPage = () => {
                   }}
                   className="bg-[#d7c8f3] py-3 rounded-md mb-3"
                 >
-                  {/* <Text className="text-gray-700 text-center">
-                    {dueDate.toISOString().split("T")[0]}
-                  </Text> */}
                   <Text className="text-gray-700 text-center">
                     {dueDate.toLocaleDateString(undefined, {
                       year: "numeric",
@@ -216,7 +255,7 @@ const AddTodoPage = () => {
                         // Tarihi kaydetmeden önce cihazın zaman dilimine uygun hale getiriyoruz
                         const localDate = new Date(selectedDate);
                         setDueDate(localDate);
-                        console.log("Selected Local Date:", localDate.toISOString());
+                        // console.log("Selected Local Date:", localDate.toISOString());
                       }
                     }}
                   />
@@ -224,14 +263,12 @@ const AddTodoPage = () => {
               </View>
               {/* Zaman Seçimi */}
               <View className=" ">
-              
-              <TimePicker  setDueTime={setDueTime} defaultTime={false}/>
-
+                <TimePicker  setDueTime={setDueTime} defaultTime={false}/>
               </View>
 
               {/* Hatırlatma Seçimi */}
               <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
-                  Select a remind time!
+                  {t("Select_a_remind_time")}
                 </Text>
               <CustomRemindPicker
                 options={reminderOptions} // Seçenekler
@@ -248,10 +285,10 @@ const AddTodoPage = () => {
                   }
                 className="bg-red-400 py-4 rounded-md mt-6 flex-row items-center justify-center"
               >
-                <Text className="text-white text-center font-bold">Add ToDo</Text>
+                <Text className="text-white text-center font-bold">{t("Add_ToDo")}</Text>
                  <LottieView
                   style={{ width: 45, height: 45, opacity: opacity}}
-                  className="absolute right-0"
+                  className="absolute left-0"
                   source={require('../../../assets/data/success.json')}
                   ref={successRef}
                   loop={false}

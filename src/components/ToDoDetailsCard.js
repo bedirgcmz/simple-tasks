@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { useTodoListContext } from "../context/todos-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -10,7 +10,7 @@ import { playSuccessSound } from "../utils/play-success-sound";
 import LottieView from "lottie-react-native";
 
 const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
-  const { todos, deleteTodo, updateTodo, setShowCongrats } =
+  const { todos, deleteTodo, updateTodo, setShowCongrats, t } =
     useTodoListContext();
   const todo = todos.find((todo) => todo.id === pTodoId);
   function calculateDaysLeft(todo) {
@@ -22,33 +22,28 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
 
     // Convert milliseconds to days
     const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-
     // Check if due date has passed
     if (daysLeft < 0) {
-      return <Text>{`The due date was ${Math.abs(daysLeft)} days ago.`}</Text>;
+      return <Text>{`${t("calculateDays_text_1")} ${Math.abs(daysLeft)} ${t("calculateDays_text_2")}`}</Text>;
     } else if (daysLeft === 0) {
-      return  <Text>{"The ToDo is due today!"}</Text>
+      return  <Text>{t("calculateDays_text_3")} </Text>
     } else {
-      return <Text>{`${daysLeft} days left until the due date.`}</Text>
+      return <Text>{`${daysLeft} ${t("calculateDays_text_4")}`}</Text>
     }
   }
 
   const confettiRef = useRef()
-  // const checkBoxRef = useRef()
 
   const playConfetti = () => {
     confettiRef?.current?.play()
   }
-  // const playCheckBoxRef = () => {
-  //   checkBoxRef?.current?.play()
-  // }
 
   return (
     <View className="">
       <Text className="font-bold text-2xl text-center text-white mb-4">
         {pPageTitle}
       </Text>
-      <TouchableOpacity
+      <View
         className={`border-4 rounded-md shadow-lg bg-[#ebd9fc] pb-3 ${
           todo.status === "done" ? "border-[#fe9092]" : "border-[#6c757d]"
         }`}
@@ -93,20 +88,22 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
           {/* ToDo Title */}
           <View className="mb-2 flex-row items-center justify-start gap-2">
             <Text><Ionicons name="ellipse" size={12} color="#6c757d" /></Text>
-            <Text className="text-xl font-bold text-[#495057] pr-2">
+            <Text className="text-lg font-bold text-[#495057] pr-2">
               {todo.title}
             </Text>
           </View>
 
           {/* ToDo Description */}
-          <View className="mb-4 flex-row items-start justify-start gap-2">
+          <ScrollView className="mb-4 max-h-[220px]"
+          contentContainerStyle={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "flex-start", gap: 8, paddingBottom:22 }}
+          >
             <View className="pt-1">
               <Text><Ionicons name="document-text-outline" size={18} color="black" /></Text>
             </View>
-            <Text className="text-base w-[87%] text-gray-600">
+            <Text className="text-[15px] w-[87%] text-gray-600">
               {todo.description}
             </Text>
-          </View>
+          </ScrollView>
 
           {/* ToDo Dates */}
           <View className="mb-4 flex-row justify-between px-2">
@@ -131,7 +128,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
               } // Edit ekranına yönlendirme
               className="flex-row items-center space-x-2 px-2 py-1 rounded-lg bg-gray-600"
             >
-              <Text className="text-white text-[14px]">Edit</Text>
+              <Text className="text-white text-[14px]">{t("Edit_button")}</Text>
               <Text><MaterialCommunityIcons name="pencil" size={14} color="white" /></Text>
             </TouchableOpacity>
 
@@ -139,10 +136,12 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
             <TouchableOpacity
               onPress={() =>
                 showConfirmAlert(
-                  "You want to DELETE this ToDo!",
-                  "Are you sure?",
+                  t("You_want_to_DELETE"),
+                  t("Are_you_sure"),
                   deleteTodo,
-                  todo.id
+                  todo.id,
+                  t
+                  
                 )
               }
               className="flex-row items-center space-x-2 px-2 py-1 rounded-lg bg-gray-600"
@@ -154,11 +153,11 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
                   color="white"
                 />
               </Text>
-              <Text className="text-white  text-[14px]">Delete</Text>
+              <Text className="text-white  text-[14px]">{t("Delete_button")}</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </TouchableOpacity>
+      </View>
       <LottieView
       style={{ width: 300, height: 300}}
       source={require('../../assets/data/confetti.json')}

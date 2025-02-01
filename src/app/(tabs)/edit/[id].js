@@ -22,7 +22,7 @@ import { playCorrectSound } from "../../../utils/play-success-sound";
 
 const EditTodoPage = () => {
   const { id } = useLocalSearchParams();
-  const { todos, updateTodo } = useTodoListContext();
+  const { todos, updateTodo, t, language } = useTodoListContext();
 
   // Düzenlenecek ToDo'yu bul
   const todo = todos.find((item) => item.id === id);
@@ -48,19 +48,60 @@ const EditTodoPage = () => {
     }
   }, [id, todo, todos]);
 
-  const categories = [
-    "School",
-    "Finance",
-    "Shopping",
-    "Family",
-    "Travel",
-    "Health",
-    "Home",
-    "Friends",
-    "Work",
-    "Fun",
-    "Others",
-  ];
+  const categories = {
+    en: [
+      "School",
+      "Finance",
+      "Shopping",
+      "Family",
+      "Travel",
+      "Health",
+      "Home",
+      "Friends",
+      "Work",
+      "Fun",
+      "Others",
+    ],
+    tr: [
+      "Okul",
+      "Finans",
+      "Alışveriş",
+      "Aile",
+      "Seyahat",
+      "Sağlık",
+      "Ev",
+      "Arkadaşlar",
+      "İş",
+      "Eğlence",
+      "Diğerleri",
+    ],
+    sv: [
+      "Skola",
+      "Ekonomi",
+      "Shopping",
+      "Familj",
+      "Resa",
+      "Hälsa",
+      "Hem",
+      "Vänner",
+      "Arbete",
+      "Nöje",
+      "Övrigt",
+    ],
+    de: [
+      "Schule",
+      "Finanzen",
+      "Einkaufen",
+      "Familie",
+      "Reisen",
+      "Gesundheit",
+      "Zuhause",
+      "Freunde",
+      "Arbeit",
+      "Spaß",
+      "Sonstiges",
+    ],
+  };
 
   const reminderOptions = [
     "5 minutes before",
@@ -75,7 +116,7 @@ const EditTodoPage = () => {
 
   const handleUpdateTodo = () => {
     if (!title || !category) {
-      alert("Title and category fields are required!");
+      alert(t("Alert_in_handle_add_todo"));
       return;
     }
 
@@ -92,7 +133,7 @@ const EditTodoPage = () => {
 
     updateTodo(todo.id, updatedTodo);
     playCorrectSound()
-    alert("ToDo updated successfully!");
+    alert(t("Alert_successfully"));
     router.push({ pathname: `/filter`, params: { from: category } });
   };
 
@@ -113,12 +154,12 @@ const EditTodoPage = () => {
           >
             <View className="px-4 flex-1">
               <Text className="text-[#d7c8f3] text-2xl font-bold text-center mb-4 mt-4">
-                Edit ToDo
+                {t("Edit_ToDo_Page_Title")}
               </Text>
 
               {/* Başlık */}
               <TextInput
-                placeholder="Enter Title"
+                placeholder={t("Title_input")}
                 placeholderTextColor="#6c757d"
                 value={title}
                 onChangeText={setTitle}
@@ -131,7 +172,7 @@ const EditTodoPage = () => {
 
               {/* Açıklama */}
               <TextInput
-                placeholder="Enter Description"
+                placeholder={t("Description_input")}
                 placeholderTextColor="#6c757d"
                 value={description}
                 onChangeText={setDescription}
@@ -146,10 +187,10 @@ const EditTodoPage = () => {
               {/* Kategori */}
               <View className="flex-col flex-wrap items-center justify-center mb-3">
                 <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
-                  Select a category
+                {t("Select_a_category")}
                 </Text>
                 <View className="flex-row flex-wrap items-center justify-start bg-[#d7c8f3] py-2 rounded-lg">
-                  {categories.map((item) => (
+                  {categories[language]?.map((item) => (
                     <TouchableOpacity
                       onPress={() => {
                         setCategory(item);
@@ -166,7 +207,7 @@ const EditTodoPage = () => {
               {/* Tarih */}
               <View>
                 <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
-                  Select a due date
+                {t("Select_a_due_date")}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -202,7 +243,7 @@ const EditTodoPage = () => {
 
               {/* Hatırlatma */}
               <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
-                Select a remind time
+              {t("Select_a_remind_time")}
               </Text>
               <CustomRemindPicker
                 options={reminderOptions}
@@ -215,7 +256,7 @@ const EditTodoPage = () => {
                 onPress={handleUpdateTodo}
                 className="bg-red-400 py-4 rounded-md mt-6"
               >
-                <Text className="text-white text-center font-bold">Update ToDo</Text>
+                <Text className="text-white text-center font-bold">{t("Update")}</Text>
               </TouchableOpacity>
             </View>
             <StatusBar style="light" backgroundColor="transparent" translucent />

@@ -46,11 +46,11 @@ export const TodoListProvider = ({ children }) => {
     id: '0',
     title: 'Welcome Simple Tasks',
     description: 'Lets create new ToDos. This is your first ToDo!',
-    category: 'Others',
+    category: t("Others"),
     status: 'pending',
     createdAt: moment().format('YYYY-MM-DD'),
     dueDate: moment().add(7, 'days').format('YYYY-MM-DD'), 
-    dueTime: "09:00:00",
+    dueTime: "12:00:00",
     reminderTime: '1 day before',
     completedAt: null,
   };
