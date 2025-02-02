@@ -6,6 +6,8 @@ import translations from "../locales/translations";
 import { scheduleNotification, cancelNotification } from "../utils/notificationUtils"; 
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
+import { router } from 'expo-router'
+
 
 // Bildirimlerin nasıl işleneceğini tanımla
 Notifications.setNotificationHandler({
@@ -15,6 +17,24 @@ Notifications.setNotificationHandler({
     shouldSetBadge: false,
   }),
 });
+
+// 📌 **Bildirim Yönlendirme Durumunu İzleyen Hook**
+export function useNotificationListener(setNotificationRedirect) {
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const todoId = response.notification.request.content.data.todoId;
+      console.log("📩 Bildirime tıklandı, yönlendirilecek todoId:", todoId);
+      
+      if (todoId) {
+        setNotificationRedirect(todoId); // 📌 Bildirim yönlendirmesini başlat
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+}
 
 // Android için özel kanal oluştur
 async function configureAndroidChannel() {
@@ -39,6 +59,8 @@ export const TodoListProvider = ({ children }) => {
   const STORAGE_KEY = 'user_todos';
   const deviceLanguage = Localization.locale.split("-")[0];
   const [language, setLanguage] = useState(deviceLanguage || "en");
+  const [notificationRedirect, setNotificationRedirect] = useState(null); // 📌 Bildirim yönlendirme durumu
+
 
   const t = (key) => translations[language][key] || key;
 
@@ -139,6 +161,18 @@ export const TodoListProvider = ({ children }) => {
     loadTodos();
   }, []);
 
+   // 📌 **Bildirim Dinleyiciyi Burada Kullan**
+   useNotificationListener(setNotificationRedirect);
+
+   // 📌 **Bildirim yönlendirmesini yönet**
+   useEffect(() => {
+     if (notificationRedirect) {
+       console.log("🚀 Bildirimden yönlendirme yapılıyor:", `/dynamicid/${notificationRedirect}`);
+       router.replace(`/dynamicid/${notificationRedirect}`); // 📌 replace kullanarak kesin yönlendirme yap
+       setNotificationRedirect(null); // 📌 Yönlendirme tamamlandı, state’i sıfırla
+     }
+   }, [notificationRedirect]);
+
   const value = {
     todos,
     addTodo,
@@ -162,3 +196,5 @@ export const useTodoListContext = () => {
   }
   return context;
 };
+
+

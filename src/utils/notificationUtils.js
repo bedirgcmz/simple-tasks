@@ -64,6 +64,7 @@ export async function scheduleNotification(todo, t) {
           title: todo.title,
           body: `${t("Notification_1")} ${todo.dueDate.split("T")[0]} / ${todo.dueTime}`,
           sound: "default",
+          data: { todoId: todo.id },
         },
         trigger: null, // Anında gönder
       });
@@ -74,6 +75,7 @@ export async function scheduleNotification(todo, t) {
           title: todo.title,
           body: `${t("Notification_2")} ${todo.dueDate.split("T")[0]} / ${todo.dueTime}`,
           sound: "default",
+          data: { todoId: todo.id },
         },
         trigger: {
           seconds: timeDiffSeconds,
