@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { useTodoListContext } from "../context/todos-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -10,7 +10,7 @@ import { playSuccessSound } from "../utils/play-success-sound";
 import LottieView from "lottie-react-native";
 
 const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
-  const { todos, deleteTodo, updateTodo, setShowCongrats, t } =
+  const { todos, deleteTodo, updateTodo, setShowCongrats, t, language } =
     useTodoListContext();
   const todo = todos.find((todo) => todo.id === pTodoId);
   function calculateDaysLeft(todo) {
@@ -109,7 +109,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
           <View className="mb-4 flex-row justify-between px-2">
             <View className="flex-row items-center text-sm text-gray-500">
               <Text><Ionicons name="calendar" size={18} color="#495057" /></Text>
-              <Text className="ml-1">{formatToShortDate(todo.dueDate)}</Text>
+              <Text className="ml-1">{formatToShortDate(todo.dueDate, language)}</Text>
             </View>
             <View className="flex-row items-center text-sm text-gray-500">
               <Text><Ionicons name="time" size={18} color="#495057" /></Text>

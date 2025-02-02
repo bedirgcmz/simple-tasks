@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Modal, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import { useTodoListContext } from '../context/todos-context';
 
 const CustomRemindPicker = ({ options, selectedValue, onValueChange }) => {
+  const { t } = useTodoListContext();
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
@@ -32,7 +34,7 @@ const CustomRemindPicker = ({ options, selectedValue, onValueChange }) => {
               onPress={() => setModalVisible(false)}
               className="bg-red-400 p-3 mt-2 rounded-md"
             >
-              <Text className="text-white text-center">Close</Text>
+              <Text className="text-white text-center">{t("Close")}</Text>
             </TouchableOpacity>
           </View>
         </View>

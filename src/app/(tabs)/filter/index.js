@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, StatusBar, ImageBackground, Text, TouchableOpacity } from 'react-native';
 import { useTodoListContext } from '../../../context/todos-context';
-import Todo from '../../../components/todo';
+import Todo from '../../../components/Todo';
 import { useLocalSearchParams } from 'expo-router';
 import FilterByCategory from '../../../components/FilterByCategory';
+import TodoDoneAnimation from '../../../components/TodoDoneAnimation';
 
 const FilterTodosScreen = () => {
   const { todos } = useTodoListContext();
@@ -52,6 +53,7 @@ if (selectedCategory === "All") {
           <Todo todo={item} index={index} fromText="filter"/>
         )}
       />
+      <TodoDoneAnimation />
      <StatusBar 
           style="light"
           backgroundColor="transparent"

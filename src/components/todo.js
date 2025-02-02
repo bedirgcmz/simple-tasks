@@ -4,7 +4,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
 import { showConfirmAlert } from '../utils/alerts';
-import { playCorrectSound, playSuccessSound } from '../utils/play-success-sound';
+import { playCorrectSound } from '../utils/play-success-sound';
+import TodoDoneAnimation from './TodoDoneAnimation';
 
 
 const Todo = ({todo, index, fromText}) => {

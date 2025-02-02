@@ -84,7 +84,7 @@ export const TodoListProvider = ({ children }) => {
     saveTodos(updatedTodos);
 
     // Bildirim zamanla
-    await scheduleNotification(newTodo);
+    await scheduleNotification(newTodo , t);
   };
 
   const deleteTodo = async (id) => {
@@ -129,7 +129,7 @@ export const TodoListProvider = ({ children }) => {
       
       // **SONRA** yeni bildirimi oluştur
       setTimeout(async () => {
-        await scheduleNotification(updatedTodo);
+        await scheduleNotification(updatedTodo, t);
       }, 1000); // 1 saniye gecikme ile yeni bildirimi planla
     }
   };

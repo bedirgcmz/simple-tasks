@@ -4,7 +4,7 @@ import { useTodoListContext } from "../context/todos-context";
 
 
 const TodoDoneAnimation = () => {
-    const { showCongrats, setShowCongrats } = useTodoListContext();
+    const { showCongrats, setShowCongrats, t } = useTodoListContext();
   const scaleAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -21,13 +21,13 @@ const TodoDoneAnimation = () => {
 
   return (
     <Animated.View
-      className="absolute top-[50%] left-[21%] -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-xl p-4 z-40"
+      className="absolute top-[50%] left-[22%] bg-gray-800 w-[200px] -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-xl p-2 z-40"
       style={{
         transform: [{ scale: scaleAnim }],
         opacity: scaleAnim,
       }}
     >
-      <Text className="text-xl font-bold text-green-500 text-center z-30">🎉 Congratulations!</Text>
+      <Text className="text-xl font-bold text-green-500 text-center z-30">🎉{t("Congratulations")}</Text>
     </Animated.View>
   );
 };

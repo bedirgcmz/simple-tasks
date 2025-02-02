@@ -53,7 +53,6 @@ const translations = {
       calculateDays_text_6:"Today!",
       calculateDays_text_7:"days left",
       Great: "Great",
-
       // DynamicDay Page
       No_ToDos_found : "No ToDos found for this date",
       todos_of_the_day: "ToDos of the day",
@@ -61,14 +60,36 @@ const translations = {
       Alert_Cancel: "Cancel",
       Alert_Confirm_Delete: "Yes, delete it!",
       Alert_Confirm_Edit: "Yes, edit it!",
+      //TodoDoneAnimation
+      Congratulations: "Congratulations!",
+         // TimePicke.js
+         TimePicker_Select_a_due_time: "Select a due time",//a
+         TimePicker_Selected_Time: "Selected Time",//a
+         TimePicker_Select_Time: "Select Time",//a
+         TimePicker_Confirm: "Confirm",//a
+         TimePicker_Cancel: "Cancel",//a
+         TimePicker_Hours: "Hours",//a
+         TimePicker_Minutes: "Minutes",//a
+      // Reminder Time Options
+      reminderTime: {
+        _5_minutes_before: "5 minutes before",
+        _10_minutes_before: "10 minutes before",
+        _30_minutes_before: "30 minutes before",
+        _1_hour_before: "1 hour before",
+        _2_hours_before: "2 hours before",
+        _6_hours_before: "6 hours before",
+        _1_day_before: "1 day before",
+        _1_week_before: "1 week before",
+      },
+      Close:"Close",
+      // NotificationUtils.js
+      Notification_1: "Your task was due in",
+      Notification_2: "Your task is due in",
 
-      // Filter
-      All: "All",
-      Today: "Today",
-      Tomorrow: "Tomorrow",
-      Next_Days: "Next Days",
-      Past_Days: "Past Days",
-      Completed: "Completed",
+
+
+      
+         
       // Settings
       Settings: "Settings",
       Language: "Language",
@@ -77,7 +98,6 @@ const translations = {
       Turkish: "Turkish",
       Spanish: "Spanish",
       // Notification
-      Notification: "Notification",
       Notification_Title: "ToDo Reminder",
       Notification_Body: "You have a ToDo reminder",
       // Alert
@@ -87,14 +107,7 @@ const translations = {
       // Toast
       Toast_Title: "ToDo Deleted",
       Toast_Message: "Your ToDo has been deleted.",
-      // TimePicke.js
-      TimePicker_Select_a_due_time: "Select a due time",//a
-      TimePicker_Selected_Time: "Selected Time",//a
-      TimePicker_Select_Time: "Select Time",//a
-      TimePicker_Confirm: "Confirm",//a
-      TimePicker_Cancel: "Cancel",//a
-      TimePicker_Hours: "Hours",//a
-      TimePicker_Minutes: "Minutes",//a
+   
       // Reminder
       "1 day before": "1 day before",
       "1 hour before": "1 hour before",
@@ -157,7 +170,8 @@ const translations = {
       calculateDays_text_6: "Bugün!",
       calculateDays_text_7: "gün kaldı",
       Great: "Harika!",
-
+      //TodoDoneAnimation
+      Congratulations: "Tebrikler!",
       // DynamicDay Page
       No_ToDos_found: "Bu tarih için yapılacaklar bulunamadı",
       todos_of_the_day: "gününün todoları",
@@ -165,14 +179,31 @@ const translations = {
       Alert_Cancel: "İptal",
       Alert_Confirm_Delete: "Evet, sil!",
       Alert_Confirm_Edit: "Evet, düzenle!",
-      
-      // Filter
-      All: "Tümü",
-      Today: "Bugün",
-      Tomorrow: "Yarın",
-      Next_Days: "Gelecek Günler",
-      Past_Days: "Geçmiş Günler",
-      Completed: "Tamamlananlar",
+       //TimePicker
+       TimePicker_Select_a_due_time: "Son yapılma saatini seç",
+       TimePicker_Selected_Time: "Seçilen Zaman",
+       TimePicker_Select_Time: "Saati Seç",
+       TimePicker_Confirm: "Onayla",
+       TimePicker_Cancel: "İptal",
+       TimePicker_Hours: "Saat",
+       TimePicker_Minutes: "Dakika",
+      // Reminder time options
+      reminderTime: {
+        _5_minutes_before: "5 dakika önce",
+        _10_minutes_before: "10 dakika önce",
+        _30_minutes_before: "30 dakika önce",
+        _1_hour_before: "1 saat önce",
+        _2_hours_before: "2 saat önce",
+        _6_hours_before: "6 saat önce",
+        _1_day_before: "1 gün önce",
+        _1_week_before: "1 hafta önce",
+      },
+      Close:"Kapat",
+      // NotificationUtils.js
+      Notification_1: "Görevinizin son tarihi şuydu:",
+      Notification_2: "Görevinizin son tarihi:",
+
+     
       // Settings
       Settings: "Ayarlar",
       Language: "Dil",
@@ -191,14 +222,7 @@ const translations = {
       // Toast
       Toast_Title: "ToDo Silindi",
       Toast_Message: "ToDo başarıyla silindi.",
-      //TimePicker
-      TimePicker_Select_a_due_time: "Son yapılma saatini seç",
-      TimePicker_Selected_Time: "Seçilen Zaman",
-      TimePicker_Select_Time: "Saati Seç",
-      TimePicker_Confirm: "Onayla",
-      TimePicker_Cancel: "İptal",
-      TimePicker_Hours: "Saat",
-      TimePicker_Minutes: "Dakika",
+     
 
 
     },
@@ -256,7 +280,8 @@ const translations = {
       calculateDays_text_6: "Idag!",
       calculateDays_text_7: "dagar kvar",
       Great: "Bra!",
-
+      //TodoDoneAnimation
+      Congratulations: "Grattis!",
       // DynamicDay Page
       No_ToDos_found: "Inga att göra hittades för detta datum",
       todos_of_the_day: "Dagens att göra",
@@ -264,15 +289,34 @@ const translations = {
       Alert_Cancel: "Avbryt",
       Alert_Confirm_Delete: "Ja, radera det!",
       Alert_Confirm_Edit: "Ja, redigera!",
+       // TimePicke.js
+       TimePicker_Select_a_due_time: "Välj en förfallotid",//a
+       TimePicker_Selected_Time: "Vald Tid",//a
+       TimePicker_Select_Time: "Välj Tid",//a
+       TimePicker_Confirm: "Bekräfta",//a
+       TimePicker_Cancel: "Avbryt",//a
+       TimePicker_Hours: "Timmar",//a
+       TimePicker_Minutes: "Minuter",//a
+      // Reminder time options
+      reminderTime: {
+        _5_minutes_before: "5 minuter innan",
+        _10_minutes_before: "10 minuter innan",
+        _30_minutes_before: "30 minuter innan",
+        _1_hour_before: "1 timme innan",
+        _2_hours_before: "2 timmar innan",
+        _6_hours_before: "6 timmar innan",
+        _1_day_before: "1 dag innan",
+        _1_week_before: "1 vecka innan",
+      },
+      Close:"Stäng",
+       // NotificationUtils.js
+       Notification_1: "Din uppgift förföll för",
+       Notification_2: "Din uppgift förfaller om",
 
 
-      // Filter
-      All: "Allt",
-      Today: "Idag",
-      Tomorrow: "Imorgon",
-      Next_Days: "Nästa Dag",
-      Past_Days: "Tidigare Dag",
-      Completed: "Slutförda",
+
+
+      
       // Settings
       Settings: "Inställningar",
       Language: "Språk",
@@ -291,14 +335,7 @@ const translations = {
       // Toast
       Toast_Title: "ToDo Raderad",
       Toast_Message: "Din ToDo har tagits bort.",
-      // TimePicke.js
-      TimePicker_Select_a_due_time: "Välj en förfallotid",//a
-      TimePicker_Selected_Time: "Vald Tid",//a
-      TimePicker_Select_Time: "Välj Tid",//a
-      TimePicker_Confirm: "Bekräfta",//a
-      TimePicker_Cancel: "Avbryt",//a
-      TimePicker_Hours: "Timmar",//a
-      TimePicker_Minutes: "Minuter",//a
+     
       // Reminder
       "1 day before": "1 dag före",
       "1 hour before": "1 timme före",
@@ -371,6 +408,29 @@ const translations = {
       Alert_Cancel: "Abbrechen",
       Alert_Confirm_Delete: "Ja, löschen!",
       Alert_Confirm_Edit: "Ja, bearbeiten!",
+      Congratulations: "Herzlichen Glückwunsch!",
+      // TimePicke.js
+      TimePicker_Select_a_due_time: "Wähle eine Fälligkeitszeit",
+      TimePicker_Selected_Time: "Ausgewählte Zeit",
+      TimePicker_Select_Time: "Zeit auswählen",
+      TimePicker_Confirm: "Bestätigen",
+      TimePicker_Cancel: "Abbrechen",
+      TimePicker_Hours: "Stunden",
+      TimePicker_Minutes: "Minuten",
+      // Reminder time options
+      reminderTime: {
+        _5_minutes_before: "5 Minuten vorher",
+        _10_minutes_before: "10 Minuten vorher",
+        _30_minutes_before: "30 Minuten vorher",
+        _1_hour_before: "1 Stunde vorher",
+        _2_hours_before: "2 Stunden vorher",
+        _6_hours_before: "6 Stunden vorher",
+        _1_day_before: "1 Tag vorher",
+        _1_week_before: "1 Woche vorher",
+      },
+      Close:"Schließen",
+      Notification_1: "Deine Aufgabe war fällig in",
+      Notification_2: "Deine Aufgabe ist fällig in",
 
       // Filter
       All: "Alle",
@@ -397,14 +457,7 @@ const translations = {
       // Toast
       Toast_Title: "ToDo Gelöscht",
       Toast_Message: "Deine ToDo wurde gelöscht.",
-      // TimePicke.js
-      TimePicker_Select_a_due_time: "Wähle eine Fälligkeitszeit",
-      TimePicker_Selected_Time: "Ausgewählte Zeit",
-      TimePicker_Select_Time: "Zeit auswählen",
-      TimePicker_Confirm: "Bestätigen",
-      TimePicker_Cancel: "Abbrechen",
-      TimePicker_Hours: "Stunden",
-      TimePicker_Minutes: "Minuten",
+      
       // Reminder
       "1 day before": "1 Tag vorher",
       "1 hour before": "1 Stunde vorher",

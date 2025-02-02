@@ -16,8 +16,6 @@ const TimePicker = ({ setDueTime, defaultTime }) => {
   },[defaultTime, setDueTime])
 
   const handleConfirm = () => {
-    // Kullanıcının seçtiği saat ve dakika bilgisi
-    const selectedTime = `${hours}:${minutes}`; // Sadece saat ve dakika
     
     // Moment.js ile yerel zamanı oluşturuyoruz (sadece saat ve dakika bilgisiyle)
     const localTime = moment()
