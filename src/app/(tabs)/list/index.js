@@ -156,7 +156,7 @@ const TodoBoardScreen = () => {
                 </ScrollView>
               ) : (
                 <View className="items-center mt-4">
-                  <Text className="text-gray-500 text-center">{completedTodosMessage}</Text>
+                  <Text className="text-gray-500 text-start w-full">{completedTodosMessage}</Text>
                 </View>
               )}
             </View>

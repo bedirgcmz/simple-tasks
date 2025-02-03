@@ -62,13 +62,103 @@ export const TodoListProvider = ({ children }) => {
   const [language, setLanguage] = useState(deviceLanguage || "en");
   const [notificationRedirect, setNotificationRedirect] = useState(null); // 📌 Bildirim yönlendirme durumu
   const [username, setUsername] = useState("");
+  
 
   const t = (key) => translations[language][key] || key;
+
+
+    //Todlarin kategorilerini dile gore degistirme
+    const categories = {
+      en: [
+        "School",
+        "Finance",
+        "Shopping",
+        "Family",
+        "Travel",
+        "Health",
+        "Home",
+        "Friends",
+        "Work",
+        "Fun",
+        "Others",
+      ],
+      tr: [
+        "Okul",
+        "Finans",
+        "Alışveriş",
+        "Aile",
+        "Seyahat",
+        "Sağlık",
+        "Ev",
+        "Arkadaşlar",
+        "İş",
+        "Eğlence",
+        "Diğerleri",
+      ],
+      sv: [
+        "Skola",
+        "Ekonomi",
+        "Shopping",
+        "Familj",
+        "Resa",
+        "Hälsa",
+        "Hem",
+        "Vänner",
+        "Arbete",
+        "Nöje",
+        "Övrigt",
+      ],
+      de: [
+        "Schule",
+        "Finanzen",
+        "Einkaufen",
+        "Familie",
+        "Reisen",
+        "Gesundheit",
+        "Zuhause",
+        "Freunde",
+        "Arbeit",
+        "Spaß",
+        "Sonstiges",
+      ],
+    };
+    const translateTodosCategories = async (pLang) => {
+      try {
+        const translatedTodos = todos.map(todo => {
+          // Eski kategoriyi bul
+          const oldCategory = todo.category;
+          
+          // Yeni dildeki karşılığını bul
+          let newCategory = oldCategory;
+    
+          Object.keys(categories).forEach(lang => {
+            const index = categories[lang].indexOf(oldCategory);
+            if (index !== -1) {
+              newCategory = categories[pLang][index]; // Yeni dildeki karşılık
+            }
+          });
+    
+          return { ...todo, category: newCategory };
+        });
+    
+        // AsyncStorage'a kaydet
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(translatedTodos));
+    
+        // State'i güncelle
+        if (todos.length > 0) {
+          setTodos(translatedTodos);
+      }
+      } catch (error) {
+        console.error("Error translating categories:", error);
+      }
+    };
+
+
   const initialTodo = {
     id: '0',
     title: 'Welcome Simple Tasks',
     description: 'Lets create new ToDos. This is your first ToDo!',
-    category: t("Others"),
+    category: categories[deviceLanguage]?.[10] || "Others",
     status: 'pending',
     createdAt: moment().format('YYYY-MM-DD'),
     dueDate: moment().add(7, 'days').format('YYYY-MM-DD'), 
@@ -79,17 +169,33 @@ export const TodoListProvider = ({ children }) => {
 
   const loadTodos = async () => {
     try {
-      const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
-      if (storedTodos) {
-        setTodos(JSON.parse(storedTodos));
-      } else {
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([initialTodo]));
-        setTodos([initialTodo]);
-      }
+        const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
+
+        if (storedTodos) {
+            setTodos(JSON.parse(storedTodos));
+        } else {
+            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([initialTodo]));
+            setTodos([initialTodo]);
+        }
     } catch (error) {
-      console.error('Error loading todos:', error);
+        console.error('❌ Error loading todos:', error);
     }
-  };
+};
+
+
+  // const loadTodos = async () => {
+  //   try {
+  //     const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
+  //     if (storedTodos) {
+  //       setTodos(JSON.parse(storedTodos));
+  //     } else {
+  //       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([initialTodo]));
+  //       setTodos([initialTodo]);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error loading todos:', error);
+  //   }
+  // };
 
   const saveTodos = async (updatedTodos) => {
     try {
@@ -182,94 +288,11 @@ export const TodoListProvider = ({ children }) => {
   };
 
 
-  //Todlarin kategorilerini dile gore degistirme
-  const categories = {
-    en: [
-      "School",
-      "Finance",
-      "Shopping",
-      "Family",
-      "Travel",
-      "Health",
-      "Home",
-      "Friends",
-      "Work",
-      "Fun",
-      "Others",
-    ],
-    tr: [
-      "Okul",
-      "Finans",
-      "Alışveriş",
-      "Aile",
-      "Seyahat",
-      "Sağlık",
-      "Ev",
-      "Arkadaşlar",
-      "İş",
-      "Eğlence",
-      "Diğerleri",
-    ],
-    sv: [
-      "Skola",
-      "Ekonomi",
-      "Shopping",
-      "Familj",
-      "Resa",
-      "Hälsa",
-      "Hem",
-      "Vänner",
-      "Arbete",
-      "Nöje",
-      "Övrigt",
-    ],
-    de: [
-      "Schule",
-      "Finanzen",
-      "Einkaufen",
-      "Familie",
-      "Reisen",
-      "Gesundheit",
-      "Zuhause",
-      "Freunde",
-      "Arbeit",
-      "Spaß",
-      "Sonstiges",
-    ],
-  };
-  const translateTodosCategories = async (pLang) => {
-    try {
-      const translatedTodos = todos.map(todo => {
-        // Eski kategoriyi bul
-        const oldCategory = todo.category;
-        
-        // Yeni dildeki karşılığını bul
-        let newCategory = oldCategory;
-  
-        Object.keys(categories).forEach(lang => {
-          const index = categories[lang].indexOf(oldCategory);
-          if (index !== -1) {
-            newCategory = categories[pLang][index]; // Yeni dildeki karşılık
-          }
-        });
-  
-        return { ...todo, category: newCategory };
-      });
-  
-      // AsyncStorage'a kaydet
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(translatedTodos));
-  
-      // State'i güncelle
-      setTodos(translatedTodos);
-    } catch (error) {
-      console.error("Error translating categories:", error);
-    }
-  };
-
   useEffect(() => {
-    loadTodos();
-    setUsername(t("Guest"))
-    loadUsername();
+    loadTodos().then(() => {
+      setUsername(t("Guest"));
+      loadUsername();
+  });
   }, []);
 
   useEffect(() => {

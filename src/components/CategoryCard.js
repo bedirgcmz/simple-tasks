@@ -63,7 +63,6 @@ const CategoryCard = ({ category, completed, total, percentage }) => {
         // İngilizce karşılığına göre rengi ayarla
         setBgColor(categoryColors[categoryKey] || "bg-default");
       }, [category]);
-      console.log(category);
 
   return (
     <TouchableOpacity onPress={() => router.push({ pathname: `/filter`, params: { from: category } })}  className={`items-center justify-between py-2 rounded-lg mb-4 shadow-md border border-[#373f51] w-24 h-28 mr-4 mt-2 ${bgColor}`}>

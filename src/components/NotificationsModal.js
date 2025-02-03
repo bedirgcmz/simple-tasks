@@ -83,7 +83,7 @@ const NotificationModal = () => {
       onRequestClose={() => setShowModal(false)}
     >
       <View className="flex-1 bg-black/50 justify-center items-center">
-        <View className="bg-[#d7c8f3] w-4/5 pt-4 pb-12 rounded-lg">
+        <View className="bg-[#d7c8f3] w-4/5 pt-4 pb-16 rounded-lg">
           <View className="items-center mb-4  px-4 ">
             <Ionicons name="notifications" size={50} color="#6a0dad" />
             <Text className="text-lg font-bold text-center mt-2">

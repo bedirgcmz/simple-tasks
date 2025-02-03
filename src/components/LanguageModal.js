@@ -22,7 +22,6 @@ const LanguageModal = ({ visible, onClose }) => {
   };
 
   const changeUserName = () => {
-    console.log(username);
     updateUsername(username);
     setIsEnableUsername(false)
   }
@@ -40,11 +39,12 @@ const LanguageModal = ({ visible, onClose }) => {
               <Ionicons name="settings" size={18} color="white" />
             </View>
             <View className=" justify-between items-start w-full mb-8">
-              <Text className="text-sm font-bold text-white mb-2">{t("Your_Name")}:</Text>
+              {/* <Text className="text-sm font-bold text-white mb-2">{t("Your_Name")}:</Text> */}
+              <FontAwesome name="user-circle-o" size={24} color="white"/>
               <View className="w-full flex-row justify-between items-center">
                 <TextInput placeholder={t("Type_Your_Name")}
                 placeholderTextColor="#6c757d"
-                className={`text-white w-4/5 pl-0 border-gray-600 ${isEnableUsername ? "border border-blue-600 px-2": ""} py-1 rounded-md`}
+                className={`text-white w-4/5 pl-0 mt-2 border-gray-600 ${isEnableUsername ? "border border-blue-600 px-2": ""} py-1 rounded-md`}
                     value={username}
                     onChangeText={setUsername}
                     editable={isEnableUsername}
