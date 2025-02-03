@@ -181,11 +181,102 @@ export const TodoListProvider = ({ children }) => {
     }
   };
 
+
+  //Todlarin kategorilerini dile gore degistirme
+  const categories = {
+    en: [
+      "School",
+      "Finance",
+      "Shopping",
+      "Family",
+      "Travel",
+      "Health",
+      "Home",
+      "Friends",
+      "Work",
+      "Fun",
+      "Others",
+    ],
+    tr: [
+      "Okul",
+      "Finans",
+      "Alışveriş",
+      "Aile",
+      "Seyahat",
+      "Sağlık",
+      "Ev",
+      "Arkadaşlar",
+      "İş",
+      "Eğlence",
+      "Diğerleri",
+    ],
+    sv: [
+      "Skola",
+      "Ekonomi",
+      "Shopping",
+      "Familj",
+      "Resa",
+      "Hälsa",
+      "Hem",
+      "Vänner",
+      "Arbete",
+      "Nöje",
+      "Övrigt",
+    ],
+    de: [
+      "Schule",
+      "Finanzen",
+      "Einkaufen",
+      "Familie",
+      "Reisen",
+      "Gesundheit",
+      "Zuhause",
+      "Freunde",
+      "Arbeit",
+      "Spaß",
+      "Sonstiges",
+    ],
+  };
+  const translateTodosCategories = async (pLang) => {
+    try {
+      const translatedTodos = todos.map(todo => {
+        // Eski kategoriyi bul
+        const oldCategory = todo.category;
+        
+        // Yeni dildeki karşılığını bul
+        let newCategory = oldCategory;
+  
+        Object.keys(categories).forEach(lang => {
+          const index = categories[lang].indexOf(oldCategory);
+          if (index !== -1) {
+            newCategory = categories[pLang][index]; // Yeni dildeki karşılık
+          }
+        });
+  
+        return { ...todo, category: newCategory };
+      });
+  
+      // AsyncStorage'a kaydet
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(translatedTodos));
+  
+      // State'i güncelle
+      setTodos(translatedTodos);
+    } catch (error) {
+      console.error("Error translating categories:", error);
+    }
+  };
+
   useEffect(() => {
     loadTodos();
     setUsername(t("Guest"))
     loadUsername();
   }, []);
+
+  useEffect(() => {
+    translateTodosCategories(language);
+  }, [language]);
+  
+
 
    // 📌 **Bildirim Dinleyiciyi Burada Kullan**
    useNotificationListener(setNotificationRedirect);
@@ -215,7 +306,9 @@ export const TodoListProvider = ({ children }) => {
     setUsername,
     loadUsername,
     updateUsername,
-    STORAGE_KEY
+    STORAGE_KEY,
+    translateTodosCategories,
+    categories
   };
 
   return <TodoListContext.Provider value={value}>{children}</TodoListContext.Provider>;

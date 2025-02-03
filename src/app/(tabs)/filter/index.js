@@ -7,17 +7,18 @@ import FilterByCategory from '../../../components/FilterByCategory';
 import TodoDoneAnimation from '../../../components/TodoDoneAnimation';
 
 const FilterTodosScreen = () => {
-  const { todos } = useTodoListContext();
+  const { todos, language, categories } = useTodoListContext();
   const { from  } = useLocalSearchParams();
 const categoryNames = Array.from(new Set(todos.map((item) => item.category)));
-const [selectedCategory, setSelectedCategory] = useState("")
+const [selectedCategory, setSelectedCategory] = useState("All")
 
 useEffect(() => {
-  if (from) {
+  if (from && categories[language]?.includes(from)) {
     setSelectedCategory(from);
+  } else {
+    setSelectedCategory("All"); 
   }
-}, [from]);
-
+}, [from, language]); 
 
 let filteredTodos;
 if (selectedCategory === "All") {
