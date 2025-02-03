@@ -85,14 +85,25 @@ const translations = {
       // NotificationUtils.js
       Notification_1: "Your task was due in",
       Notification_2: "Your task is due in",
-
+      Notification_modal_1: "You have ToDo for today!",
+      Notification_modal_2: "Number of ToDo waiting for you today:",
+      Notification_modal_3: "Remind",
+      Notification_modal_4: "Dismiss",
+      Notification_modal_5: "See today's ToDos and 'Dismiss'!",
 
 
       
          
       // Settings
       Settings: "Settings",
-      Language: "Language",
+      Language: "Languages",
+      Your_Name: "Your Name",
+      Guest:"Guest",
+      Type_Your_Name: "Your name..",
+      Exit_Setting: "Exit Settings",
+
+
+
       // Language
       English: "English",
       Turkish: "Turkish",
@@ -202,11 +213,21 @@ const translations = {
       // NotificationUtils.js
       Notification_1: "Görevinizin son tarihi şuydu:",
       Notification_2: "Görevinizin son tarihi:",
-
+      Notification_modal_1: "Bugün için bir görevin var!",
+      Notification_modal_2: "Bugün seni bekleyen görev sayısı:",
+      Notification_modal_3: "Hatırlat",
+      Notification_modal_4: "Kapat",
+      Notification_modal_5: "Bugünün görevlerini gör ve 'Kapat'!",
      
       // Settings
       Settings: "Ayarlar",
-      Language: "Dil",
+      Language: "Diller",
+      Your_Name: "Adınız",
+      Guest: "Misafir",
+      Type_Your_Name: "Adınızı yazınız..",
+      Exit_Setting: "Ayarlardan Çık",
+
+
       // Language
       English: "İngilizce",
       Turkish: "Türkçe",
@@ -312,14 +333,24 @@ const translations = {
        // NotificationUtils.js
        Notification_1: "Din uppgift förföll för",
        Notification_2: "Din uppgift förfaller om",
+       Notification_modal_1: "Du har en uppgift för idag!",
+       Notification_modal_2: "Antal uppgifter som väntar på dig idag:",
+       Notification_modal_3: "Påminn",
+       Notification_modal_4: "Avfärda",
+       Notification_modal_5: "Se dagens uppgifter och 'Avfärda'!",
+       //settings
+       Settings: "Inställningar",
+       Language: "Språk",
+       Your_Name: "Ditt Namn",
+       Guest: "Gäst",
+       Type_Your_Name: "Skriv ditt namn..",
+       Exit_Setting: "Stäng Inställningar",
 
 
 
 
-      
-      // Settings
-      Settings: "Inställningar",
-      Language: "Språk",
+
+
       // Language
       English: "Engelska",
       Turkish: "Turkiska",
@@ -431,17 +462,24 @@ const translations = {
       Close:"Schließen",
       Notification_1: "Deine Aufgabe war fällig in",
       Notification_2: "Deine Aufgabe ist fällig in",
-
-      // Filter
-      All: "Alle",
-      Today: "Heute",
-      Tomorrow: "Morgen",
-      Next_Days: "Nächste Tage",
-      Past_Days: "Vergangene Tage",
-      Completed: "Abgeschlossene",
+      Notification_modal_1: "Du hast eine Aufgabe für heute!",
+      Notification_modal_2: "Anzahl der Aufgaben, die heute auf dich warten:",
+      Notification_modal_3: "Erinnern",
+      Notification_modal_4: "Verwerfen",
+      Notification_modal_5: "Sieh dir die Aufgaben für heute an und 'Verwerfen'!",
       // Settings
       Settings: "Einstellungen",
-      Language: "Sprache",
+      Language: "Sprachen",
+      Your_Name: "Dein Name",
+      Guest: "Gast",
+      Type_Your_Name: "Gib deinen Namen ein..",
+      Exit_Setting: "Einstellungen verlassen",
+      
+
+
+
+
+
       // Language
       English: "Englisch",
       Turkish: "Türkisch",

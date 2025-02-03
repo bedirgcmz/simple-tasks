@@ -7,20 +7,9 @@ import { router } from "expo-router";
 
 
 const NotificationModal = () => {
-  const { todos } = useTodoListContext(); // Context'ten todos alınıyor
+  const { todos, t } = useTodoListContext(); // Context'ten todos alınıyor
   const [showModal, setShowModal] = useState(false);
   const STORAGE_KEY = 'reminder_time';
-
-  // For clearing asyncstorage..
-  // const clearReminder = async () => {
-  //   try {
-  //     await AsyncStorage.removeItem('daily_notification');
-  //     console.log('Reminder cleared from AsyncStorage');
-  //   } catch (error) {
-  //     console.error('Error clearing reminder:', error);
-  //   }
-  // };
-  // clearReminder();
 
   const today = new Date().toISOString().split('T')[0]; // Bugünün tarihi
 
@@ -98,12 +87,11 @@ const NotificationModal = () => {
           <View className="items-center mb-4  px-4 ">
             <Ionicons name="notifications" size={50} color="#6a0dad" />
             <Text className="text-lg font-bold text-center mt-2">
-              You have ToDo for today!
+            {t("Notification_modal_1")}
             </Text>
           </View>
           <Text className="text-sm text-gray-600 text-center mb-6  px-4 ">
-            There {todayToDos.length === 1 ? 'is' : 'are'} <Text className="font-bold text-md">{todayToDos.length}</Text> ToDo
-            {todayToDos.length > 1 ? 's' : ''} waiting for you today.
+          {t("Notification_modal_2")} <Text className="font-bold text-md">{todayToDos.length}</Text> 
           </Text>
           <View className="flex-row justify-between  px-4 ">
             <TouchableOpacity
@@ -111,7 +99,7 @@ const NotificationModal = () => {
               onPress={remindMeAgain}
             >
               <Text className="text-white text-center font-semibold">
-                Remind
+              {t("Notification_modal_3")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -119,7 +107,7 @@ const NotificationModal = () => {
               onPress={doNotRemind}
             >
               <Text className="text-white text-center font-semibold">
-                Dismiss
+              {t("Notification_modal_4")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -130,7 +118,7 @@ const NotificationModal = () => {
                 doNotRemind()
               }}
             className="flex-row justify-center items-center bg-[#6a0dad] mt-4 p-2 w-full rounded-b-lg  border-gray-400 absolute bottom-0 left-0 w-full">
-               <Text className="text-[#d7c8f3] text-center font-semibold pr-3"> See today's ToDos and 'Dismiss'!
+               <Text className="text-[#d7c8f3] text-center font-semibold pr-3"> {t("Notification_modal_5")}
                </Text>
                <Ionicons name="caret-forward-outline" size={20} color="#d7c8f3" />
               </TouchableOpacity>

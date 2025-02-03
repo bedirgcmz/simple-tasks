@@ -57,13 +57,13 @@ export const TodoListProvider = ({ children }) => {
   const [showCongrats, setShowCongrats] = useState(false);
   const [dueTime, setDueTime] = useState('00:00');
   const STORAGE_KEY = 'user_todos';
+  const STORAGE_USERNAME_KEY = "user_username";
   const deviceLanguage = Localization.locale.split("-")[0];
   const [language, setLanguage] = useState(deviceLanguage || "en");
   const [notificationRedirect, setNotificationRedirect] = useState(null); // 📌 Bildirim yönlendirme durumu
-
+  const [username, setUsername] = useState("");
 
   const t = (key) => translations[language][key] || key;
-
   const initialTodo = {
     id: '0',
     title: 'Welcome Simple Tasks',
@@ -155,10 +155,36 @@ export const TodoListProvider = ({ children }) => {
       }, 1000); // 1 saniye gecikme ile yeni bildirimi planla
     }
   };
-  
+
+
+  //Username islemleri
+  const loadUsername = async () => {
+    try {
+      const storedUsername = await AsyncStorage.getItem(STORAGE_USERNAME_KEY);
+      if (storedUsername) {
+        setUsername(storedUsername);
+      } else {
+        // İlk kez açılıyorsa, varsayılan kullanıcı adı olarak "Guest" ata
+        await AsyncStorage.setItem(STORAGE_USERNAME_KEY, t("Guest"));
+        setUsername(t("Guest"));
+      }
+    } catch (error) {
+      console.error("Error loading username:", error);
+    }
+  };
+  const updateUsername = async (newUsername) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_USERNAME_KEY, newUsername); // AsyncStorage'a kaydet
+      setUsername(newUsername); // State'i güncelle
+    } catch (error) {
+      console.error("Error saving username:", error);
+    }
+  };
 
   useEffect(() => {
     loadTodos();
+    setUsername(t("Guest"))
+    loadUsername();
   }, []);
 
    // 📌 **Bildirim Dinleyiciyi Burada Kullan**
@@ -175,6 +201,7 @@ export const TodoListProvider = ({ children }) => {
 
   const value = {
     todos,
+    setTodos,
     addTodo,
     deleteTodo,
     updateTodo,
@@ -183,7 +210,12 @@ export const TodoListProvider = ({ children }) => {
     setShowCongrats,
     language, 
     setLanguage, 
-    t
+    t,
+    username, 
+    setUsername,
+    loadUsername,
+    updateUsername,
+    STORAGE_KEY
   };
 
   return <TodoListContext.Provider value={value}>{children}</TodoListContext.Provider>;

@@ -6,24 +6,22 @@ import { useTodoListContext } from "../context/todos-context";
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Header = () => {
-  const { t } = useTodoListContext();
+  const { t, username } = useTodoListContext();
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <View className="flex-row items-center justify-between w-full px-4 py-2 ">
-    <View className="flex-row items-center justify-start space-x-3 flex-1">
-      {/* <Image
-        source={require("../../assets/images/user.png")}
-        className="h-8 w-8"
-      /> */}
+    <View className="flex-row items-center justify-start space-x-2 flex-1">
       {/* <Button title={t("change_language")} onPress={() => setModalVisible(true)} /> */}
-      <TouchableOpacity onPress={() => setModalVisible(true)} className=" p-1 rounded-full border border-white">
-      <Ionicons name="language" size={20} color="white" />
+      <TouchableOpacity onPress={() => setModalVisible(true)} className=" p-1 rounded-full bordr border-white">
+      {/* <Ionicons name="language" size={20} color="white" /> */}
+      <Ionicons name="settings-sharp" size={22} color="white" />
       </TouchableOpacity>
 
     <LanguageModal visible={modalVisible} onClose={() => setModalVisible(false)} />
       <View className="flex-1items-center justify-start">
         <Text className="text-white">{t("welcome")}!</Text>
-        <Text className="text-[12px] text-white font-bold mt-[0px]">{t("Your_history")}</Text>
+        <Text className="text-[12px] text-white font-bold mt-[0px]">{username}</Text>
+        {/* <Text className="text-[12px] text-white font-bold mt-[0px]">{t("Your_history")}</Text> */}
       </View>
     </View>
       <View>

@@ -1,75 +1,180 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
+
+
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Modal, StatusBar, TextInput } from "react-native";
 import { useTodoListContext } from "../context/todos-context";
+import { LinearGradient } from "expo-linear-gradient";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LanguageModal = ({ visible, onClose }) => {
-  const { setLanguage, t } = useTodoListContext();
+  const { setLanguage, setTodos, t, username, setUsername, updateUsername, language, todos, STORAGE_KEY } = useTodoListContext();
+  const [isEnableUsername, setIsEnableUsername] = useState(false)
+  const categories = {
+    en: [
+      "School",
+      "Finance",
+      "Shopping",
+      "Family",
+      "Travel",
+      "Health",
+      "Home",
+      "Friends",
+      "Work",
+      "Fun",
+      "Others",
+    ],
+    tr: [
+      "Okul",
+      "Finans",
+      "Alışveriş",
+      "Aile",
+      "Seyahat",
+      "Sağlık",
+      "Ev",
+      "Arkadaşlar",
+      "İş",
+      "Eğlence",
+      "Diğerleri",
+    ],
+    sv: [
+      "Skola",
+      "Ekonomi",
+      "Shopping",
+      "Familj",
+      "Resa",
+      "Hälsa",
+      "Hem",
+      "Vänner",
+      "Arbete",
+      "Nöje",
+      "Övrigt",
+    ],
+    de: [
+      "Schule",
+      "Finanzen",
+      "Einkaufen",
+      "Familie",
+      "Reisen",
+      "Gesundheit",
+      "Zuhause",
+      "Freunde",
+      "Arbeit",
+      "Spaß",
+      "Sonstiges",
+    ],
+  };
+
+const translateTodosCategories = async (pLang) => {
+  try {
+    const translatedTodos = todos.map(todo => {
+      // Eski kategoriyi bul
+      const oldCategory = todo.category;
+      
+      // Yeni dildeki karşılığını bul
+      let newCategory = oldCategory;
+
+      Object.keys(categories).forEach(lang => {
+        const index = categories[lang].indexOf(oldCategory);
+        if (index !== -1) {
+          newCategory = categories[pLang][index]; // Yeni dildeki karşılık
+        }
+      });
+
+      return { ...todo, category: newCategory };
+    });
+
+    // AsyncStorage'a kaydet
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(translatedTodos));
+
+    // State'i güncelle
+    setTodos(translatedTodos);
+  } catch (error) {
+    console.error("Error translating categories:", error);
+  }
+};
+
 
   const changeLanguage = (lang) => {
+    // alert(t("language_changed"));
     setLanguage(lang);
     onClose(); // Modalı kapat
+    translateTodosCategories(lang);
   };
+
+  const changeUserName = () => {
+    console.log(username);
+    updateUsername(username);
+    setIsEnableUsername(false)
+  }
 
   return (
     <Modal animationType="slide" transparent visible={visible}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.title}>{t("change_language")}</Text>
+      <View className="flex-1 bg-black/50 justify-center items-start">
+        <View className="w-3/5 h-full bg-white items-center">
+      <LinearGradient
+    colors={["#004e64", "#002855", "#3a0ca3"]}
+      style={{ flex: 1, padding: 18, justifyContent: "start", width: "100%", alignItems: "center" }}
+          >
+            <View className="flex-row justify-between items-center w-full mb-6 border-b-2 border-white pb-2">
+              <Text className="text-lg font-bold text-white">{t("Settings")}</Text>
+              <Ionicons name="settings" size={18} color="white" />
+            </View>
+            <View className=" justify-between items-start w-full mb-8">
+              <Text className="text-sm font-bold text-white mb-2">{t("Your_Name")}:</Text>
+              <View className="w-full flex-row justify-between items-center">
+                <TextInput placeholder={t("Type_Your_Name")}
+                placeholderTextColor="#6c757d"
+                className={`text-white w-4/5 pl-0 border-gray-600 ${isEnableUsername ? "border border-blue-600 px-2": ""} py-1 rounded-md`}
+                    value={username}
+                    onChangeText={setUsername}
+                    editable={isEnableUsername}
+                    />
+                  {/* <Ionicons name="checkmark-sharp" size={22} color="white" /> */}
+                  {
+                    isEnableUsername ? (
+                      <TouchableOpacity onPress={changeUserName} className="ml-2">
+                        <MaterialCommunityIcons name="close" size={22} color="white" />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity onPress={() => setIsEnableUsername(true)} className="ml-2">
+                        <MaterialCommunityIcons name="pencil" size={22} color="white" />
+                      </TouchableOpacity>
+                    )
+                  }
+                  {/* <FontAwesome name="edit" size={20} color="white" /> */}
+              </View>
+            </View>
 
-          {["en", "tr", "sv", "de"].map((lang) => (
-            <TouchableOpacity key={lang} onPress={() => changeLanguage(lang)} style={styles.button}>
-              <Text style={styles.buttonText}>{lang.toUpperCase()}</Text>
-            </TouchableOpacity>
-          ))}
+              <Text className="text-start w-full font-bold text-white mb-2">{t("Language")}</Text>
+            <View className="flex-row justify-between w-full">
+              {["en", "tr", "sv", "de"].map((lang) => (
+                <TouchableOpacity 
+                  key={lang} 
+                  onPress={() => changeLanguage(lang)}
+                  className="bg-[#023047] px-2 py-1 rounded items-center my-1 relative"
+                >
+                  <Text className="text-white text-base">{lang.toUpperCase()}</Text>
+                  {language === lang && <View className="h-[6px] w-[6px] bg-[#f07167] absolute top-0 right-0 rounded-full">
+                  </View>}
+                </TouchableOpacity>
+              ))}
+            </View>
 
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>X</Text>
+          <TouchableOpacity onPress={onClose} className="mt-auto mb-8 px-2 py-1 w-full border border-gray-500 rounded-lg">
+            <Text className="text-lg font-bold text-white text-center">{t("Exit_Setting")}</Text>
           </TouchableOpacity>
+        </LinearGradient>
         </View>
       </View>
+      <StatusBar 
+      style="light"
+      backgroundColor="transparent"
+      translucent={true} />
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContainer: {
-    width: "80%",
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  button: {
-    backgroundColor: "#2196F3",
-    padding: 10,
-    borderRadius: 5,
-    width: "100%",
-    alignItems: "center",
-    marginVertical: 5,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  closeButton: {
-    marginTop: 10,
-    padding: 10,
-  },
-  closeButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});
 
 export default LanguageModal;

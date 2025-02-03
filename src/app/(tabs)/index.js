@@ -22,7 +22,8 @@ const HomeScreen = () => {
         </View>
         <Calender />
       </ScrollView>
-      <StatusBar style="light"
+      <StatusBar 
+      style="light"
        backgroundColor="transparent"
        translucent={true}
       />
