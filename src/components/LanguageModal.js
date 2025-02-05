@@ -1,13 +1,12 @@
 
 
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, StatusBar, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, Modal, StatusBar, TextInput, Linking } from "react-native";
 import { useTodoListContext } from "../context/todos-context";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LanguageModal = ({ visible, onClose }) => {
   const { setLanguage, setTodos, t, username, setUsername, updateUsername, language, todos, STORAGE_KEY, translateTodosCategories } = useTodoListContext();
@@ -24,6 +23,13 @@ const LanguageModal = ({ visible, onClose }) => {
   const changeUserName = () => {
     updateUsername(username);
     setIsEnableUsername(false)
+  }
+
+  const BuyMeACoffee = () => {
+    Linking.openURL("https://buymeacoffee.com/bedirgcmzr");
+  };
+
+  const BuyMeACoffe = () => {
   }
 
   return (
@@ -79,10 +85,20 @@ const LanguageModal = ({ visible, onClose }) => {
                 </TouchableOpacity>
               ))}
             </View>
+            <View className="mt-auto mb-8 w-full">
+              <TouchableOpacity
+                  onPress={BuyMeACoffee}
+                  className="mt-4 w-full rounded-lg p-1 bg-[#9c6644] mb-4 border border-gray-400 relative"
+                >
+                  <Text  className="text-[13px] text-center text-[#e6ccb2]">
+                    ☕  {t("Buy_Me")}
+                  </Text>
+                </TouchableOpacity>
+            <TouchableOpacity onPress={onClose} className=" px-2 py-1 w-full border border-gray-500 rounded-lg">
+              <Text className="text-lg font-bold text-white text-center">{t("Exit_Setting")}</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity onPress={onClose} className="mt-auto mb-8 px-2 py-1 w-full border border-gray-500 rounded-lg">
-            <Text className="text-lg font-bold text-white text-center">{t("Exit_Setting")}</Text>
-          </TouchableOpacity>
+            </View>
         </LinearGradient>
         </View>
       </View>

@@ -90,10 +90,6 @@ const translations = {
       Notification_modal_3: "Remind",
       Notification_modal_4: "Dismiss",
       Notification_modal_5: "See today's ToDos and 'Dismiss'!",
-
-
-      
-         
       // Settings
       Settings: "Settings",
       Language: "Languages",
@@ -102,6 +98,7 @@ const translations = {
       Type_Your_Name: "Your name..",
       Exit_Setting: "Exit Settings",
 
+      Buy_Me: "Buy Me A Coffee",
 
 
       // Language
@@ -218,7 +215,6 @@ const translations = {
       Notification_modal_3: "Hatırlat",
       Notification_modal_4: "Kapat",
       Notification_modal_5: "Bugünün görevlerini gör ve 'Kapat'!",
-     
       // Settings
       Settings: "Ayarlar",
       Language: "Diller",
@@ -226,6 +222,7 @@ const translations = {
       Guest: "Misafir",
       Type_Your_Name: "Adınızı yazınız..",
       Exit_Setting: "Ayarlardan Çık",
+      Buy_Me: "Bana bir kahve ısmarla!",
 
 
       // Language
@@ -345,6 +342,7 @@ const translations = {
        Guest: "Gäst",
        Type_Your_Name: "Skriv ditt namn..",
        Exit_Setting: "Stäng Inställningar",
+       Buy_Me: "Bjud mig på en kaffe!",
 
 
 
@@ -474,7 +472,7 @@ const translations = {
       Guest: "Gast",
       Type_Your_Name: "Gib deinen Namen ein..",
       Exit_Setting: "Einstellungen verlassen",
-      
+      Buy_Me: "Spendier mir einen Kaffee!",
 
 
 
