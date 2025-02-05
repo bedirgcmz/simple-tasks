@@ -172,7 +172,14 @@ export const TodoListProvider = ({ children }) => {
         const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
 
         if (storedTodos) {
-            setTodos(JSON.parse(storedTodos));
+            const parsedTodos = JSON.parse(storedTodos);
+            
+            if (Array.isArray(parsedTodos) && parsedTodos.length > 0) {
+                setTodos(parsedTodos);
+            } else {
+                await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([initialTodo]));
+                setTodos([initialTodo]);
+            }
         } else {
             await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([initialTodo]));
             setTodos([initialTodo]);
@@ -182,20 +189,6 @@ export const TodoListProvider = ({ children }) => {
     }
 };
 
-
-  // const loadTodos = async () => {
-  //   try {
-  //     const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
-  //     if (storedTodos) {
-  //       setTodos(JSON.parse(storedTodos));
-  //     } else {
-  //       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([initialTodo]));
-  //       setTodos([initialTodo]);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error loading todos:', error);
-  //   }
-  // };
 
   const saveTodos = async (updatedTodos) => {
     try {
