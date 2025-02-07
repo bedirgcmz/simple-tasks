@@ -1,22 +1,43 @@
 import * as Notifications from "expo-notifications";
 import moment from "moment-timezone"; // moment-timezone'ı kullandık
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { formatToShortDate } from "./date-utils";
 
 const STORAGE_KEY = "scheduledNotifications";
 
+// Notifications.addNotificationReceivedListener(async (notification) => {
+//   console.log("📩 Received Notification:", notification);
+  
+//   const notificationId = notification.request.identifier;
+  
+//   console.log(`❌ Canceling Notification: ${notificationId}`);
+  
+//   // Bildirimi Expo'dan tamamen kaldır
+//   await Notifications.cancelScheduledNotificationAsync(notificationId);
+// });
+// AsyncStorage'dan tüm bildirimleri silmek için
+
+
 Notifications.addNotificationReceivedListener(async (notification) => {
   console.log("📩 Received Notification:", notification);
-  
+
   const notificationId = notification.request.identifier;
-  
-  console.log(`❌ Canceling Notification: ${notificationId}`);
-  
+
   // Bildirimi Expo'dan tamamen kaldır
   await Notifications.cancelScheduledNotificationAsync(notificationId);
+
+  // Bildirim ID'sini AsyncStorage'dan sil
+  const storedNotifications = JSON.parse(await AsyncStorage.getItem(STORAGE_KEY)) || {};
+  delete storedNotifications[notificationId]; // İlgili bildirimi sil
+  console.log("sored bild in async storage:", storedNotifications);
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications)); // Güncellenmiş veriyi kaydet
 });
 
 
-export async function scheduleNotification(todo, t) {
+
+export async function scheduleNotification(todo, t, language) {
+// await AsyncStorage.removeItem(STORAGE_KEY);
+// console.log("Calismis olmali");
 
   if (!todo || !todo.dueDate || !todo.dueTime || !todo.reminderTime) {
     console.log("❌ Invalid todo data:", todo);
@@ -47,7 +68,7 @@ export async function scheduleNotification(todo, t) {
   try {
     // console.log("🛠 Creating moment object...");
     const localTimeZone = moment.tz.guess();
-    const todoDateTime = moment.tz(`${todo.dueDate} ${todo.dueTime}`, "YYYY-MM-DD HH:mm:ss", localTimeZone);
+    const todoDateTime = moment.tz(`${todo.dueDate.replace(/:/g, "-")} ${todo.dueTime}`, "YYYY-MM-DD HH:mm:ss", localTimeZone);
     const reminderTime = todoDateTime.subtract(reminderMinutes, "minutes");
 
     // console.log("🕒 Formatted Todo DateTime (Local):", todoDateTime.format("YYYY-MM-DD HH:mm:ss"));
@@ -55,25 +76,18 @@ export async function scheduleNotification(todo, t) {
     // console.log("⏳ Current Time (Local):", moment().format("YYYY-MM-DD HH:mm:ss"));
 
     const timeDiffSeconds = reminderTime.diff(moment(), "seconds");
-
+// console.log("hesaplanan hatirlatici saniyesi:", timeDiffSeconds);
     let notificationId;
     if (timeDiffSeconds <= 0) {
-      // console.log("⚠️ Reminder time is in the past or now. Sending immediate notification.");
-      notificationId = await Notifications.scheduleNotificationAsync({
-        content: {
-          title: todo.title,
-          body: `${t("Notification_1")} ${todo.dueDate.split("T")[0]} / ${todo.dueTime}`,
-          sound: "default",
-          data: { todoId: todo.id },
-        },
-        trigger: null, // Anında gönder
-      });
+      // ❌ Eğer zaman geçmişteyse, bildirimi göndermeyi iptal et
+      console.log("⚠️ Reminder time is in the past. Skipping notification.");
+      return;
     } else {
       // console.log(`🕒 Scheduling notification in ${timeDiffSeconds} seconds`);
       notificationId = await Notifications.scheduleNotificationAsync({
         content: {
           title: todo.title,
-          body: `${t("Notification_2")} ${todo.dueDate.split("T")[0]} / ${todo.dueTime}`,
+          body: `${t("Notification_2")}  ${formatToShortDate(todo.dueDate, language)} / ${todo.dueTime}`,
           sound: "default",
           data: { todoId: todo.id },
         },
@@ -83,6 +97,8 @@ export async function scheduleNotification(todo, t) {
           type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
         },
       });
+      // console.log("📌 Bildirim planlandı, ID:", notificationId);
+
     }
 
     // console.log("🔹 Kaydedilecek Notification ID:", notificationId, "for todo:", todo.id);

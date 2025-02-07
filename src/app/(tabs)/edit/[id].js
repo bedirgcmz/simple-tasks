@@ -19,6 +19,8 @@ import CustomRemindPicker from "../../../components/CustomRemindPicker";
 import FilterByCategory from "../../../components/FilterByCategory";
 import TimePicker from "../../../components/TimePicker";
 import { playCorrectSound } from "../../../utils/play-success-sound";
+import moment from "moment-timezone";
+
 
 const EditTodoPage = () => {
   const { id } = useLocalSearchParams();
@@ -31,7 +33,7 @@ const EditTodoPage = () => {
   const [title, setTitle] = useState(todo?.title || "");
   const [description, setDescription] = useState(todo?.description || "");
   const [category, setCategory] = useState(todo?.category || "");
-  const [dueDate, setDueDate] = useState(todo ? new Date(todo.dueDate) : new Date());
+  const [dueDate, setDueDate] = useState("");
   const [dueTime, setDueTime] = useState(todo?.dueTime || "");
   const [reminderTime, setReminderTime] = useState(todo?.reminderTime || "2 hours before");
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -42,7 +44,7 @@ const EditTodoPage = () => {
       setTitle(todo.title || "");
       setDescription(todo.description || "");
       setCategory(todo.category || "");
-      setDueDate(todo.dueDate ? new Date(todo.dueDate) : new Date());
+      setDueDate(todo.dueDate ? todo.dueDate : new Date());
       setDueTime(todo.dueTime || "");
       setReminderTime(todo.reminderTime || "2 hours before");
     }
@@ -126,7 +128,7 @@ const EditTodoPage = () => {
       title,
       description,
       category,
-      dueDate: dueDate.toISOString().split("T")[0],
+      dueDate,
       dueTime,
       reminderTime,
     };
@@ -136,6 +138,18 @@ const EditTodoPage = () => {
     alert(t("Alert_successfully"));
     router.push({ pathname: `/filter`, params: { from: category } });
   };
+
+  useEffect(() => {
+    // ':' ile ayırıcıyı '-' ile değiştiriyoruz
+    const formattedDate = todo.dueDate.replace(/:/g, "-");
+    const formattedDueDate = moment(dueDate).format("YYYY-MM-DD");
+
+    // Şimdi moment ile Date objesi oluşturabiliriz
+    const dateObject = moment(formattedDate, "YYYY-MM-DD").toDate();
+    setDueDate(dateObject)
+  },[id])
+  console.log(dueDate);
+
 
   return (
     <KeyboardAvoidingView
@@ -213,16 +227,27 @@ const EditTodoPage = () => {
                   onPress={() => {
                     Keyboard.dismiss();
                     setShowDatePicker(true);
+                    setDueDate(new Date());
                   }}
                   className="bg-[#d7c8f3] py-3 rounded-md mb-3"
                 >
                   <Text className="text-gray-700 text-center">
-                    {dueDate.toISOString().split("T")[0]}
+                    {/* {moment(dueDate).format("YYYY:MM:DD")} */}
+                    {
+                    !dueDate || typeof dueDate === "object" ? (
+                      <Text className="text-center">{t("Not_Yet_Selected")}</Text>
+                    ) : (
+                      <Text className="text-gray-700 text-center">
+                        {dueDate}
+                      </Text>
+                       
+                    )
+                  }
                   </Text>
                 </TouchableOpacity>
                 {showDatePicker && (
                   <DateTimePicker
-                    value={dueDate}
+                    value={ dueDate}
                     mode="date"
                     display="default"
                     style={{
@@ -232,7 +257,11 @@ const EditTodoPage = () => {
                     }}
                     onChange={(event, selectedDate) => {
                       setShowDatePicker(false);
-                      if (selectedDate) setDueDate(selectedDate);
+                      if (selectedDate) {
+                        // 📌 Seçilen tarih değerinin saatini sıfırla (gün kaymasını önler)
+                        const localDate = moment.tz(selectedDate, moment.tz.guess()).format("YYYY:MM:DD");
+                        setDueDate(localDate);
+                      };
                     }}
                   />
                 )}
@@ -251,13 +280,28 @@ const EditTodoPage = () => {
                 onValueChange={(itemValue) => setReminderTime(itemValue)}
               />
 
-              {/* ToDo Güncelle */}
-              <TouchableOpacity
-                onPress={handleUpdateTodo}
-                className="bg-red-400 py-4 rounded-md mt-6"
-              >
-                <Text className="text-white text-center font-bold">{t("Update")}</Text>
-              </TouchableOpacity>
+              <View className="flex-row justify-between">
+                {/* ToDo Güncelle */}
+                <TouchableOpacity
+                  onPress={handleUpdateTodo}
+                  className="bg-red-400 py-4 rounded-l-md mt-6 flex-1"
+                >
+                  <Text className="text-white text-center font-bold">{t("Update")}</Text>
+                </TouchableOpacity>
+                {/* Go Back */}
+                <TouchableOpacity
+                  onPress={() => {
+                    router.push(`/dynamicid/${todo.id}`)
+                    setDueDate(todo.dueDate)
+                    
+                  }
+                  }
+                  className="bg-[#0a2472] py-4 rounded-r-md mt-6"
+                >
+                  <Text className="text-white text-center font-bold px-6">{t("Alert_Cancel")}</Text>
+                </TouchableOpacity>
+              </View>
+                
             </View>
             <StatusBar style="light" backgroundColor="transparent" translucent />
           </ScrollView>

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,8 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  AppState
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTodoListContext } from "../../context/todos-context";
@@ -21,6 +22,7 @@ import FilterByCategory from "../../components/FilterByCategory";
 import TimePicker from "../../components/TimePicker";
 import LottieView from "lottie-react-native";
 import translations from "../../locales/translations"
+import moment from "moment-timezone";
 
 const AddTodoPage = () => {
   const { addTodo, t, language } = useTodoListContext();
@@ -28,7 +30,8 @@ const AddTodoPage = () => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [dueTime, setDueTime] = useState('12:00');
-  const [dueDate, setDueDate] = useState(new Date());
+  // const [dueDate, setDueDate] = useState(moment().startOf('day').toDate());
+  const [dueDate, setDueDate] = useState("");
   const [reminderTime, setReminderTime] = useState("2 hours before");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [opacity, setOpacity] = useState(0);
@@ -87,6 +90,25 @@ const AddTodoPage = () => {
       "Sonstiges",
     ],
   };
+
+  // Ugulama arka planda clisirken duedate eskik tarihte kalmasin, her acilista yenilensin diye isleyen useEffect
+  useEffect(() => {
+    const updateDate = () => {
+      // setDueDate(moment().startOf('day').toDate());
+    };
+  
+    // 📌 İlk açıldığında çalıştır
+    updateDate();
+  
+    // 📌 AppState ile arka plandan döndüğünde güncelle
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (nextAppState === "active") {
+        updateDate();
+      }
+    });
+  
+    return () => subscription.remove();
+  }, []);
  
   const handleReminderChange = (selectedLabel) => {
     let englishValue = "5 minutes before"; // Varsayılan değer
@@ -126,7 +148,8 @@ const handleAddTodo = () => {
     category,
     status: "pending",
     createdAt: new Date().toISOString(),
-    dueDate: new Date(dueDate).toISOString(),
+    dueDate,
+    // dueDate: new Date(dueDate).toISOString(),
     dueTime, 
     reminderTime,
     completedAt: "",
@@ -135,19 +158,26 @@ const handleAddTodo = () => {
   // console.log("Added new todo:", newTodo);
   addTodo(newTodo);
 
+  console.log("Eklenen todo bilgileri", newTodo);
   // State sıfırlama
   setTitle("");
   setDescription("");
   setCategory("");
-  setDueDate(new Date());
+  setDueDate("");
+  // setDueDate(moment().startOf('day').toDate());
   setDueTime('12:00');
   setReminderTime("5 minutes before"); // Varsayılan değeri sıfırla
 
   setTimeout(() => {
     router.push({ pathname: `/filter`, params: { from: category } });
-  }, 2000);
+  }, 1500);
 };
 
+
+const doneRefTit = useRef()
+const doneRefDec = useRef()
+const doneRefCat = useRef()
+const doneRefDat = useRef()
 
   const successRef = useRef()
   const playSuccess = () => {
@@ -183,27 +213,57 @@ const handleAddTodo = () => {
               </Text>
 
               {/* Başlık */}
-              <TextInput
-                placeholder={t("Title_input")}
-                placeholderTextColor="#6c757d"
-                value={title}
-                onChangeText={setTitle}
-                className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800"
-                // autoFocus
-                maxLength={60}
-              />
+              <View className="relative">
+                <TextInput
+                  placeholder={t("Title_input")}
+                  placeholderTextColor="#6c757d"
+                  value={title}
+                  onChangeText={setTitle}
+                  className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800 relative"
+                  // autoFocus
+                  maxLength={60}
+                />
+                {
+                  title !== "" &&
+                  <LottieView
+                  style={{ width: 27, height: 27, opacity: 1}}
+                  className="absolute right-0 top-[5px] z-40"
+                  source={require('../../../assets/data/done2.json')}
+                  ref={doneRefTit}
+                  loop={false}
+                  autoPlay={true}
+                  speed={2}
+                  />
+                }
+
+              </View>
               <Text className="text-gray-400 text-right text-[12px] mb-2">{title.length}/60</Text>
 
               {/* Açıklama */}
-              <TextInput
-                placeholder={t("Description_input")}
-                placeholderTextColor="#6c757d"
-                value={description}
-                onChangeText={setDescription}
-                className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800"
-                multiline
-                maxLength={200}
-              />
+              <View>
+                <TextInput
+                  placeholder={t("Description_input")}
+                  placeholderTextColor="#6c757d"
+                  value={description}
+                  onChangeText={setDescription}
+                  className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800"
+                  multiline
+                  maxLength={200}
+                />
+                  {/* { description !== "" && doneRef?.current?.play() } */}
+                {
+                  description !== "" &&
+                  <LottieView
+                  style={{ width: 27, height: 27, opacity: 1}}
+                  className="absolute right-0 top-[5px] z-40"
+                  source={require('../../../assets/data/done2.json')}
+                  ref={doneRefDec}
+                  loop={false}
+                  autoPlay={true}
+                  speed={2}
+                  />
+                }
+              </View>
               <Text className="text-gray-400 text-right text-[12px]">{description.length}/200</Text>
 
               <View className="flex-col flex-wrap items-center justify-center mb-3">
@@ -217,11 +277,24 @@ const handleAddTodo = () => {
                           {
                           setCategory(item)
                           Keyboard.dismiss()
+                          doneRefCat?.current?.play()
                         }
                         } key={item} >
                           <FilterByCategory categoryName={item} selectedCategory={category}/>
                         </TouchableOpacity>
                       ))
+                    }
+                     {
+                      category !== "" &&
+                      <LottieView
+                      style={{ width: 27, height: 27, opacity: 1}}
+                      className="absolute right-0 top-[0px] z-40"
+                      source={require('../../../assets/data/done2.json')}
+                      ref={doneRefCat}
+                      loop={false}
+                      autoPlay={true}
+                      speed={2}
+                      />
                     }
                 </View>
 
@@ -236,16 +309,33 @@ const handleAddTodo = () => {
                   onPress={() => {
                     Keyboard.dismiss();
                     setShowDatePicker(true);
+                    setDueDate(new Date());
+                    // setDueDate(moment().tz(moment.tz.guess()).startOf("day").toDate());
                   }}
                   className="bg-[#d7c8f3] py-3 rounded-md mb-3"
                 >
-                  <Text className="text-gray-700 text-center">
-                    {dueDate.toLocaleDateString(undefined, {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                    })}
-                  </Text>
+                  {
+                    !dueDate || typeof dueDate === "object" ? (
+                      <Text className="text-center">{t("Not_Yet_Selected")}</Text>
+                    ) : (
+                      <Text className="text-gray-700 text-center">
+                        {dueDate}
+                      </Text>
+                       
+                    )
+                  }
+                   {
+                      dueDate !== "" &&
+                      <LottieView
+                      style={{ width: 27, height: 27, opacity: 1}}
+                      className="absolute right-0 top-[5px] z-40"
+                      source={require('../../../assets/data/done2.json')}
+                      ref={doneRefDat}
+                      loop={false}
+                      autoPlay={true}
+                      speed={2}
+                      />
+                    }
                 </TouchableOpacity>
                 {showDatePicker && (
                   <DateTimePicker
@@ -256,10 +346,9 @@ const handleAddTodo = () => {
                     onChange={(event, selectedDate) => {
                       setShowDatePicker(false);
                       if (selectedDate) {
-                        // Tarihi kaydetmeden önce cihazın zaman dilimine uygun hale getiriyoruz
-                        const localDate = new Date(selectedDate);
+                        // 📌 Seçilen tarih değerinin saatini sıfırla (gün kaymasını önler)
+                        const localDate = moment.tz(selectedDate, moment.tz.guess()).format("YYYY:MM:DD");
                         setDueDate(localDate);
-                        // console.log("Selected Local Date:", localDate.toISOString());
                       }
                     }}
                   />
@@ -274,19 +363,12 @@ const handleAddTodo = () => {
               <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
                   {t("Select_a_remind_time")}
                 </Text>
-              {/* <CustomRemindPicker
-                options={reminderOptions} // Seçenekler
-                selectedValue={reminderTime} // Seçilen değer
-                onValueChange={(itemValue) => setReminderTime(itemValue)} // Değişiklik işleyicisi
-              /> */}
            <CustomRemindPicker
                 options={Object.values(translations[language].reminderTime)} // Kullanıcının göreceği çeviri metinleri
                 selectedValue={translations[language].reminderTime[Object.keys(translations["en"].reminderTime)
                   .find(key => translations["en"].reminderTime[key] === reminderTime)] || translations[language].reminderTime._5_minutes_before} 
                 onValueChange={handleReminderChange}
               />
-
-
 
               {/* ToDo Ekle */}
               <TouchableOpacity

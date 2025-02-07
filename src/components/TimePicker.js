@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import moment from "moment-timezone"; // Moment.js'i import ediyoruz
 import { useTodoListContext } from "../context/todos-context";
+import LottieView from "lottie-react-native";
 
 const TimePicker = ({ setDueTime, defaultTime }) => {
   const {  t } = useTodoListContext();
   const [hours, setHours] = useState(defaultTime ? defaultTime.slice(0,2) : "12");
   const [minutes, setMinutes] = useState(defaultTime ? defaultTime.slice(3,5) : "00");
   const [isPickerVisible, setPickerVisible] = useState(false);
+  const doneRefTim = useRef()
 
   useEffect(() => {
       setHours(defaultTime ? defaultTime.slice(0, 2) : "12");
@@ -24,7 +26,7 @@ const TimePicker = ({ setDueTime, defaultTime }) => {
 
     // Seçilen zamanı dışarı gönder
     setDueTime(localTime); // setDueTime fonksiyonunu çağırıyoruz
-    console.log("Tim Picker local format:", localTime); // Konsole yazdırıyoruz
+    // console.log("Tim Picker local format:", localTime); // Konsole yazdırıyoruz
     setPickerVisible(false); // Modalı kapatıyoruz
   };
 
@@ -34,6 +36,8 @@ const TimePicker = ({ setDueTime, defaultTime }) => {
     );
   };
 
+  const controlSelectedTiem = `${hours}:${minutes}`
+
   return (
     <View className="flex-1 items-center justify-center">
       <Text className="font-bold text-[#d7c8f3] w-full mb-2">{t("TimePicker_Select_a_due_time")}</Text>
@@ -41,12 +45,21 @@ const TimePicker = ({ setDueTime, defaultTime }) => {
       {/* Zaman Seçici Butonu */}
       <TouchableOpacity
         onPress={() => setPickerVisible(true)}
-        className="bg-[#d7c8f3] px-4 py-2 rounded-lg w-full mb-2 py-3"
+        className="bg-[#d7c8f3] px-4 py-2 rounded-lg w-full mb-2 py-3 relative"
       >
         <Text className="text-gray-600 font-semibold text-center">
-          {t("TimePicker_Selected_Time")}:{" "}
+          {controlSelectedTiem === "12:00" ? t("Default_Time") : t("TimePicker_Selected_Time")}:{" "}
           <Text className="text-gray-800">{`${hours}:${minutes}`}</Text>
-        </Text>
+        </Text>         
+         <LottieView
+          style={{ width: 27, height: 27, opacity: 1}}
+          className="absolute right-0 top-[5px] z-40"
+          source={require('../../assets/data/done2.json')}
+          ref={doneRefTim}
+          loop={false}
+          autoPlay={true}
+          speed={2}
+         />
       </TouchableOpacity>
 
       {/* Modal */}

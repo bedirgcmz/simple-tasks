@@ -28,10 +28,13 @@ const translations = {
       Description_input: "Enter Description",
       Select_a_category: "Select a category",
       Select_a_due_date: "Select a due date",
+      Not_Yet_Selected: "Not Yet Selected",
+      Default_Time: "Default Time",
       Select_a_remind_time: "Select a remind time!",
       Add_ToDo: "Add ToDo",
       // category
       Others: "Others",
+      All_ToDos: "All ToDos",
       // Edit Page
       Edit_ToDo_Page_Title: "Edit ToDo",
       Alert_successfully: "ToDo updated successfully!",
@@ -153,10 +156,13 @@ const translations = {
       Description_input: "Açıklama Girin",
       Select_a_category: "Bir kategori seçin",
       Select_a_due_date: "Son tarihi seçin",
+      Not_Yet_Selected: "Henüz Seçilmedi",
+      Default_Time: "Varsayılan Zaman",
       Select_a_remind_time: "Hatırlatma zamanı seçin!",
       Add_ToDo: "Görev Ekle",
       // category
       Others: "Diğer",
+      All_ToDos: "Tüm Görevler",
       // Edit Page
       Edit_ToDo_Page_Title: "Görevi Düzenle",
       Alert_successfully: "Görev başarıyla güncellendi!",
@@ -273,10 +279,13 @@ const translations = {
       Description_input: "Ange Beskrivning",
       Select_a_category: "Välj en kategori",
       Select_a_due_date: "Välj ett förfallodatum",
+      Not_Yet_Selected: "Inte Vald Än",
+      Default_Time: "Standardtid",
       Select_a_remind_time: "Välj en påminnelsetid!",
       Add_ToDo: "Lägg till Att Göra",
       // category
       Others: "Övrigt",
+      All_ToDos: "Alla Att Göra",
       // Edit Page
       Edit_ToDo_Page_Title: "Redigera Att Göra",
       Alert_successfully: "Att Göra har uppdaterats!",
@@ -402,10 +411,13 @@ const translations = {
       Description_input: "Beschreibung eingeben",
       Select_a_category: "Wähle eine Kategorie",
       Select_a_due_date: "Wähle ein Fälligkeitsdatum",
+      Not_Yet_Selected: "Noch Nicht Ausgewählt",
+      Default_Time: "Standardzeit",
       Select_a_remind_time: "Wähle eine Erinnerungszeit!",
       Add_ToDo: "Aufgabe hinzufügen",
       // category
       Others: "Andere",
+      All_ToDos: "Alle Aufgaben",
       Edit_ToDo: "Aufgabe bearbeiten",
       Update: "Aktualisieren",
       Delete: "Löschen",

@@ -3,54 +3,73 @@ import { View, Text, ScrollView, Image, ImageBackground, StatusBar } from "react
 import { useTodoListContext } from "../../../context/todos-context";
 import TodoCard from "../../../components/TodoCard";
 import TodoDoneAnimation from "../../../components/TodoDoneAnimation";
+import moment from "moment-timezone";
 
 const TodoBoardScreen = () => {
   const { todos, t } = useTodoListContext();
 
-  // Helper functions to filter todos
+  // Kullanıcının saat dilimini al
+const userTimezone = moment.tz.guess();
   const isToday = (date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return new Date(date).setHours(0, 0, 0, 0) === today.getTime();
+    // 📌 Tarih formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
+    const formattedDate = date.replace(/:/g, "-");
+  
+    // 📌 `date` değişkenini yerel saat dilimiyle `moment` nesnesine çevir
+    const checkDate = moment.tz(formattedDate, "YYYY-MM-DD", userTimezone).startOf("day");
+  
+    // 📌 Bugünün tarihini yerel saat dilimiyle al ve saatlerini sıfırla
+    const today = moment().tz(userTimezone).startOf("day");
+  
+    // 📌 Günleri karşılaştır (sadece gün bazında!)
+    return checkDate.isSame(today, "day");
   };
 
-  const isTomorrow = (date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-    return new Date(date).setHours(0, 0, 0, 0) === tomorrow.getTime();
-  };
+  /**
+ * Verilen tarih yarın mı? (Cihaz saat dilimine göre çalışır)
+ */
+const isTomorrow = (date) => {
+  const formattedDate = date.replace(/:/g, "-");
+  const checkDate = moment.tz(formattedDate, "YYYY-MM-DD", userTimezone).startOf("day");
+  const tomorrow = moment().tz(userTimezone).add(1, "day").startOf("day");
 
-  const isNextDays = (date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-  
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-  
-    return new Date(date) > tomorrow;
-  };
-  const isPastDays = (date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-  
-    return new Date(date).setHours(0, 0, 0, 0) < today.getTime();
-  };
+  return checkDate.isSame(tomorrow, "day");
+};
+
+/**
+ * Verilen tarih gelecek günlerden biri mi? (Yarından sonrası mı?)
+ */
+const isNextDays = (date) => {
+  const formattedDate = date.replace(/:/g, "-");
+  const checkDate = moment.tz(formattedDate, "YYYY-MM-DD", userTimezone).startOf("day");
+  const tomorrow = moment().tz(userTimezone).add(1, "day").startOf("day");
+
+  return checkDate.isAfter(tomorrow, "day");
+};
+
+/**
+ * Verilen tarih geçmiş günlerden biri mi? (Bugünden önce mi?)
+ */
+const isPastDays = (date) => {
+  const formattedDate = date.replace(/:/g, "-");
+  const checkDate = moment.tz(formattedDate, "YYYY-MM-DD", userTimezone).startOf("day");
+  const today = moment().tz(userTimezone).startOf("day");
+
+  return checkDate.isBefore(today, "day");
+};
   
   
 
   const todaysTodos = todos.filter(
-    (todo) => isToday(todo.dueDate) && todo.status !== "done"
+    (todo) => isToday(todo.dueDate) //&& todo.status !== "done"
   );
   const tomorrowsTodos = todos.filter(
-    (todo) => isTomorrow(todo.dueDate) && todo.status !== "done"
+    (todo) => isTomorrow(todo.dueDate) //&& todo.status !== "done"
   );
   const nextDaysTodos = todos.filter(
     (todo) =>
       isNextDays(todo.dueDate) &&
-      !isTomorrow(todo.dueDate) &&
-      todo.status !== "done"
+      !isTomorrow(todo.dueDate) 
+      // && todo.status !== "done"
   );
   const pastDaysTodos = todos.filter(
     (todo) => isPastDays(todo.dueDate)
@@ -78,8 +97,16 @@ const TodoBoardScreen = () => {
   );
  
   const renderTodoSection = (title, todos, key, image, message, cardBgColor) => (
-      <View key={key} className="p-4 pb-8 border-gray-300">
-        <Text className="text-lg font-bold text-[#ef6351]">{title}</Text>
+      <View key={key} className="p-4 pb-8 border-gray-300 relative">
+        {/* Kırmızı Nokta */}
+        <Text className="text-lg font-bold text-[#ef6351]">{title}
+        {todaysTodos.length > 0 &&  key === "today" &&(
+                  <View
+                    className="absolute top-0 right-0 h-2 w-2 bg-[#ff5400] rounded-full"
+                    style={{ transform: [{ translateX: 6 }, { translateY: -6 }] }} // Noktayı daha iyi konumlandırma
+                  />
+                )}
+        </Text>
         {todos.length > 0 ? (
           <>
             <Text className="text-gray-500 mb-4 pl-1">

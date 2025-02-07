@@ -7,7 +7,7 @@ import FilterByCategory from '../../../components/FilterByCategory';
 import TodoDoneAnimation from '../../../components/TodoDoneAnimation';
 
 const FilterTodosScreen = () => {
-  const { todos, language, categories } = useTodoListContext();
+  const { todos, language, categories, t } = useTodoListContext();
   const { from  } = useLocalSearchParams();
 const categoryNames = Array.from(new Set(todos.map((item) => item.category)));
 const [selectedCategory, setSelectedCategory] = useState("All")
@@ -42,7 +42,7 @@ if (selectedCategory === "All") {
         ))
       }
       <TouchableOpacity onPress={() => setSelectedCategory("All")} >
-         <Text className={`text-gray-600 bg-[#d7c8f3]  px-3 py-[2px] mb-1 rounded-md text-[14px] mx-1 ${selectedCategory === "All" ? "bg-gray-600 text-white" : ""}`}>All ToDos</Text>
+         <Text className={`text-gray-600 bg-[#d7c8f3]  px-3 py-[2px] mb-1 rounded-md text-[14px] mx-1 ${selectedCategory === "All" ? "bg-gray-600 text-white" : ""}`}>{t("All_ToDos")}</Text>
       </TouchableOpacity>
 
     </View>

@@ -8,36 +8,67 @@ import { router } from "expo-router";
 import { showConfirmAlert } from "../utils/alerts";
 import { playSuccessSound } from "../utils/play-success-sound";
 import LottieView from "lottie-react-native";
+import moment from "moment-timezone";
 
 const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
   const { todos, deleteTodo, updateTodo, setShowCongrats, t, language } =
     useTodoListContext();
   const todo = todos.find((todo) => todo.id === pTodoId);
+  // function calculateDaysLeft(todo) {
+  //   const createdAt = new Date();
+  //   const dueDate = new Date(todo.dueDate);
+
+  //   // Calculate the difference in milliseconds
+  //   const timeDifference = dueDate.getTime() - createdAt.getTime();
+
+  //   // Convert milliseconds to days
+  //   const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+  //   // Check if due date has passed
+  //   if (daysLeft < 0) {
+  //     return <Text>{`${t("calculateDays_text_1")} ${Math.abs(daysLeft)} ${t("calculateDays_text_2")}`}</Text>;
+  //   } else if (daysLeft === 0) {
+  //     return  <Text>{t("calculateDays_text_3")} </Text>
+  //   } else {
+  //     return <Text>{`${daysLeft} ${t("calculateDays_text_4")}`}</Text>
+  //   }
+  // }
   function calculateDaysLeft(todo) {
-    const createdAt = new Date();
-    const dueDate = new Date(todo.dueDate);
+    // 📌 `dueDate` formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
+    const formattedDueDate = todo.dueDate.replace(/:/g, "-");
 
-    // Calculate the difference in milliseconds
-    const timeDifference = dueDate.getTime() - createdAt.getTime();
+    // console.log("createdSt control", todo.createdAt);
 
-    // Convert milliseconds to days
-    const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-    // Check if due date has passed
-    if (daysLeft < 0) {
-      return <Text>{`${t("calculateDays_text_1")} ${Math.abs(daysLeft)} ${t("calculateDays_text_2")}`}</Text>;
-    } else if (daysLeft === 0) {
-      return  <Text>{t("calculateDays_text_3")} </Text>
-    } else {
-      return <Text>{`${daysLeft} ${t("calculateDays_text_4")}`}</Text>
+    // 📌 `createdAt` ve `dueDate` nesnelerini oluştur
+    const createdAt = moment(todo.createdAt, "YYYY-MM-DD").startOf("day");
+    const dueDate = moment(formattedDueDate, "YYYY-MM-DD").startOf("day");
+
+    // 📌 Eğer `dueDate` geçersizse, hata ver
+    if (!dueDate.isValid()) {
+        throw new Error("❌ Geçersiz tarih formatı! " + formattedDueDate);
     }
-  }
+
+    // 📌 Gün farkını hesapla
+    const daysLeft = dueDate.diff(createdAt, "days");
+
+    // console.log("📌 Gün farkı:", daysLeft);
+
+    // 📌 DueDate geçmişse
+    if (daysLeft < 0) {
+        return `${Math.abs(daysLeft)} ${t("calculateDays_text_5")}`;
+    } else if (daysLeft === 0) {
+        return t("calculateDays_text_6");
+    } else {
+        return `${daysLeft} ${t("calculateDays_text_7")}`;
+    }
+}
+
 
   const confettiRef = useRef()
 
   const playConfetti = () => {
     confettiRef?.current?.play()
   }
-
+  
   return (
     <View className="">
       <Text className="font-bold text-2xl text-center text-white mb-4">

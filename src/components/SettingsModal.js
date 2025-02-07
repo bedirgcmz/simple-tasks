@@ -8,7 +8,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const LanguageModal = ({ visible, onClose }) => {
+const SettingsModal = ({ visible, onClose }) => {
   const { setLanguage, setTodos, t, username, setUsername, updateUsername, language, todos, STORAGE_KEY, translateTodosCategories } = useTodoListContext();
   const [isEnableUsername, setIsEnableUsername] = useState(false)
 
@@ -28,10 +28,6 @@ const LanguageModal = ({ visible, onClose }) => {
   const BuyMeACoffee = () => {
     Linking.openURL("https://buymeacoffee.com/bedirgcmzr");
   };
-
-  const BuyMeACoffe = () => {
-  }
-
   return (
     <Modal animationType="slide" transparent visible={visible}>
       <View className="flex-1 bg-black/50 justify-center items-start">
@@ -54,15 +50,17 @@ const LanguageModal = ({ visible, onClose }) => {
                     value={username}
                     onChangeText={setUsername}
                     editable={isEnableUsername}
+                  maxLength={17}
+
                     />
-                  {/* <Ionicons name="checkmark-sharp" size={22} color="white" /> */}
                   {
                     isEnableUsername ? (
-                      <TouchableOpacity onPress={changeUserName} className="ml-2">
-                        <MaterialCommunityIcons name="close" size={22} color="white" />
+                      <TouchableOpacity onPress={changeUserName} className="p-2 pt-3">
+                        {/* <MaterialCommunityIcons name="close" size={22} color="white" /> */}
+                        <Ionicons name="checkmark" size={24} color="white" />
                       </TouchableOpacity>
                     ) : (
-                      <TouchableOpacity onPress={() => setIsEnableUsername(true)} className="ml-2">
+                      <TouchableOpacity onPress={() => setIsEnableUsername(true)} className="p-2 pt-3">
                         <MaterialCommunityIcons name="pencil" size={22} color="white" />
                       </TouchableOpacity>
                     )
@@ -94,8 +92,9 @@ const LanguageModal = ({ visible, onClose }) => {
                     ☕  {t("Buy_Me")}
                   </Text>
                 </TouchableOpacity>
-            <TouchableOpacity onPress={onClose} className=" px-2 py-1 w-full border border-gray-500 rounded-lg">
-              <Text className="text-lg font-bold text-white text-center">{t("Exit_Setting")}</Text>
+            <TouchableOpacity onPress={onClose} className=" px-2 py-1 w-full border border-gray-500 rounded-lg flex-row items-center justify-center">
+              <Text className="text-md font-bold text-white text-center pr-2">{t("Exit_Setting")}</Text>
+              <Ionicons name="close" size={20} color="white" />
             </TouchableOpacity>
 
             </View>
@@ -110,4 +109,4 @@ const LanguageModal = ({ visible, onClose }) => {
   );
 };
 
-export default LanguageModal;
+export default SettingsModal;

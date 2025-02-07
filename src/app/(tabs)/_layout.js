@@ -16,7 +16,7 @@ useEffect(() => {
 
 useEffect(() => {
   const findTodayToDos = todos.filter(
-    (todo) => todo.dueDate.split('T')[0] === todayDate && todo.status === "pending"
+    (todo) => todo.dueDate.replace(/:/g, "-") === todayDate && todo.status === "pending"
   );
   setTodayToDos(findTodayToDos);
 }, [todos, todayDate]); // todos veya todayDate değiştiğinde çalışır

@@ -161,7 +161,7 @@ export const TodoListProvider = ({ children }) => {
     category: categories[deviceLanguage]?.[10] || "Others",
     status: 'pending',
     createdAt: moment().format('YYYY-MM-DD'),
-    dueDate: moment().add(7, 'days').format('YYYY-MM-DD'), 
+    dueDate: moment().add(7, 'days').format('YYYY:MM:DD'), 
     dueTime: "12:00:00",
     reminderTime: '1 day before',
     completedAt: null,
@@ -205,7 +205,7 @@ export const TodoListProvider = ({ children }) => {
     saveTodos(updatedTodos);
 
     // Bildirim zamanla
-    await scheduleNotification(newTodo , t);
+    await scheduleNotification(newTodo , t, language);
   };
 
   const deleteTodo = async (id) => {
@@ -243,7 +243,7 @@ export const TodoListProvider = ({ children }) => {
     if (updatedTodo.status === "done") {
       await cancelNotification(id);
     } else if (updatedTodo.reminderTime || updatedTodo.dueDate || updatedTodo.dueTime) {
-      console.log(`🔄 Güncellenen Todo için Bildirim Yönetimi: ${id}`);
+      // console.log(`🔄 Güncellenen Todo için Bildirim Yönetimi: ${id}`);
       
       // **ÖNCE** eski bildirimi iptal et
       await cancelNotification(id);

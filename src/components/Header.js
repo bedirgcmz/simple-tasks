@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity, Button } from 'react-native'
 import React, {useState} from 'react'
 import { router } from 'expo-router'
-import LanguageModal from "./LanguageModal";
+import SettingsModal from "./SettingsModal";
 import { useTodoListContext } from "../context/todos-context";
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -17,10 +17,10 @@ const Header = () => {
       <Ionicons name="settings-sharp" size={22} color="white" />
       </TouchableOpacity>
 
-    <LanguageModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+    <SettingsModal visible={modalVisible} onClose={() => setModalVisible(false)} />
       <View className="flex-1items-center justify-start">
         <Text className="text-white">{t("welcome")}!</Text>
-        <Text className="text-[12px] text-white font-bold mt-[0px]">{username}</Text>
+        <Text className="text-[12px] text-white font-bold mt-[0px]">{username === "" ? t("Guest") : username}</Text>
         {/* <Text className="text-[12px] text-white font-bold mt-[0px]">{t("Your_history")}</Text> */}
       </View>
     </View>
