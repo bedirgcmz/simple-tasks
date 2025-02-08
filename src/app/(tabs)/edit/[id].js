@@ -140,12 +140,12 @@ const EditTodoPage = () => {
   };
 
   useEffect(() => {
-    // ':' ile ayırıcıyı '-' ile değiştiriyoruz
-    const formattedDate = todo.dueDate.replace(/:/g, "-");
-    const formattedDueDate = moment(dueDate).format("YYYY-MM-DD");
+    // // ':' ile ayırıcıyı '-' ile değiştiriyoruz
+    // const formattedDate = todo.dueDate;
+    // const formattedDueDate = moment(dueDate).format("YYYY-MM-DD");
 
     // Şimdi moment ile Date objesi oluşturabiliriz
-    const dateObject = moment(formattedDate, "YYYY-MM-DD").toDate();
+    const dateObject = moment(todo.dueDate, "YYYY-MM-DD").toDate();
     setDueDate(dateObject)
   },[id])
   console.log(dueDate);

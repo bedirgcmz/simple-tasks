@@ -34,17 +34,17 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
   // }
   function calculateDaysLeft(todo) {
     // 📌 `dueDate` formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
-    const formattedDueDate = todo.dueDate.replace(/:/g, "-");
+    // const formattedDueDate = todo.dueDate.replace(/:/g, "-");
 
     // console.log("createdSt control", todo.createdAt);
 
     // 📌 `createdAt` ve `dueDate` nesnelerini oluştur
     const createdAt = moment(todo.createdAt, "YYYY-MM-DD").startOf("day");
-    const dueDate = moment(formattedDueDate, "YYYY-MM-DD").startOf("day");
+    const dueDate = moment(todo.dueDate, "YYYY-MM-DD").startOf("day");
 
     // 📌 Eğer `dueDate` geçersizse, hata ver
     if (!dueDate.isValid()) {
-        throw new Error("❌ Geçersiz tarih formatı! " + formattedDueDate);
+        throw new Error("❌ Geçersiz tarih formatı! " + todo.dueDate);
     }
 
     // 📌 Gün farkını hesapla

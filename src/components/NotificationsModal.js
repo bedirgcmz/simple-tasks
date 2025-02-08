@@ -12,7 +12,7 @@ const NotificationModal = () => {
   const STORAGE_KEY = 'reminder_time';
 
   const today = new Date().toISOString().split('T')[0]; // Bugünün tarihi
-
+console.log();
   // Bugüne ait görevleri kontrol et
   const checkTodosForToday = async () => {
     try {
@@ -72,7 +72,7 @@ const NotificationModal = () => {
   }, [todos]); // Todos değiştiğinde kontrol tekrar yapılır
 
   const todayToDos = todos.filter(
-    (todo) => todo.dueDate.split('T')[0] === today && todo.status === "pending"
+    (todo) => todo.dueDate === today && todo.status === "pending"
   );
 
   return (

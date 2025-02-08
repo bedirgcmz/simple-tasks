@@ -75,7 +75,7 @@ export function formatToShortDate(dateString, language = "en") {
   // console.log("📌 Gelen dateString:", dateString);
 
   // 📌 Stringi `:` ile ayırarak gün, ay ve yılı al
-  const [year, month, day] = dateString.split(":");
+  const [year, month, day] = dateString.split("-");
 
   // 📌 Kullanıcının cihaz saat dilimini al
   const userTimezone = moment.tz.guess();

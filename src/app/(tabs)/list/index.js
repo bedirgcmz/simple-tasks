@@ -12,10 +12,10 @@ const TodoBoardScreen = () => {
 const userTimezone = moment.tz.guess();
   const isToday = (date) => {
     // 📌 Tarih formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
-    const formattedDate = date.replace(/:/g, "-");
+    // const formattedDate = date.replace(/:/g, "-");
   
     // 📌 `date` değişkenini yerel saat dilimiyle `moment` nesnesine çevir
-    const checkDate = moment.tz(formattedDate, "YYYY-MM-DD", userTimezone).startOf("day");
+    const checkDate = moment.tz(date, "YYYY-MM-DD", userTimezone).startOf("day");
   
     // 📌 Bugünün tarihini yerel saat dilimiyle al ve saatlerini sıfırla
     const today = moment().tz(userTimezone).startOf("day");
@@ -28,8 +28,8 @@ const userTimezone = moment.tz.guess();
  * Verilen tarih yarın mı? (Cihaz saat dilimine göre çalışır)
  */
 const isTomorrow = (date) => {
-  const formattedDate = date.replace(/:/g, "-");
-  const checkDate = moment.tz(formattedDate, "YYYY-MM-DD", userTimezone).startOf("day");
+  // const formattedDate = date.replace(/:/g, "-");
+  const checkDate = moment.tz(date, "YYYY-MM-DD", userTimezone).startOf("day");
   const tomorrow = moment().tz(userTimezone).add(1, "day").startOf("day");
 
   return checkDate.isSame(tomorrow, "day");
@@ -39,8 +39,8 @@ const isTomorrow = (date) => {
  * Verilen tarih gelecek günlerden biri mi? (Yarından sonrası mı?)
  */
 const isNextDays = (date) => {
-  const formattedDate = date.replace(/:/g, "-");
-  const checkDate = moment.tz(formattedDate, "YYYY-MM-DD", userTimezone).startOf("day");
+  // const formattedDate = date.replace(/:/g, "-");
+  const checkDate = moment.tz(date, "YYYY-MM-DD", userTimezone).startOf("day");
   const tomorrow = moment().tz(userTimezone).add(1, "day").startOf("day");
 
   return checkDate.isAfter(tomorrow, "day");
@@ -50,8 +50,8 @@ const isNextDays = (date) => {
  * Verilen tarih geçmiş günlerden biri mi? (Bugünden önce mi?)
  */
 const isPastDays = (date) => {
-  const formattedDate = date.replace(/:/g, "-");
-  const checkDate = moment.tz(formattedDate, "YYYY-MM-DD", userTimezone).startOf("day");
+  // const formattedDate = date.replace(/:/g, "-");
+  const checkDate = moment.tz(date, "YYYY-MM-DD", userTimezone).startOf("day");
   const today = moment().tz(userTimezone).startOf("day");
 
   return checkDate.isBefore(today, "day");

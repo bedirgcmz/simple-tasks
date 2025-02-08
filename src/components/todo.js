@@ -33,7 +33,7 @@ const Todo = ({todo, index, fromText}) => {
 
     function calculateDaysLeft(todo) {
         // 📌 `dueDate` formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
-        const formattedDueDate = todo.dueDate.replace(/:/g, "-");
+        const formattedDueDate = todo.dueDate;
 
         // console.log("createdSt control", todo.createdAt);
     

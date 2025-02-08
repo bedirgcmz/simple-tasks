@@ -57,7 +57,7 @@ const Calender = () => {
     const marked = {};
     todos.forEach((todo) => {
       // const todoDueDate = todo.dueDate.split("T")[0]
-      const todoDueDate = todo.dueDate.replace(/:/g, "-")
+      const todoDueDate = todo.dueDate
       if (todoDueDate) {
         marked[todoDueDate] = {
           disableTouchEvent: false,

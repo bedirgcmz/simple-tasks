@@ -347,7 +347,7 @@ const doneRefDat = useRef()
                       setShowDatePicker(false);
                       if (selectedDate) {
                         // 📌 Seçilen tarih değerinin saatini sıfırla (gün kaymasını önler)
-                        const localDate = moment.tz(selectedDate, moment.tz.guess()).format("YYYY:MM:DD");
+                        const localDate = moment.tz(selectedDate, moment.tz.guess()).format("YYYY-MM-DD");
                         setDueDate(localDate);
                       }
                     }}
