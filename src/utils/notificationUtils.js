@@ -114,8 +114,6 @@ export async function scheduleNotification(todo, t, language) {
 
     }
 
-    // console.log("🔹 Kaydedilecek Notification ID:", notificationId, "for todo:", todo.id);
-
     // 📌 **Bildirim ID’sini AsyncStorage içine kaydet**
     const storedNotifications = JSON.parse(await AsyncStorage.getItem(STORAGE_KEY)) || {};
     storedNotifications[todo.id] = notificationId;
