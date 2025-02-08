@@ -14,10 +14,8 @@ const DaysTodos = () => {
   const { todos, t } = useTodoListContext();
 
   const ThisDayTodos = () => {
-    console.log("gelen todo tarihi:",todos[0].dueDate);
-    console.log(day);
-    const filteredTodos = todos.filter((todo) => todo.dueDate.split("T")[0] === day.replace(/-/g, ":"));
-    console.log(filteredTodos[0]);
+    
+    const filteredTodos = todos.filter((todo) => todo.dueDate === day);
     setThisDaysTodos(filteredTodos) ;
   }
 

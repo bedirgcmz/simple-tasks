@@ -42,7 +42,7 @@ const TodoCard = ({ todo, bgColor }) => {
       <View className="text-[12px] mb-1 text-white justify-start items-center flex-row">
         <Ionicons name="time" size={20} color="white" />
         <View className=" pl-2 flex-1 flex-row justify-between">
-          <Text className="text-[12px] text-white tracking-tighter ">{todo.dueDate.replace(/:/g, "-")}</Text><Text className="font-bold tracking-tighter  text-[12px] text-white">{todo.dueTime.slice(0, 5)}</Text>
+          <Text className="text-[12px] text-white tracking-tighter ">{todo.dueDate}</Text><Text className="font-bold tracking-tighter  text-[12px] text-white">{todo.dueTime.slice(0, 5)}</Text>
         </View>
       </View>
       <View className="flex-row mt-2 items-center justify-end">

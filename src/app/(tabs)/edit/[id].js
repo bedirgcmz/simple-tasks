@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -20,6 +20,9 @@ import FilterByCategory from "../../../components/FilterByCategory";
 import TimePicker from "../../../components/TimePicker";
 import { playCorrectSound } from "../../../utils/play-success-sound";
 import moment from "moment-timezone";
+import translations from "../../../locales/translations"
+import LottieView from "lottie-react-native";
+
 
 
 const EditTodoPage = () => {
@@ -33,10 +36,35 @@ const EditTodoPage = () => {
   const [title, setTitle] = useState(todo?.title || "");
   const [description, setDescription] = useState(todo?.description || "");
   const [category, setCategory] = useState(todo?.category || "");
-  const [dueDate, setDueDate] = useState("");
+  const [dueDate, setDueDate] = useState(todo?.dueDate);
   const [dueTime, setDueTime] = useState(todo?.dueTime || "");
   const [reminderTime, setReminderTime] = useState(todo?.reminderTime || "2 hours before");
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const handleReminderChange = (selectedLabel) => {
+    let englishValue = "5 minutes before"; // Varsayılan değer
+  
+    if (selectedLabel === translations[language].reminderTime._5_minutes_before) {
+      englishValue = "5 minutes before";
+    } else if (selectedLabel === translations[language].reminderTime._10_minutes_before) {
+      englishValue = "10 minutes before";
+    } else if (selectedLabel === translations[language].reminderTime._30_minutes_before) {
+      englishValue = "30 minutes before";
+    } else if (selectedLabel === translations[language].reminderTime._1_hour_before) {
+      englishValue = "1 hour before";
+    } else if (selectedLabel === translations[language].reminderTime._2_hours_before) {
+      englishValue = "2 hours before";
+    } else if (selectedLabel === translations[language].reminderTime._6_hours_before) {
+      englishValue = "6 hours before";
+    } else if (selectedLabel === translations[language].reminderTime._1_day_before) {
+      englishValue = "1 day before";
+    } else if (selectedLabel === translations[language].reminderTime._1_week_before) {
+      englishValue = "1 week before";
+    }
+  
+    setReminderTime(englishValue);
+  };
+  
 
    // todo değiştiğinde state'leri güncelle
    useEffect(() => {
@@ -44,7 +72,7 @@ const EditTodoPage = () => {
       setTitle(todo.title || "");
       setDescription(todo.description || "");
       setCategory(todo.category || "");
-      setDueDate(todo.dueDate ? todo.dueDate : new Date());
+      setDueDate(todo.dueDate || "");
       setDueTime(todo.dueTime || "");
       setReminderTime(todo.reminderTime || "2 hours before");
     }
@@ -105,19 +133,8 @@ const EditTodoPage = () => {
     ],
   };
 
-  const reminderOptions = [
-    "5 minutes before",
-    "10 minutes before",
-    "30 minutes before",
-    "1 hour before",
-    "2 hours before",
-    "6 hours before",
-    "1 day before",
-    "1 week before",
-  ];
-
   const handleUpdateTodo = () => {
-    if (!title || !category) {
+    if (!title || !category || !dueDate) {
       alert(t("Alert_in_handle_add_todo"));
       return;
     }
@@ -139,16 +156,10 @@ const EditTodoPage = () => {
     router.push({ pathname: `/filter`, params: { from: category } });
   };
 
-  useEffect(() => {
-    // ':' ile ayırıcıyı '-' ile değiştiriyoruz
-    const formattedDate = todo.dueDate.replace(/:/g, "-");
-    const formattedDueDate = moment(dueDate).format("YYYY-MM-DD");
-
-    // Şimdi moment ile Date objesi oluşturabiliriz
-    const dateObject = moment(formattedDate, "YYYY-MM-DD").toDate();
-    setDueDate(dateObject)
-  },[id])
-  console.log(dueDate);
+  const doneRefTit = useRef()
+  const doneRefDec = useRef()
+  const doneRefCat = useRef()
+  const doneRefDat = useRef()
 
 
   return (
@@ -172,28 +183,56 @@ const EditTodoPage = () => {
               </Text>
 
               {/* Başlık */}
-              <TextInput
-                placeholder={t("Title_input")}
-                placeholderTextColor="#6c757d"
-                value={title}
-                onChangeText={setTitle}
-                className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800"
-                maxLength={60}
-              />
+              <View className="relative">
+                <TextInput
+                  placeholder={t("Title_input")}
+                  placeholderTextColor="#6c757d"
+                  value={title}
+                  onChangeText={setTitle}
+                  className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800"
+                  maxLength={60}
+                />
+                {
+                  title !== "" &&
+                  <LottieView
+                  style={{ width: 27, height: 27, opacity: 1}}
+                  className="absolute right-0 top-[5px] z-40"
+                  source={require('../../../../assets/data/done2.json')}
+                  ref={doneRefTit}
+                  loop={false}
+                  autoPlay={true}
+                  speed={2}
+                  />
+                }
+              </View>
               <Text className="text-gray-400 text-right text-[12px] mb-2">
                 {title.length}/60
               </Text>
 
               {/* Açıklama */}
-              <TextInput
-                placeholder={t("Description_input")}
-                placeholderTextColor="#6c757d"
-                value={description}
-                onChangeText={setDescription}
-                className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800"
-                multiline
-                maxLength={200}
-              />
+              <View className="relative">
+                <TextInput
+                  placeholder={t("Description_input")}
+                  placeholderTextColor="#6c757d"
+                  value={description}
+                  onChangeText={setDescription}
+                  className="bg-[#d7c8f3] p-3 rounded-md mb-1 text-gray-800"
+                  multiline
+                  maxLength={200}
+                />
+                {
+                  description !== "" &&
+                  <LottieView
+                  style={{ width: 27, height: 27, opacity: 1}}
+                  className="absolute right-0 top-[5px] z-40"
+                  source={require('../../../../assets/data/done2.json')}
+                  ref={doneRefDec}
+                  loop={false}
+                  autoPlay={true}
+                  speed={2}
+                  />
+                }
+              </View>
               <Text className="text-gray-400 text-right text-[12px]">
                 {description.length}/200
               </Text>
@@ -215,6 +254,18 @@ const EditTodoPage = () => {
                       <FilterByCategory categoryName={item} selectedCategory={category} />
                     </TouchableOpacity>
                   ))}
+                   {
+                      category !== "" &&
+                      <LottieView
+                      style={{ width: 27, height: 27, opacity: 1}}
+                      className="absolute right-0 top-[0px] z-40"
+                      source={require('../../../../assets/data/done2.json')}
+                      ref={doneRefCat}
+                      loop={false}
+                      autoPlay={true}
+                      speed={2}
+                      />
+                    }
                 </View>
               </View>
 
@@ -231,8 +282,6 @@ const EditTodoPage = () => {
                   }}
                   className="bg-[#d7c8f3] py-3 rounded-md mb-3"
                 >
-                  <Text className="text-gray-700 text-center">
-                    {/* {moment(dueDate).format("YYYY:MM:DD")} */}
                     {
                     !dueDate || typeof dueDate === "object" ? (
                       <Text className="text-center">{t("Not_Yet_Selected")}</Text>
@@ -240,10 +289,20 @@ const EditTodoPage = () => {
                       <Text className="text-gray-700 text-center">
                         {dueDate}
                       </Text>
-                       
                     )
                   }
-                  </Text>
+                  {
+                      dueDate !== "" &&
+                      <LottieView
+                      style={{ width: 27, height: 27, opacity: 1}}
+                      className="absolute right-0 top-[5px] z-40"
+                      source={require('../../../../assets/data/done2.json')}
+                      ref={doneRefDat}
+                      loop={false}
+                      autoPlay={true}
+                      speed={2}
+                      />
+                    }
                 </TouchableOpacity>
                 {showDatePicker && (
                   <DateTimePicker
@@ -259,7 +318,7 @@ const EditTodoPage = () => {
                       setShowDatePicker(false);
                       if (selectedDate) {
                         // 📌 Seçilen tarih değerinin saatini sıfırla (gün kaymasını önler)
-                        const localDate = moment.tz(selectedDate, moment.tz.guess()).format("YYYY:MM:DD");
+                        const localDate = moment.tz(selectedDate, moment.tz.guess()).format("YYYY-MM-DD");
                         setDueDate(localDate);
                       };
                     }}
@@ -275,9 +334,10 @@ const EditTodoPage = () => {
               {t("Select_a_remind_time")}
               </Text>
               <CustomRemindPicker
-                options={reminderOptions}
-                selectedValue={reminderTime}
-                onValueChange={(itemValue) => setReminderTime(itemValue)}
+                options={Object.values(translations[language].reminderTime)} // Kullanıcının göreceği çeviri metinleri
+                selectedValue={translations[language].reminderTime[Object.keys(translations["en"].reminderTime)
+                  .find(key => translations["en"].reminderTime[key] === reminderTime)] || translations[language].reminderTime._5_minutes_before} 
+                onValueChange={handleReminderChange}
               />
 
               <View className="flex-row justify-between">

@@ -136,7 +136,7 @@ const AddTodoPage = () => {
   
 
 const handleAddTodo = () => {
-  if (!title || !category) {
+  if (!title || !category || !dueDate) {
     alert(t("Alert_in_handle_add_todo"));
     return;
   }
@@ -250,7 +250,6 @@ const doneRefDat = useRef()
                   multiline
                   maxLength={200}
                 />
-                  {/* { description !== "" && doneRef?.current?.play() } */}
                 {
                   description !== "" &&
                   <LottieView
@@ -266,6 +265,7 @@ const doneRefDat = useRef()
               </View>
               <Text className="text-gray-400 text-right text-[12px]">{description.length}/200</Text>
 
+              {/* Kategori */}
               <View className="flex-col flex-wrap items-center justify-center mb-3">
                 <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">
                   {t("Select_a_category")}
@@ -297,7 +297,6 @@ const doneRefDat = useRef()
                       />
                     }
                 </View>
-
               </View>
 
               {/* Son Tarih Seçimi */}
@@ -347,7 +346,7 @@ const doneRefDat = useRef()
                       setShowDatePicker(false);
                       if (selectedDate) {
                         // 📌 Seçilen tarih değerinin saatini sıfırla (gün kaymasını önler)
-                        const localDate = moment.tz(selectedDate, moment.tz.guess()).format("YYYY:MM:DD");
+                        const localDate = moment.tz(selectedDate, moment.tz.guess()).format("YYYY-MM-DD");
                         setDueDate(localDate);
                       }
                     }}
