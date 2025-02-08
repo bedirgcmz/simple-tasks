@@ -5,31 +5,11 @@ import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
 import { showConfirmAlert } from '../utils/alerts';
 import { playCorrectSound } from '../utils/play-success-sound';
-import TodoDoneAnimation from './TodoDoneAnimation';
 import moment from "moment-timezone";
 
 
 const Todo = ({todo, index, fromText}) => {
   const {  deleteTodo, updateTodo, setShowCongrats, t } = useTodoListContext();
-    // function calculateDaysLeft(todo) {
-    //     const createdAt = new Date(todo.createdAt);
-    //     const dueDate = new Date(todo.dueDate);
-    
-    //     // Calculate the difference in milliseconds
-    //     const timeDifference = dueDate.getTime() - createdAt.getTime();
-    
-    //     // Convert milliseconds to days
-    //     const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-    
-    //     // Check if due date has passed
-    //     if (daysLeft < 0) {
-    //         return `${Math.abs(daysLeft)} ${t("calculateDays_text_5")}`;
-    //     } else if (daysLeft === 0) {
-    //         return t("calculateDays_text_6");
-    //     } else {
-    //         return `${daysLeft} ${t("calculateDays_text_7")}`;
-    //     }
-    // }
 
     function calculateDaysLeft(todo) {
         // 📌 `dueDate` formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
