@@ -300,7 +300,6 @@ export const TodoListProvider = ({ children }) => {
    // 📌 **Bildirim yönlendirmesini yönet**
    useEffect(() => {
      if (notificationRedirect) {
-       console.log("🚀 Bildirimden yönlendirme yapılıyor:", `/dynamicid/${notificationRedirect}`);
        router.replace(`/dynamicid/${notificationRedirect}`); // 📌 replace kullanarak kesin yönlendirme yap
        setNotificationRedirect(null); // 📌 Yönlendirme tamamlandı, state’i sıfırla
      }

@@ -5,19 +5,7 @@ import { formatToShortDate } from "./date-utils";
 
 const STORAGE_KEY = "scheduledNotifications";
 
-// Notifications.addNotificationReceivedListener(async (notification) => {
-//   console.log("📩 Received Notification:", notification);
-  
-//   const notificationId = notification.request.identifier;
-  
-//   console.log(`❌ Canceling Notification: ${notificationId}`);
-  
-//   // Bildirimi Expo'dan tamamen kaldır
-//   await Notifications.cancelScheduledNotificationAsync(notificationId);
-// });
 // AsyncStorage'dan tüm bildirimleri silmek için
-
-
 Notifications.addNotificationReceivedListener(async (notification) => {
   console.log("📩 Received Notification:", notification);
 
@@ -32,6 +20,31 @@ Notifications.addNotificationReceivedListener(async (notification) => {
   console.log("sored bild in async storage:", storedNotifications);
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications)); // Güncellenmiş veriyi kaydet
 });
+
+// Bu fonksiyon uygulama acildiginda, expo da olan bildirimlere, asyncStorage olanlari yeniden senkronize eder
+const clearExpiredNotifications = async () => {
+  try {
+    const storedNotifications = JSON.parse(await AsyncStorage.getItem(STORAGE_KEY)) || {};
+    const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
+
+    for (const todoId in storedNotifications) {
+      if (!scheduledNotifications.some(n => n.identifier === storedNotifications[todoId])) {
+        console.log(`🗑 Removing stale notification from storage: ${todoId}`);
+        delete storedNotifications[todoId];
+      }
+    }
+
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications));
+  } catch (error) {
+    console.log("❌ Error clearing expired notifications:", error);
+  }
+};
+
+// Uygulama açıldığında veya arka plandan öne alındığında çalıştır
+useEffect(() => {
+  clearExpiredNotifications();
+}, []);
+
 
 
 
