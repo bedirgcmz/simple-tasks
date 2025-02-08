@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { useTodoListContext } from "../context/todos-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { formatToShortDate } from "../utils/date-utils";
+import { calculateReminderDateTime, formatToShortDate } from "../utils/date-utils";
 import { router } from "expo-router";
 import { showConfirmAlert } from "../utils/alerts";
 import { playSuccessSound } from "../utils/play-success-sound";
@@ -62,7 +62,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
     }
 }
 
-
+// console.log("detail icinde",todo.dueDate);
   const confettiRef = useRef()
 
   const playConfetti = () => {
@@ -140,11 +140,23 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
           <View className="mb-4 flex-row justify-between px-2">
             <View className="flex-row items-center text-sm text-gray-500">
               <Text><Ionicons name="calendar" size={18} color="#495057" /></Text>
-              <Text className="ml-1">{formatToShortDate(todo.dueDate, language)}</Text>
+              <Text className="ml-1 tracking-tighter  text-[13px]">{formatToShortDate(todo.dueDate, language)}</Text>
+                <Text className="ml-1 tracking-tighter  text-[13px]">- {todo.dueTime.slice(0, 5)}</Text>
+              
             </View>
-            <View className="flex-row items-center text-sm text-gray-500">
-              <Text><Ionicons name="time" size={18} color="#495057" /></Text>
-              <Text className="ml-1">{todo.dueTime.slice(0, 5)}</Text>
+            <View className="flex-row items-center text-gray-500">
+              <View className="flex-row items-center">
+                {
+                  todo.status === "done" ?
+                  <Ionicons name="notifications-off" size={19} color="#495057" /> :
+                  <Ionicons name="notifications" size={19} color="#fe9092" />
+
+                }
+                <Text className="ml-1 tracking-tighter text-[13px]">
+                  {formatToShortDate(calculateReminderDateTime(todo).slice(0, 11), language)} {" "}
+                  {calculateReminderDateTime(todo).slice(11, 16)}
+                </Text>
+              </View>
             </View>
           </View>
 
@@ -172,7 +184,6 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
                   deleteTodo,
                   todo.id,
                   t
-                  
                 )
               }
               className="flex-row items-center space-x-2 px-2 py-1 rounded-lg bg-gray-600"

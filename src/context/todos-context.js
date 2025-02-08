@@ -161,7 +161,7 @@ export const TodoListProvider = ({ children }) => {
     category: categories[deviceLanguage]?.[10] || "Others",
     status: 'pending',
     createdAt: moment().format('YYYY-MM-DD'),
-    dueDate: moment().add(7, 'days').format('YYYY:MM:DD'), 
+    dueDate: moment().add(7, 'days').format('YYYY-MM-DD'), 
     dueTime: "12:00:00",
     reminderTime: '1 day before',
     completedAt: null,

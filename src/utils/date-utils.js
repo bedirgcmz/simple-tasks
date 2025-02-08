@@ -74,7 +74,8 @@ export function formatToShortDate(dateString, language = "en") {
 
   // console.log("📌 Gelen dateString:", dateString);
 
-  // 📌 Stringi `:` ile ayırarak gün, ay ve yılı al
+  // console.log("gelen date bilgisi date-util icinde",dateString);
+  // 📌 Stringi `-` ile ayırarak gün, ay ve yılı al
   const [year, month, day] = dateString.split("-");
 
   // 📌 Kullanıcının cihaz saat dilimini al
@@ -93,4 +94,47 @@ export function formatToShortDate(dateString, language = "en") {
   // console.log("✅ Son durumda oluşan tarih:", `${day} ${formattedMonth}`);
 
   return `${day} ${formattedMonth}`;
+}
+
+
+export function calculateReminderDateTime(todo) {
+  if (!todo || !todo.dueDate || !todo.dueTime || !todo.reminderTime) {
+    console.log("❌ Geçersiz todo verisi:", todo);
+    return null;
+  }
+
+  // 📌 Kullanıcının saat dilimini tespit et
+  const userTimeZone = moment.tz.guess(); // Örneğin: "Europe/Stockholm"
+
+  // 📌 Hatırlatma süreleri (dakika cinsinden)
+  const reminderMap = {
+    "5 minutes before": 5,
+    "10 minutes before": 10,
+    "30 minutes before": 30,
+    "1 hour before": 60,
+    "2 hours before": 120,
+    "6 hours before": 360,
+    "1 day before": 1440,
+    "1 week before": 10080,
+  };
+
+  const reminderMinutes = reminderMap[todo.reminderTime];
+  if (!reminderMinutes) {
+    console.log("❌ Geçersiz hatırlatma süresi:", todo.reminderTime);
+    return null;
+  }
+
+  try {
+    // 📌 Kullanıcının yerel saatinde `dueDate` ve `dueTime`'ı oluştur
+    const localDateTime = moment.tz(`${todo.dueDate} ${todo.dueTime}`, "YYYY-MM-DD HH:mm:ss", userTimeZone);
+
+    // 📌 Hatırlatma zamanını hesapla
+    const reminderDateTime = localDateTime.subtract(reminderMinutes, "minutes");
+
+    // 📌 Sonucu kullanıcıya uygun formatta döndür
+    return reminderDateTime.format("YYYY-MM-DD HH:mm");
+  } catch (error) {
+    console.log("❌ Hatırlatma zamanı hesaplanırken hata oluştu:", error);
+    return null;
+  }
 }

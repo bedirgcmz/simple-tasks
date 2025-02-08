@@ -7,12 +7,12 @@ import { router } from "expo-router";
 
 
 const NotificationModal = () => {
-  const { todos, t } = useTodoListContext(); // Context'ten todos alınıyor
+  const { todos, t } = useTodoListContext(); 
   const [showModal, setShowModal] = useState(false);
   const STORAGE_KEY = 'reminder_time';
 
-  const today = new Date().toISOString().split('T')[0]; // Bugünün tarihi
-console.log();
+  const today = new Date().toISOString().split('T')[0]; 
+
   // Bugüne ait görevleri kontrol et
   const checkTodosForToday = async () => {
     try {

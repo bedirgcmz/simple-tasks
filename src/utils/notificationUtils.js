@@ -8,7 +8,7 @@ const STORAGE_KEY = "scheduledNotifications";
 
 // AsyncStorage'dan tüm bildirimleri silmek için
 Notifications.addNotificationReceivedListener(async (notification) => {
-  // console.log("📩 Received Notification:", notification);
+  console.log("📩 Received Notification:", notification);
 
   const notificationId = notification.request.identifier;
 
@@ -20,98 +20,6 @@ Notifications.addNotificationReceivedListener(async (notification) => {
   delete storedNotifications[notificationId]; // İlgili bildirimi sil
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications)); // Güncellenmiş veriyi kaydet
 });
-
-// // Bu fonksiyon uygulama acildiginda, expo da olan bildirimlere, asyncStorage olanlari yeniden senkronize eder
-// const clearExpiredNotifications = async () => {
-//   try {
-//     const storedNotifications = JSON.parse(await AsyncStorage.getItem(STORAGE_KEY)) || {};
-//     const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
-
-//     for (const todoId in storedNotifications) {
-//       if (!scheduledNotifications.some(n => n.identifier === storedNotifications[todoId])) {
-//         console.log(`🗑 Removing stale notification from storage: ${todoId}`);
-//         delete storedNotifications[todoId];
-//       }
-//     }
-
-//     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications));
-//   } catch (error) {
-//     console.log("❌ Error clearing expired notifications:", error);
-//   }
-// };
-
-// // Uygulama açıldığında veya arka plandan öne alındığında çalıştır
-// useEffect(() => {
-//   clearExpiredNotifications();
-// }, []);
-
-
-// export async function scheduleNotification(todo, t, language) {
-//   if (!todo || !todo.dueDate || !todo.dueTime || !todo.reminderTime) {
-//     console.log("❌ Invalid todo data:", todo);
-//     return;
-//   }
-
-//   const reminderMap = {
-//     "5 minutes before": 5,
-//     "10 minutes before": 10,
-//     "30 minutes before": 30,
-//     "1 hour before": 60,
-//     "2 hours before": 120,
-//     "6 hours before": 360,
-//     "1 day before": 1440,
-//     "1 week before": 10080,
-//   };
-
-//   const reminderMinutes = reminderMap[todo.reminderTime];
-//   if (!reminderMinutes) {
-//     console.log("❌ Invalid reminder time:", todo.reminderTime);
-//     return;
-//   }
-
-//   try {
-//     const localTimeZone = moment.tz.guess();
-//     console.log("Tododan gelen dueDate bilgisi:", todo.dueDate);
-//     console.log("Tododan gelen dueTime bilgisi:", todo.dueTime);
-//     const todoDateTime = moment.tz(
-//       `${todo.dueDate} ${todo.dueTime}`,
-//       "YYYY-MM-DD HH:mm:ss",
-//       localTimeZone
-//       );
-//     console.log("fornatlamadan sonra elde edilen todoDateTime bilgisi:", todoDateTime);
-
-//     const reminderTime = todoDateTime.subtract(reminderMinutes, "minutes");
-//     console.log("📆 Bildirimin calisacagi reminderTiem:", reminderTime);
-
-//     // Eğer reminderTime geçmişse, bildirimi tetikleme
-//     if (reminderTime.isBefore(moment())) {
-//       console.log("⚠️ Reminder time is in the past. Skipping notification.", reminderTime);
-//       return;
-//     }
-
-
-//     const notificationId = await Notifications.scheduleNotificationAsync({
-//       content: {
-//         title: todo.title,
-//         body: `${t("Notification_2")}  ${formatToShortDate(todo.dueDate, language)} / ${todo.dueTime.substring(0, 5)}`,
-//         sound: "default",
-//         data: { todoId: todo.id },
-//       },
-//       trigger: {
-//         date: reminderTime.toDate(),
-//       },
-//     });
-
-//     // 📌 **Bildirim ID’sini AsyncStorage içine kaydet**
-//     const storedNotifications = JSON.parse(await AsyncStorage.getItem(STORAGE_KEY)) || {};
-//     storedNotifications[todo.id] = notificationId;
-//     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications));
-
-//   } catch (error) {
-//     console.log("❌ Error in scheduleNotification:", error);
-//   }
-// }
-
 
 export async function scheduleNotification(todo, t, language) {
   if (!todo || !todo.dueDate || !todo.dueTime || !todo.reminderTime) {
@@ -137,33 +45,47 @@ export async function scheduleNotification(todo, t, language) {
   }
 
   try {
-    // dueDate ve dueTime'ı birleştirerek bir Date nesnesi oluşturun
-    const [year, month, day] = todo.dueDate.split('-').map(Number);
-    const [hour, minute, second] = todo.dueTime.split(':').map(Number);
-    const dueDateTime = new Date(year, month - 1, day, hour, minute, second);
+    // 📌 Kullanıcının saat dilimini bul
+    const userTimeZone = moment.tz.guess(); // Örneğin: "Europe/Stockholm"
 
-    // Hatırlatma zamanını hesaplayın
-    const reminderTime = new Date(dueDateTime.getTime() - reminderMinutes * 60000);
+    // 📌 dueDate ve dueTime'ı kullanarak yerel tarih- saat oluştur
+    const localDateTime = moment.tz(`${todo.dueDate} ${todo.dueTime}`, "YYYY-MM-DD HH:mm:ss", userTimeZone);
 
-    // Eğer reminderTime geçmişteyse, bildirimi tetiklemeyin
-    const now = new Date();
-    if (reminderTime <= now) {
+    // 📌 UTC'ye çevir
+    const utcDateTime = localDateTime.utc();
+
+    // 📌 Hatırlatma zamanını UTC bazında hesapla
+    const reminderTimeUtc = utcDateTime.subtract(reminderMinutes, "minutes");
+
+    // 📌 Şu anki UTC zamanını al
+    const nowUtc = moment.utc();
+
+    // 📌 Bildirim zamanına kaç saniye kaldığını hesapla
+    const timeDiffSeconds = reminderTimeUtc.diff(nowUtc, "seconds");
+
+    if (timeDiffSeconds <= 0) {
       console.log("⚠️ Hatırlatma zamanı geçmişte. Bildirim planlanmadı.");
       return;
     }
 
-    // Bildirimi planlayın
+    // 📌 Bildirimi planla // ${localDateTime.format("YYYY-MM-DD HH:mm")} burasi hatirlatma zamanini veriyor
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
         title: todo.title,
-        body: `${t("Notification_2")} ${new Intl.DateTimeFormat(language, { dateStyle: 'short', timeStyle: 'short' }).format(dueDateTime)}`,
+        body: `${t("Notification_2")} ${todo.dueDate}/${todo.dueTime.slice(0,5)}`, // Kullanıcının yerel saatine göre göster
         sound: "default",
-        data: { todoId: todo.id },
+        data: { todoId: todo.id }, 
       },
-      trigger: reminderTime,
+      trigger: {
+        seconds: timeDiffSeconds, // 📌 UTC bazında doğru zamanlama
+        repeats: false,
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      },
     });
 
-    // Bildirim ID'sini AsyncStorage'e kaydedin
+    console.log(`✅ Bildirim planlandı: ${todo.title}, Bildirim ID: ${notificationId}, Planlanan Zaman (UTC): ${reminderTimeUtc.format("YYYY-MM-DD HH:mm:ss")}`);
+
+    // 📌 Bildirim ID'sini AsyncStorage'e kaydet
     const storedNotifications = JSON.parse(await AsyncStorage.getItem(STORAGE_KEY)) || {};
     storedNotifications[todo.id] = notificationId;
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications));
@@ -172,6 +94,7 @@ export async function scheduleNotification(todo, t, language) {
     console.log("❌ scheduleNotification fonksiyonunda hata:", error);
   }
 }
+
 
 
 export async function cancelNotification(todoId) {
