@@ -153,11 +153,10 @@ export const TodoListProvider = ({ children }) => {
       }
     };
 
-
   const initialTodo = {
     id: '0',
-    title: 'Welcome Simple Tasks',
-    description: 'Lets create new ToDos. This is your first ToDo!',
+    title: t("IT_title"),
+    description: t("IT_description"),
     category: categories[deviceLanguage]?.[10] || "Others",
     status: 'pending',
     createdAt: moment().format('YYYY-MM-DD'),

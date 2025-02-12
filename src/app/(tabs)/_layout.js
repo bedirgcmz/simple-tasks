@@ -3,23 +3,43 @@ import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTodoListContext } from './../../context/todos-context';
 import { View } from 'react-native';
+import moment from "moment-timezone";
+
 
 const TabsLayout = () => {
   const { todos } = useTodoListContext(); // Context'ten todos alınıyor
   const [todayToDos, setTodayToDos] = useState([])
-  const [todayDate, setTodayDate] = useState(""); // Başlangıçta boş bir değer
+  // const [todayDate, setTodayDate] = useState(""); // Başlangıçta boş bir değer
+
+// useEffect(() => {
+//   const today = new Date().toISOString().split('T')[0]; // Bugünün tarihini al
+//   setTodayDate(today); 
+// }, []);
+
+  // Kullanıcının saat dilimini al
+  const userTimezone = moment.tz.guess();
+  const isToday = (date) => {
+    // 📌 Tarih formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
+    // const formattedDate = date.replace(/:/g, "-");
+  
+    // 📌 `date` değişkenini yerel saat dilimiyle `moment` nesnesine çevir
+    const checkDate = moment.tz(date, "YYYY-MM-DD", userTimezone).startOf("day");
+  
+    // 📌 Bugünün tarihini yerel saat dilimiyle al ve saatlerini sıfırla
+    const today = moment().tz(userTimezone).startOf("day");
+  
+    // 📌 Günleri karşılaştır (sadece gün bazında!)
+    return checkDate.isSame(today, "day");
+  };
+
+ 
 
 useEffect(() => {
-  const today = new Date().toISOString().split('T')[0]; // Bugünün tarihini al
-  setTodayDate(today); 
-}, []);
-
-useEffect(() => {
-  const findTodayToDos = todos.filter(
-    (todo) => todo.dueDate === todayDate && todo.status === "pending"
+  const todaysTodos = todos.filter(
+    (todo) => isToday(todo.dueDate) && todo.status !== "done"
   );
-  setTodayToDos(findTodayToDos);
-}, [todos, todayDate]); // todos veya todayDate değiştiğinde çalışır
+  setTodayToDos(todaysTodos);
+}, [todos]); // todos  değiştiğinde çalışır
 
   return (
     <Tabs

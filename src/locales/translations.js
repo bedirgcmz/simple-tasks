@@ -100,14 +100,15 @@ const translations = {
       Guest:"Guest",
       Type_Your_Name: "Your name..",
       Exit_Setting: "Exit Settings",
-
       Buy_Me: "Buy Me A Coffee",
 
+      // initialTodo
+      IT_title: "Welcome to ToDo App",
+      IT_description: "This is a simple ToDo app. You can add, edit and delete ToDos. You can also filter ToDos by category and see statistics of your ToDos.",
 
-      // Language
-      English: "English",
-      Turkish: "Turkish",
-      Spanish: "Spanish",
+
+
+
       // Notification
       Notification_Title: "ToDo Reminder",
       Notification_Body: "You have a ToDo reminder",
@@ -229,6 +230,11 @@ const translations = {
       Type_Your_Name: "Adınızı yazınız..",
       Exit_Setting: "Ayarlardan Çık",
       Buy_Me: "Bana bir kahve ısmarla!",
+      // initialtodo
+      IT_title: "ToDo Uygulamasına Hoş Geldiniz",
+      IT_description: "Bu basit bir ToDo uygulamasıdır. Görev ekleyebilir, düzenleyebilir ve silebilirsiniz. Ayrıca görevleri kategoriye göre filtreleyebilir ve istatistikleri görüntüleyebilirsiniz.",
+ 
+
 
 
       // Language
@@ -352,7 +358,10 @@ const translations = {
        Type_Your_Name: "Skriv ditt namn..",
        Exit_Setting: "Stäng Inställningar",
        Buy_Me: "Bjud mig på en kaffe!",
-
+      // initialtodo
+      IT_title: "Välkommen till ToDo-appen",
+      IT_description: "Detta är en enkel att göra-app. Du kan lägga till, redigera och ta bort uppgifter. Du kan också filtrera uppgifter efter kategori och se statistik över dina uppgifter.",
+    
 
 
 
@@ -485,8 +494,10 @@ const translations = {
       Type_Your_Name: "Gib deinen Namen ein..",
       Exit_Setting: "Einstellungen verlassen",
       Buy_Me: "Spendier mir einen Kaffee!",
-
-
+      // initialtodo
+      IT_title: "Willkommen in der ToDo-App",
+      IT_description: "Dies ist eine einfache ToDo-App. Sie können Aufgaben hinzufügen, bearbeiten und löschen. Sie können Aufgaben auch nach Kategorie filtern und Statistiken zu Ihren Aufgaben einsehen.",
+    
 
 
 

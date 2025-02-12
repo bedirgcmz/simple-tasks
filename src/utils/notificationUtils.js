@@ -77,9 +77,11 @@ export async function scheduleNotification(todo, t, language) {
         data: { todoId: todo.id }, 
       },
       trigger: {
+        
         seconds: timeDiffSeconds, // 📌 UTC bazında doğru zamanlama
         repeats: false,
         type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        // date: new Date(Date.now() + timeDiffSeconds * 1000), // 📌 Mutlak tarih belirtiyoruz
       },
     });
 
@@ -94,7 +96,6 @@ export async function scheduleNotification(todo, t, language) {
     console.log("❌ scheduleNotification fonksiyonunda hata:", error);
   }
 }
-
 
 
 export async function cancelNotification(todoId) {
@@ -135,7 +136,3 @@ export async function cancelNotification(todoId) {
     console.log("❌ Error in cancelNotification:", error);
   }
 }
-
-
-
-// await Notifications.cancelAllScheduledNotificationsAsync();

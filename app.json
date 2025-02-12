@@ -3,7 +3,7 @@
     "name": "SimpleTasks",
     "slug": "simple-task",
     "scheme": "your-app-scheme",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,9 +16,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bgSweden.simpletask",
-      "buildNumber": "1"
+      "buildNumber": "2"
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

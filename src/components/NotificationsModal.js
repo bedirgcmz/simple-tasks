@@ -9,26 +9,34 @@ import { router } from "expo-router";
 const NotificationModal = () => {
   const { todos, t } = useTodoListContext(); 
   const [showModal, setShowModal] = useState(false);
-  const STORAGE_KEY = 'reminder_time';
+  const [storedDay, setStoredDay] = useState("");
+  const STORAGE_REMIND_KEY = 'reminder_time_for_today';
+ const STORAGE_DAY_KEY = 'last_checked_day';
 
   const today = new Date().toISOString().split('T')[0]; 
 
-  // Bugüne ait görevleri kontrol et
   const checkTodosForToday = async () => {
     try {
-      const storedReminderTime = await AsyncStorage.getItem(STORAGE_KEY);
+      let lastCheckedDay = await AsyncStorage.getItem(STORAGE_DAY_KEY);
 
+      // Eğer gün ilk kez kaydediliyorsa veya farklı bir günse güncelle
+      if (!lastCheckedDay || lastCheckedDay !== today) {
+        await AsyncStorage.setItem(STORAGE_DAY_KEY, today);
+        await AsyncStorage.removeItem(STORAGE_REMIND_KEY);
+        setStoredDay(today); 
+      } 
+
+      // Daha önce hatırlatma saati kaydedilmiş mi kontrol et
+      const storedReminderTime = await AsyncStorage.getItem(STORAGE_REMIND_KEY);
       if (storedReminderTime) {
         const reminderTime = new Date(storedReminderTime);
         const now = new Date();
-
-        // Eğer hatırlatma zamanı henüz geçmediyse, modalı gösterme
-        if (now < reminderTime) {
-          return;
-        }
+        
+        // Eğer hatırlatma zamanı hala geçerli ise, modalı gösterme
+        if (now < reminderTime) return;
       }
 
-      // Bugüne ait görevleri kontrol et
+      // Bugüne ait yapılması gereken görevleri filtrele
       const todayTasks = todos.filter(
         (todo) => todo.dueDate.split('T')[0] === today && todo.status === "pending"
       );
@@ -41,13 +49,21 @@ const NotificationModal = () => {
     }
   };
 
+  // useEffect içinde async fonksiyon doğrudan kullanılmaz, o yüzden içeride çağırıyoruz.
+  useEffect(() => {
+    const fetchData = async () => {
+      await checkTodosForToday();
+    };
+    fetchData();
+  }, [todos]);
+
   // "Remind me again" seçeneği
   const remindMeAgain = async () => {
     try {
       const remindTime = new Date();
       remindTime.setHours(remindTime.getHours() + 2); // Şimdiden 2 saat sonrası
       // remindTime.setMinutes(remindTime.getMinutes() + 1); // Şimdiden 1 dakika sonrası
-      await AsyncStorage.setItem(STORAGE_KEY, remindTime.toISOString());
+      await AsyncStorage.setItem(STORAGE_REMIND_KEY, remindTime.toISOString());
       setShowModal(false); // Modalı kapat
     } catch (error) {
       console.error('Error setting reminder:', error);
@@ -59,17 +75,14 @@ const NotificationModal = () => {
     try {
       const endOfDay = new Date();
       endOfDay.setHours(23, 59, 59, 999); // Gün sonuna kadar ertele
-      await AsyncStorage.setItem(STORAGE_KEY, endOfDay.toISOString());
+      await AsyncStorage.setItem(STORAGE_REMIND_KEY, endOfDay.toISOString());
       setShowModal(false);
     } catch (error) {
       console.error('Error saving reminder status:', error);
     }
   };
 
-  // İlk yüklemede görevleri kontrol et
-  useEffect(() => {
-    checkTodosForToday();
-  }, [todos]); // Todos değiştiğinde kontrol tekrar yapılır
+
 
   const todayToDos = todos.filter(
     (todo) => todo.dueDate === today && todo.status === "pending"
