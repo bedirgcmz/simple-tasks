@@ -105,9 +105,9 @@ const translations = {
       // initialTodo
       IT_title: "Welcome to ToDo App",
       IT_description: "This is a simple ToDo app. You can add, edit and delete ToDos. You can also filter ToDos by category and see statistics of your ToDos.",
-
-
-
+      Last_todo_alert: "Last ToDo cannot be deleted",
+      No_todos_found: "No todos found. Cannot delete.",
+      Date_Not_Found:"Not Found",
 
       // Notification
       Notification_Title: "ToDo Reminder",
@@ -233,7 +233,9 @@ const translations = {
       // initialtodo
       IT_title: "ToDo Uygulamasına Hoş Geldiniz",
       IT_description: "Bu basit bir ToDo uygulamasıdır. Görev ekleyebilir, düzenleyebilir ve silebilirsiniz. Ayrıca görevleri kategoriye göre filtreleyebilir ve istatistikleri görüntüleyebilirsiniz.",
- 
+      Last_todo_alert: "Son görev silinemez",
+      No_todos_found: "Hiç görev bulunamadı. Silinemiyor.",
+      Date_Not_Found:"Bulunamadi",
 
 
 
@@ -361,7 +363,9 @@ const translations = {
       // initialtodo
       IT_title: "Välkommen till ToDo-appen",
       IT_description: "Detta är en enkel att göra-app. Du kan lägga till, redigera och ta bort uppgifter. Du kan också filtrera uppgifter efter kategori och se statistik över dina uppgifter.",
-    
+      Last_todo_alert: "Sista uppgiften kan inte tas bort",
+      No_todos_found: "Inga uppgifter hittades. Kan inte radera.",
+      Date_Not_Found:"Hittade inte",
 
 
 
@@ -497,9 +501,10 @@ const translations = {
       // initialtodo
       IT_title: "Willkommen in der ToDo-App",
       IT_description: "Dies ist eine einfache ToDo-App. Sie können Aufgaben hinzufügen, bearbeiten und löschen. Sie können Aufgaben auch nach Kategorie filtern und Statistiken zu Ihren Aufgaben einsehen.",
-    
-
-
+      Last_todo_alert: "Die letzte Aufgabe kann nicht gelöscht werden",
+      No_todos_found: "Keine Aufgaben gefunden. Löschen nicht möglich.",
+      Date_Not_Found:"Nicht gefunden",
+      
 
       // Language
       English: "Englisch",

@@ -9,12 +9,6 @@ import moment from "moment-timezone";
 const TabsLayout = () => {
   const { todos } = useTodoListContext(); // Context'ten todos alınıyor
   const [todayToDos, setTodayToDos] = useState([])
-  // const [todayDate, setTodayDate] = useState(""); // Başlangıçta boş bir değer
-
-// useEffect(() => {
-//   const today = new Date().toISOString().split('T')[0]; // Bugünün tarihini al
-//   setTodayDate(today); 
-// }, []);
 
   // Kullanıcının saat dilimini al
   const userTimezone = moment.tz.guess();
@@ -36,7 +30,14 @@ const TabsLayout = () => {
 
 useEffect(() => {
   const todaysTodos = todos.filter(
-    (todo) => isToday(todo.dueDate) && todo.status !== "done"
+    (todo) => {
+      const validFormat = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD formatı için regex
+      if (!validFormat.test(todo.dueDate.trim())) {
+        console.error("Tarih Okunamadı"); // Hata mesajı fırlat
+      } else {
+        isToday(todo.dueDate) && todo.status !== "done"
+      }
+    }
   );
   setTodayToDos(todaysTodos);
 }, [todos]); // todos  değiştiğinde çalışır

@@ -208,6 +208,17 @@ export const TodoListProvider = ({ children }) => {
   };
 
   const deleteTodo = async (id) => {
+       // 🚀 `todos` dizisini kontrol et, null veya undefined hatalarını önle
+       if (!todos || todos.length === 0) {
+        console.warn(t("No_todos_found"));
+        return;
+    }
+
+    // 🚀 Eğer son todo ise, silmeyi iptal et ve kullanıcıya uyarı göster
+    if (todos.length === 1) {
+        alert(t("Last_todo_alert"));
+        return;
+    }
     try {
       console.log(`🗑 Deleting todo: ${id}`);
   

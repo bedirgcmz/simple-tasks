@@ -11,15 +11,10 @@ const TodoBoardScreen = () => {
   // Kullanıcının saat dilimini al
 const userTimezone = moment.tz.guess();
   const isToday = (date) => {
-    // 📌 Tarih formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
-    // const formattedDate = date.replace(/:/g, "-");
-  
     // 📌 `date` değişkenini yerel saat dilimiyle `moment` nesnesine çevir
     const checkDate = moment.tz(date, "YYYY-MM-DD", userTimezone).startOf("day");
-  
     // 📌 Bugünün tarihini yerel saat dilimiyle al ve saatlerini sıfırla
     const today = moment().tz(userTimezone).startOf("day");
-  
     // 📌 Günleri karşılaştır (sadece gün bazında!)
     return checkDate.isSame(today, "day");
   };
@@ -59,20 +54,48 @@ const isPastDays = (date) => {
   
   
 
+const validFormat = /^\d{4}-\d{2}-\d{2}$/; 
+
   const todaysTodos = todos.filter(
-    (todo) => isToday(todo.dueDate) //&& todo.status !== "done"
+    (todo) => {
+      if (!validFormat.test(todo.dueDate.trim())) {
+        console.error("Tarih Okunamadı"); // Hata mesajı fırlat
+        return false;
+      } else {
+        return isToday(todo.dueDate)
+      }
+    }
   );
   const tomorrowsTodos = todos.filter(
-    (todo) => isTomorrow(todo.dueDate) //&& todo.status !== "done"
+    (todo) => {
+      if (!validFormat.test(todo.dueDate.trim())) {
+        console.error("Tarih Okunamadı"); // Hata mesajı fırlat
+        return false;
+      } else {
+        return isTomorrow(todo.dueDate)
+      }
+    } 
   );
   const nextDaysTodos = todos.filter(
-    (todo) =>
-      isNextDays(todo.dueDate) &&
-      !isTomorrow(todo.dueDate) 
-      // && todo.status !== "done"
+    (todo) =>{
+      if (!validFormat.test(todo.dueDate.trim())) {
+        console.error("Tarih Okunamadı"); // Hata mesajı fırlat
+        return false;
+      } else {
+        return isNextDays(todo.dueDate) && !isTomorrow(todo.dueDate) 
+      }
+    }
+    
   );
   const pastDaysTodos = todos.filter(
-    (todo) => isPastDays(todo.dueDate)
+    (todo) => {
+      if (!validFormat.test(todo.dueDate.trim())) {
+        console.error("Tarih Okunamadı"); // Hata mesajı fırlat
+        return false;
+      } else {
+        return isPastDays(todo.dueDate)
+      }
+    } 
   );
   const completedTodos = todos.filter((todo) => todo.status === "done");
 
