@@ -9,14 +9,14 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const SettingsModal = ({ visible, onClose }) => {
-  const { setLanguage, setTodos, t, username, setUsername, updateUsername, language, todos, STORAGE_KEY, translateTodosCategories } = useTodoListContext();
+  const { setLanguage, t, username, setUsername, updateUsername, language, translateTodosCategories, STORAGE_USERNAME_LANGUAGE } = useTodoListContext();
   const [isEnableUsername, setIsEnableUsername] = useState(false)
 
 
-  const changeLanguage = (lang) => {
-    // alert(t("language_changed"));
+  const changeLanguage = async(lang) => {
+    await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, language);
     setLanguage(lang);
-    onClose(); // Modalı kapat
+    onClose(); 
     translateTodosCategories(lang);
   };
 

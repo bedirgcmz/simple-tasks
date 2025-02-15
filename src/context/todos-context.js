@@ -58,13 +58,33 @@ export const TodoListProvider = ({ children }) => {
   const [dueTime, setDueTime] = useState('00:00');
   const STORAGE_KEY = 'user_todos';
   const STORAGE_USERNAME_KEY = "user_username";
-  const deviceLanguage = Localization.locale.split("-")[0];
+  const STORAGE_USERNAME_LANGUAGE = "user_username";
   const [language, setLanguage] = useState(deviceLanguage || "en");
   const [notificationRedirect, setNotificationRedirect] = useState(null); // 📌 Bildirim yönlendirme durumu
   const [username, setUsername] = useState("");
   
 
   const t = (key) => translations[language][key] || key;
+
+// ✅ useEffect içinde async fonksiyon doğru şekilde kullanıldı
+useEffect(() => {
+  const loadUserLanguage = async () => {
+    try {
+      const storedUserLanguage = await AsyncStorage.getItem(STORAGE_USERNAME_LANGUAGE);
+      if (storedUserLanguage) {
+        setLanguage(storedUserLanguage); // ✅ Kayıtlı dili yükle
+      } else {
+        const deviceLanguage = Localization.locale.split("-")[0]; // Cihazın varsayılan dili
+        await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, deviceLanguage);
+        setLanguage(deviceLanguage); // ✅ Cihazın varsayılan dilini kullan
+      }
+    } catch (error) {
+      console.error("❌ Error loading language:", error);
+    }
+  };
+
+  loadUserLanguage();
+}, []);
 
 
     //Todlarin kategorilerini dile gore degistirme
