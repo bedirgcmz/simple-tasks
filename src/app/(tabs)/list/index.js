@@ -142,6 +142,7 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
                   key={todo.id}
                   todo={todo}
                   bgColor={cardBgColor}
+                  fromText="list"
                 />
               ))}
             </ScrollView>
@@ -190,7 +191,6 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
             <View className="p-4 pb-6">
               <Text className="text-lg font-bold  text-[#ef6351]">{completedTodosTitle}</Text>
               <Text className="text-gray-500 mb-4 pl-1">
-              {/* {completedTodos.length}{completedTodos.length > 1 ? " ToDos are done" : " ToDo is done"}   */}
               {completedTodos.length} {t("Done")}
             </Text>
               {completedTodos.length > 0 ? (
@@ -199,8 +199,8 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
                     <TodoCard
                       key={todo.id}
                       todo={todo}
-                      // bgColor={"bg-customGreen"}
                       bgColor={"bg-[#343a40]"}
+                      fromText="list"
                     />
                   ))}
                 </ScrollView>

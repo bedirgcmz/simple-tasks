@@ -189,7 +189,7 @@ const translations = {
       Congratulations: "Tebrikler!",
       // DynamicDay Page
       No_ToDos_found: "Bu tarih için yapılacaklar bulunamadı",
-      todos_of_the_day: "gününün todoları",
+      todos_of_the_day: "gününün görevleri",
       //Alert in utils
       Alert_Cancel: "İptal",
       Alert_Confirm_Delete: "Evet, sil!",

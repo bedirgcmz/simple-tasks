@@ -58,13 +58,12 @@ export const TodoListProvider = ({ children }) => {
   const [dueTime, setDueTime] = useState('00:00');
   const STORAGE_KEY = 'user_todos';
   const STORAGE_USERNAME_KEY = "user_username";
-  const STORAGE_USERNAME_LANGUAGE = "user_username";
-  const [language, setLanguage] = useState(deviceLanguage || "en");
+  const STORAGE_USERNAME_LANGUAGE = "user_language_simpletask";
+  const [language, setLanguage] = useState("en");
   const [notificationRedirect, setNotificationRedirect] = useState(null); // 📌 Bildirim yönlendirme durumu
   const [username, setUsername] = useState("");
+const t = (key) => translations[language][key] || key;
   
-
-  const t = (key) => translations[language][key] || key;
 
 // ✅ useEffect içinde async fonksiyon doğru şekilde kullanıldı
 useEffect(() => {
@@ -85,6 +84,8 @@ useEffect(() => {
 
   loadUserLanguage();
 }, []);
+
+
 
 
     //Todlarin kategorilerini dile gore degistirme
@@ -177,7 +178,7 @@ useEffect(() => {
     id: '0',
     title: t("IT_title"),
     description: t("IT_description"),
-    category: categories[deviceLanguage]?.[10] || "Others",
+    category: categories[language]?.[10] || "Others",
     status: 'pending',
     createdAt: moment().format('YYYY-MM-DD'),
     dueDate: moment().add(7, 'days').format('YYYY-MM-DD'), 

@@ -13,11 +13,15 @@ const SettingsModal = ({ visible, onClose }) => {
   const [isEnableUsername, setIsEnableUsername] = useState(false)
 
 
-  const changeLanguage = async(lang) => {
-    await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, language);
-    setLanguage(lang);
-    onClose(); 
-    translateTodosCategories(lang);
+  const changeLanguage = async (lang) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, lang);
+      setLanguage(lang);
+      onClose();
+      translateTodosCategories(lang);
+    } catch (error) {
+      console.error("❌ Error saving language:", error);
+    }
   };
 
   const changeUserName = () => {

@@ -11,7 +11,6 @@ const TaskScreen = () => {
   const { todos, t } = useTodoListContext();
   const todo = todos.find((todo) => todo.id === id);
 
-
   return (
     <LinearGradient
     colors={["#01061b", "#431127", "#931e36"]}
