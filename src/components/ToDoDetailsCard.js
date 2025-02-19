@@ -14,26 +14,8 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
   const { todos, deleteTodo, updateTodo, setShowCongrats, t, language } =
     useTodoListContext();
   const todo = todos.find((todo) => todo.id === pTodoId);
-  // function calculateDaysLeft(todo) {
-  //   const createdAt = new Date();
-  //   const dueDate = new Date(todo.dueDate);
 
-  //   // Calculate the difference in milliseconds
-  //   const timeDifference = dueDate.getTime() - createdAt.getTime();
-
-  //   // Convert milliseconds to days
-  //   const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-  //   // Check if due date has passed
-  //   if (daysLeft < 0) {
-  //     return <Text>{`${t("calculateDays_text_1")} ${Math.abs(daysLeft)} ${t("calculateDays_text_2")}`}</Text>;
-  //   } else if (daysLeft === 0) {
-  //     return  <Text>{t("calculateDays_text_3")} </Text>
-  //   } else {
-  //     return <Text>{`${daysLeft} ${t("calculateDays_text_4")}`}</Text>
-  //   }
-  // }
   function calculateDaysLeft(todo) {
-
     // 📌 `createdAt` ve `dueDate` nesnelerini oluştur
     const createdAt = moment(todo.createdAt, "YYYY-MM-DD").startOf("day");
     const dueDate = moment(todo.dueDate, "YYYY-MM-DD").startOf("day");
