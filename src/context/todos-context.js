@@ -88,7 +88,7 @@ useEffect(() => {
 
 
 
-    //Todlarin kategorilerini dile gore degistirme
+    //Todolarin kategorilerini dile gore degistirme
     const categories = {
       en: [
         "School",
@@ -187,26 +187,24 @@ useEffect(() => {
     completedAt: null,
   };
 
-  const loadTodos = async () => {
-    try {
-        const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
 
-        if (storedTodos) {
-            const parsedTodos = JSON.parse(storedTodos);
-            
-            if (Array.isArray(parsedTodos) && parsedTodos.length > 0) {
-                setTodos(parsedTodos);
-            } else {
-                await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([initialTodo]));
-                setTodos([initialTodo]);
-            }
-        } else {
-            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([initialTodo]));
-            setTodos([initialTodo]);
-        }
-    } catch (error) {
-        console.error('❌ Error loading todos:', error);
+const loadTodos = async () => {
+  try {
+    const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
+
+    if (storedTodos && storedTodos !== "[]") { 
+      const parsedTodos = JSON.parse(storedTodos);
+      if (Array.isArray(parsedTodos) && parsedTodos.length > 0) {
+        setTodos(parsedTodos);
+      }
+    } else { 
+      const defaultTodos = [initialTodo];
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(defaultTodos));
+      setTodos(defaultTodos);
     }
+  } catch (error) {
+    console.error("❌ Error loading todos:", error);
+  }
 };
 
 
@@ -313,11 +311,13 @@ useEffect(() => {
 
 
   useEffect(() => {
-    loadTodos().then(() => {
-      setUsername(t("Guest"));
-      loadUsername();
-  });
+    const initApp = async () => {
+      await loadTodos();
+      await loadUsername(); 
+    };
+    initApp();
   }, []);
+  
 
   useEffect(() => {
     translateTodosCategories(language);
