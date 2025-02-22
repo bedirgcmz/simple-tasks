@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import {  FontAwesome5 } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { truncateText } from "../utils/date-utils";
+import { calculateDaysLeft, truncateText } from "../utils/date-utils";
 import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
 import { showConfirmAlert } from '../utils/alerts';
@@ -12,36 +12,6 @@ import moment from "moment-timezone";
 
 const TodoCard = ({ todo, bgColor, fromText }) => {
   const {  deleteTodo, updateTodo, setShowCongrats, t } = useTodoListContext();
-
-  function calculateDaysLeft(todo) {
-    // 📌 `dueDate` formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
-    const formattedDueDate = todo.dueDate;
-
-    // console.log("createdSt control", todo.createdAt);
-
-    // 📌 `createdAt` ve `dueDate` nesnelerini oluştur
-    const createdAt = moment(todo.createdAt, "YYYY-MM-DD").startOf("day");
-    const dueDate = moment(formattedDueDate, "YYYY-MM-DD").startOf("day");
-
-    // 📌 Eğer `dueDate` geçersizse, hata ver
-    if (!dueDate.isValid()) {
-        throw new Error("❌ Geçersiz tarih formatı! " + formattedDueDate);
-    }
-
-    // 📌 Gün farkını hesapla
-    const daysLeft = dueDate.diff(createdAt, "days");
-
-    // console.log("📌 Gün farkı:", daysLeft);
-
-    // 📌 DueDate geçmişse
-    if (daysLeft < 0) {
-        return `${Math.abs(daysLeft)} ${t("calculateDays_text_5")}`;
-    } else if (daysLeft === 0) {
-        return t("calculateDays_text_6");
-    } else {
-        return `${daysLeft} ${t("calculateDays_text_7")}`;
-    }
-}
 
   return (
     <TouchableOpacity
@@ -87,7 +57,7 @@ const TodoCard = ({ todo, bgColor, fromText }) => {
             <FontAwesome5 name="trash" size={16} color="#e9ecef" />
           </TouchableOpacity>
         </View>
-        <Text className="text-black text-center text-xs bg-[#ced4da] z-[11] w-full rounded-b-lg">{calculateDaysLeft(todo)}</Text>
+        <Text className="text-black text-center text-xs bg-[#ced4da] z-[11] w-full rounded-b-lg">{calculateDaysLeft(todo, t)}</Text>
     </TouchableOpacity>
   );
 };

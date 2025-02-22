@@ -108,6 +108,7 @@ const translations = {
       Last_todo_alert: "Last ToDo cannot be deleted",
       No_todos_found: "No todos found. Cannot delete.",
       Date_Not_Found:"Not Found",
+      Selected_Character: "Selected Character",
 
       // Notification
       Notification_Title: "ToDo Reminder",
@@ -236,13 +237,13 @@ const translations = {
       Last_todo_alert: "Son görev silinemez",
       No_todos_found: "Hiç görev bulunamadı. Silinemiyor.",
       Date_Not_Found:"Bulunamadi",
+      Selected_Character: "Seçilen Karekter",
 
 
 
-      // Language
-      English: "İngilizce",
-      Turkish: "Türkçe",
-      Spanish: "İspanyolca",
+      
+
+
       // Notification
       Notification: "Bildirim",
       Notification_Title: "ToDo Hatırlatıcısı",
@@ -366,15 +367,15 @@ const translations = {
       Last_todo_alert: "Sista uppgiften kan inte tas bort",
       No_todos_found: "Inga uppgifter hittades. Kan inte radera.",
       Date_Not_Found:"Hittade inte",
+      Selected_Character: "Vald karaktär",
 
 
 
 
 
-      // Language
-      English: "Engelska",
-      Turkish: "Turkiska",
-      Spanish: "Spaniska",
+     
+      
+
       // Notification
       Notification: "Meddelande",
       Notification_Title: "ToDo Påminnelse",
@@ -504,12 +505,12 @@ const translations = {
       Last_todo_alert: "Die letzte Aufgabe kann nicht gelöscht werden",
       No_todos_found: "Keine Aufgaben gefunden. Löschen nicht möglich.",
       Date_Not_Found:"Nicht gefunden",
+      Selected_Character: "Ausgewähltes Zeichen",
       
 
-      // Language
-      English: "Englisch",
-      Turkish: "Türkisch",
-      Spanish: "Spanisch",
+     
+      
+
       // Notification
       Notification: "Benachrichtigung",
       Notification_Title: "ToDo Erinnerung",

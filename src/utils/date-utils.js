@@ -3,9 +3,6 @@ import { useTodoListContext } from "../context/todos-context";
   
 export const truncateText = (pText, pNumber) =>
   pText.length > pNumber ? `${pText.slice(0, pNumber)}...` : pText;
-  
-
-
 
 export function formatToShortDate(dateString, language = "en") {
   const {  t } = useTodoListContext(); 
@@ -17,15 +14,11 @@ export function formatToShortDate(dateString, language = "en") {
     de: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
   };
 
-  // console.log("📌 Gelen dateString:", dateString);
-
-  // console.log("gelen date bilgisi date-util icinde",dateString);
   try {
     if (dateString) {
       const validFormat = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD formatı için regex
     
       if (!validFormat.test(dateString.trim())) {
-        console.error("Tarih Okunamadı", dateString); // Hata mesajı fırlat
         return t("Date_Not_Found");
       } else {
         // 📌 Stringi `-` ile ayırarak gün, ay ve yılı al
@@ -94,5 +87,32 @@ export function calculateReminderDateTime(todo) {
   } catch (error) {
     console.log("❌ Hatırlatma zamanı hesaplanırken hata oluştu:", error);
     return null;
+  }
+}
+
+export function calculateDaysLeft(todo) {
+  const {  t } = useTodoListContext(); 
+
+  // 📌 `dueDate` formatı kesin olarak "YYYY-MM-DD" olmalı
+  const dueDate = moment(todo.dueDate, "YYYY-MM-DD").startOf("day");
+
+  // 📌 Eğer `dueDate` geçersizse hata ver
+  if (!dueDate.isValid()) {
+      throw new Error("❌ Geçersiz dueDate formatı! " + todo.dueDate);
+  }
+
+  // 📌 Bugünün tarihini al ve başlangıcını belirle (createdAt yerine)
+  const today = moment().startOf("day");
+
+  // 📌 Gün farkını hesapla
+  const daysLeft = dueDate.diff(today, "days");
+
+  // 📌 DueDate geçmişse
+  if (daysLeft < 0) {
+      return `${Math.abs(daysLeft)} ${t("calculateDays_text_5")}`; // Örn: "3 gün geçti"
+  } else if (daysLeft === 0) {
+      return t("calculateDays_text_6"); // "Bugün"
+  } else {
+      return `${daysLeft} ${t("calculateDays_text_7")}`; // Örn: "5 gün kaldı"
   }
 }

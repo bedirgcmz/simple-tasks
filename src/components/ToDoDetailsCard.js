@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { useTodoListContext } from "../context/todos-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { calculateReminderDateTime, formatToShortDate } from "../utils/date-utils";
+import { calculateDaysLeft, calculateReminderDateTime, formatToShortDate } from "../utils/date-utils";
 import { router } from "expo-router";
 import { showConfirmAlert } from "../utils/alerts";
 import { playSuccessSound } from "../utils/play-success-sound";
@@ -15,32 +15,6 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
     useTodoListContext();
   const todo = todos.find((todo) => todo.id === pTodoId);
 
-  function calculateDaysLeft(todo) {
-    // 📌 `createdAt` ve `dueDate` nesnelerini oluştur
-    const createdAt = moment(todo.createdAt, "YYYY-MM-DD").startOf("day");
-    const dueDate = moment(todo.dueDate, "YYYY-MM-DD").startOf("day");
-
-    // 📌 Eğer `dueDate` geçersizse, hata ver
-    if (!dueDate.isValid()) {
-        throw new Error("❌ Geçersiz tarih formatı! " + todo.dueDate);
-    }
-
-    // 📌 Gün farkını hesapla
-    const daysLeft = dueDate.diff(createdAt, "days");
-
-    // console.log("📌 Gün farkı:", daysLeft);
-
-    // 📌 DueDate geçmişse
-    if (daysLeft < 0) {
-        return `${Math.abs(daysLeft)} ${t("calculateDays_text_5")}`;
-    } else if (daysLeft === 0) {
-        return t("calculateDays_text_6");
-    } else {
-        return `${daysLeft} ${t("calculateDays_text_7")}`;
-    }
-}
-
-// console.log("detail icinde",todo.dueDate);
   const confettiRef = useRef()
 
   const playConfetti = () => {
@@ -83,7 +57,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
             ${todo.status === "done" ? "bg-[#fe9092]" : "bg-[#6c757d]"}
             `}
             >
-              <Text className="text-lg text-white">{calculateDaysLeft(todo)}</Text>
+              <Text className="text-lg text-white">{calculateDaysLeft(todo, t)}</Text>
             </View>
 
             <View className="px-2">
@@ -119,7 +93,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
               <View className="mb-4 flex-row justify-between px-2">
                 <View className="flex-row items-center text-sm text-gray-500">
                   <Text><Ionicons name="calendar" size={18} color="#495057" /></Text>
-                  <Text className="ml-1 tracking-tighter  text-[13px]">{formatToShortDate(todo.dueDate, language)}</Text>
+                  <Text className="ml-1 tracking-tighter  text-[13px]">{formatToShortDate(todo.dueDate, language, t)}</Text>
                     <Text className="ml-1 tracking-tighter  text-[13px]">- {todo.dueTime.slice(0, 5)}</Text>
                   
                 </View>
@@ -132,7 +106,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
 
                     }
                     <Text className="ml-1 tracking-tighter text-[13px]">
-                      {formatToShortDate(calculateReminderDateTime(todo).slice(0, 11), language)} {" "}
+                      {formatToShortDate(calculateReminderDateTime(todo).slice(0, 11), language, t)} {" "}
                       {calculateReminderDateTime(todo).slice(11, 16)}
                     </Text>
                   </View>

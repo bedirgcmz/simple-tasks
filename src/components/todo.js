@@ -5,42 +5,11 @@ import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
 import { showConfirmAlert } from '../utils/alerts';
 import { playCorrectSound } from '../utils/play-success-sound';
-import moment from "moment-timezone";
+import { calculateDaysLeft } from '../utils/date-utils';
 
 
 const Todo = ({todo, index, fromText}) => {
   const {  deleteTodo, updateTodo, setShowCongrats, t } = useTodoListContext();
-
-    function calculateDaysLeft(todo) {
-        // 📌 `dueDate` formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
-        const formattedDueDate = todo.dueDate;
-
-        // console.log("createdSt control", todo.createdAt);
-    
-        // 📌 `createdAt` ve `dueDate` nesnelerini oluştur
-        const createdAt = moment(todo.createdAt, "YYYY-MM-DD").startOf("day");
-        const dueDate = moment(formattedDueDate, "YYYY-MM-DD").startOf("day");
-    
-        // 📌 Eğer `dueDate` geçersizse, hata ver
-        if (!dueDate.isValid()) {
-            throw new Error("❌ Geçersiz tarih formatı! " + formattedDueDate);
-        }
-    
-        // 📌 Gün farkını hesapla
-        const daysLeft = dueDate.diff(createdAt, "days");
-    
-        // console.log("📌 Gün farkı:", daysLeft);
-    
-        // 📌 DueDate geçmişse
-        if (daysLeft < 0) {
-            return `${Math.abs(daysLeft)} ${t("calculateDays_text_5")}`;
-        } else if (daysLeft === 0) {
-            return t("calculateDays_text_6");
-        } else {
-            return `${daysLeft} ${t("calculateDays_text_7")}`;
-        }
-    }
-    
 
   return (
     <TouchableOpacity onPress={() => router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: fromText } })} className={`flex-1 flex-row items-center justify-between my-2 border-b border-[#6c757d] rounded-lg shadow bg-[#6c757d36] ${index % 2 !== 0 && "bgg-[#343a40]"}`}>
@@ -62,7 +31,7 @@ const Todo = ({todo, index, fromText}) => {
         </View>
         {
             todo.status !== "done" ?
-            <Text className="text-red-400 text-[12px] tracking-tighter">{calculateDaysLeft(todo)}</Text> :
+            <Text className="text-red-400 text-[12px] tracking-tighter">{calculateDaysLeft(todo, t)}</Text> :
             <Text className="text-green-600 text-[12px] tracking-tighter">{t("Great")}</Text>
         }
         <TouchableOpacity className="p-2 pl-1"

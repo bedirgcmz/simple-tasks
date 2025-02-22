@@ -32,8 +32,8 @@ const DaysTodos = () => {
       style={{ flex: 1, padding: 7, justifyContent: "start" }}
     >
 
-    <ScrollView className="mt-12 z-10 max-h-[75%]"
-    contentContainerStyle={{flexDirection: "row", flexWrap: "wrap", alignItems:"start", justifyContent: "center", paddingBottom:20}}
+    <ScrollView className="mt-12 z-10 max-h-[75%] px-2 pr-3"
+    contentContainerStyle={{flexDirection: "row", flexWrap: "wrap", alignItems:"start", justifyContent: "space-between", paddingBottom:20}}
     >
       {thisDaysTodos.length !== 0 && 
       <View className="text-center pt-4 pb-2 flex-col items-center justify-centerv w-full">

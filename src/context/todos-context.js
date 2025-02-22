@@ -59,30 +59,46 @@ export const TodoListProvider = ({ children }) => {
   const STORAGE_KEY = 'user_todos';
   const STORAGE_USERNAME_KEY = "user_username";
   const STORAGE_USERNAME_LANGUAGE = "user_language_simpletask";
+  const STORAGE_USERNAME_IMAGE = "user_image_simpletask";
   const [language, setLanguage] = useState("en");
   const [notificationRedirect, setNotificationRedirect] = useState(null); // 📌 Bildirim yönlendirme durumu
   const [username, setUsername] = useState("");
-const t = (key) => translations[language][key] || key;
+  const [userIconImage, setUserIconImage] = useState("icon24");
+  const t = (key) => translations[language][key] || key;
+
+
   
 
-// ✅ useEffect içinde async fonksiyon doğru şekilde kullanıldı
+//  useEffect içinde async fonksiyon ile resim ve dil secimini baslangicta yukle
 useEffect(() => {
   const loadUserLanguage = async () => {
     try {
       const storedUserLanguage = await AsyncStorage.getItem(STORAGE_USERNAME_LANGUAGE);
-      if (storedUserLanguage) {
-        setLanguage(storedUserLanguage); // ✅ Kayıtlı dili yükle
+      if (storedUserLanguage && ["en", "sv","de","tr",].includes(storedUserLanguage)) {
+        setLanguage(storedUserLanguage); //  Kayıtlı dili yükle
       } else {
         const deviceLanguage = Localization.locale.split("-")[0]; // Cihazın varsayılan dili
         await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, deviceLanguage);
-        setLanguage(deviceLanguage); // ✅ Cihazın varsayılan dilini kullan
+        setLanguage(deviceLanguage); //  Cihazın varsayılan dilini kullan
       }
     } catch (error) {
       console.error("❌ Error loading language:", error);
     }
   };
-
+  const loadUserImage = async () => {
+    try {
+      const storedUserImage = await AsyncStorage.getItem(STORAGE_USERNAME_IMAGE);
+      if (storedUserImage) {
+        setUserIconImage(storedUserImage); //  Kayıtlı resmi yükle
+      } else {
+        await AsyncStorage.setItem(STORAGE_USERNAME_IMAGE, userIconImage);
+      }
+    } catch (error) {
+      console.error("❌ Error loading language:", error);
+    }
+  };
   loadUserLanguage();
+  loadUserImage()
 }, []);
 
 
@@ -143,6 +159,7 @@ useEffect(() => {
         "Sonstiges",
       ],
     };
+
     const translateTodosCategories = async (pLang) => {
       try {
         const translatedTodos = todos.map(todo => {
@@ -207,7 +224,6 @@ const loadTodos = async () => {
   }
 };
 
-
   const saveTodos = async (updatedTodos) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTodos));
@@ -259,7 +275,6 @@ const loadTodos = async () => {
       console.log("❌ Error in deleteTodo:", error);
     }
   };
-  
 
   const updateTodo = async (id, updatedTodo) => {
     const updatedTodos = todos.map((todo) =>
@@ -283,7 +298,6 @@ const loadTodos = async () => {
       }, 1000); // 1 saniye gecikme ile yeni bildirimi planla
     }
   };
-
 
   //Username islemleri
   const loadUsername = async () => {
@@ -353,8 +367,12 @@ const loadTodos = async () => {
     loadUsername,
     updateUsername,
     STORAGE_KEY,
+    STORAGE_USERNAME_LANGUAGE,
+    STORAGE_USERNAME_IMAGE,
     translateTodosCategories,
-    categories
+    categories,
+    userIconImage,
+    setUserIconImage
   };
 
   return <TodoListContext.Provider value={value}>{children}</TodoListContext.Provider>;
