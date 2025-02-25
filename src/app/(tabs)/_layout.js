@@ -4,6 +4,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTodoListContext } from './../../context/todos-context';
 import { View } from 'react-native';
 import moment from "moment-timezone";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 
 const TabsLayout = () => {
@@ -72,6 +73,9 @@ useEffect(() => {
           } else if (route.name === "filter") {
             iconName = focused ? "filter-circle" : "filter-circle-outline";
             return <Ionicons name={iconName} size={size} color={color} />
+          } else if (route.name === "checklist") {
+            iconName = focused ? "list-check" : "list-check";
+            return <FontAwesome6 name={iconName} size={size} color={color} />
           }
 
           // return <Ionicons name={iconName} size={size} color={color} />
@@ -92,7 +96,7 @@ useEffect(() => {
           shadowOpacity: 0.2, // Gölge opaklığı
           shadowRadius: 10, // Gölge yayılımı
           elevation: 5, // Android için gölge
-          marginHorizontal: 90,
+          marginHorizontal: 70,
           paddingHorizontal: 10,
           paddingVertical: 8,
           borderRadius: 50, // Yuvarlak köşeler
@@ -177,6 +181,18 @@ useEffect(() => {
           headerShown: false,
           headerTitle: "Filter",
           tabBarLabel: "Filter",
+          tabBarShowLabel: false,
+          // tabBarStyle: { display: "none" },
+          
+        }}
+      />
+      <Tabs.Screen
+        name="checklist"
+        options={{
+          // href: null,
+          headerShown: false,
+          headerTitle: "Check List",
+          tabBarLabel: "Check List",
           tabBarShowLabel: false,
           // tabBarStyle: { display: "none" },
           
