@@ -4,8 +4,8 @@ import { useTodoListContext } from "../context/todos-context";
 export const truncateText = (pText, pNumber) =>
   pText.length > pNumber ? `${pText.slice(0, pNumber)}...` : pText;
 
-export function formatToShortDate(dateString, language = "en") {
-  const {  t } = useTodoListContext(); 
+export function formatToShortDate(dateString, language = "en", t) {
+  // const {  t } = useTodoListContext(); 
 
   const monthNames = {
     en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -90,8 +90,8 @@ export function calculateReminderDateTime(todo) {
   }
 }
 
-export function calculateDaysLeft(todo) {
-  const {  t } = useTodoListContext(); 
+export function calculateDaysLeft(todo, t) {
+  // const {  t } = useTodoListContext(); 
 
   // 📌 `dueDate` formatı kesin olarak "YYYY-MM-DD" olmalı
   const dueDate = moment(todo.dueDate, "YYYY-MM-DD").startOf("day");
