@@ -23,7 +23,7 @@ export function useNotificationListener(setNotificationRedirect) {
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
       const todoId = response.notification.request.content.data.todoId;
-      console.log("📩 Bildirime tıklandı, yönlendirilecek todoId:", todoId);
+      // console.log("📩 Bildirime tıklandı, yönlendirilecek todoId:", todoId);
       
       if (todoId) {
         setNotificationRedirect(todoId); // 📌 Bildirim yönlendirmesini başlat
@@ -255,11 +255,11 @@ const loadTodos = async () => {
         return;
     }
     try {
-      console.log(`🗑 Deleting todo: ${id}`);
+      // console.log(`🗑 Deleting todo: ${id}`);
   
       const todoToDelete = todos.find((todo) => todo.id === id);
       if (todoToDelete) {
-        console.log(todoToDelete);
+        // console.log(todoToDelete);
         await cancelNotification(id); // 📌 Önce bildirimi iptal et
       }
   
@@ -349,7 +349,6 @@ const loadTodos = async () => {
        setNotificationRedirect(null); // 📌 Yönlendirme tamamlandı, state’i sıfırla
      }
    }, [notificationRedirect]);
-
   const value = {
     todos,
     setTodos,

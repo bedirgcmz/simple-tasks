@@ -19,7 +19,6 @@ const TodoApp = () => {
     loadData();
   }, []);
 
-
 // 📌 Liste kelimesinin dillerdeki karşılıkları
 const LIST_TRANSLATIONS = {
   en: "List",
@@ -37,13 +36,7 @@ const updateGroupNamesOnLanguageChange = async (newLanguage, setGroups) => {
 
     // 📌 Güncellenmiş grup isimlerini oluştur
     const updatedGroups = groups.map((group) => {
-      const currentName = group.name;
-
-      // 📌 Eğer isim çevirilebilir bir kelime ise değiştir
-      if (Object.values(LIST_TRANSLATIONS).includes(currentName)) {
-        return { ...group, name: LIST_TRANSLATIONS[newLanguage] || LIST_TRANSLATIONS.en };
-      }
-      return group;
+      return { ...group, name: LIST_TRANSLATIONS[newLanguage] || LIST_TRANSLATIONS.en };
     });
 
     // 📌 Güncellenmiş listeyi AsyncStorage'a kaydet
@@ -51,6 +44,8 @@ const updateGroupNamesOnLanguageChange = async (newLanguage, setGroups) => {
 
     // 📌 State güncelle
     setGroups(updatedGroups);
+    setCurrentGroupId(updatedGroups[0].id);
+
   } catch (error) {
     console.error("❌ Error updating group names:", error);
   }
