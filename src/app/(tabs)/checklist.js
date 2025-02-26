@@ -252,7 +252,7 @@ useEffect(() => {
                             <Trash2 color="white" size={16} />
                         </TouchableOpacity>
                         <View className="flex-row items-center rounded-lg px-2 bg-[#ffe5ec] mt-2"
-                          style={{ paddingVertical: Platform.OS === "ios" ? 5 : 1 }} // iOS: 3px, Android: 5px
+                          style={{ paddingVertical: Platform.OS === "ios" ? 5 : 3 }} // iOS: 3px, Android: 5px
                         >
                             <TextInput
                             value={todoText}
