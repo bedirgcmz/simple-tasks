@@ -256,7 +256,7 @@ const translations = {
       Date_Not_Found:"Bulunamadi",
       Selected_Character: "Seçilen Karekter",
       // check list
-        List_1: "Liste 1",
+        List_1: "Liste",
         List: "Liste",
         Check_List: "Kontrol Listesi",
         Create_List: "Liste Oluştur",
@@ -396,7 +396,7 @@ const translations = {
       Date_Not_Found:"Hittade inte",
       Selected_Character: "Vald karaktär",
       // check list
-      List_1: "Lista 1",
+      List_1: "Lista",
       List: "Lista",
       Check_List: "Checklista",
       Create_List: "Skapa Lista",
@@ -542,7 +542,7 @@ const translations = {
       Date_Not_Found:"Nicht gefunden",
       Selected_Character: "Ausgewähltes Zeichen",
       // check list
-      List_1: "Liste 1",
+      List_1: "Liste",
       List: "Liste",
       Check_List: "Checkliste",
       Create_List: "Liste Erstellen",
