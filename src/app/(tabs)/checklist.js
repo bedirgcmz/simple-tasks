@@ -3,30 +3,71 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, ScrollView } from "r
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CheckBox } from "react-native-elements";
 import { Trash2, Edit, Plus } from "lucide-react-native";
-import { showConfirmAlert } from "../../utils/alerts";
 import { useTodoListContext } from "../../context/todos-context";
 import {Alert} from 'react-native';
 import { LinearGradient } from "expo-linear-gradient";
 import { Platform } from "react-native";
 
 const TodoApp = () => {
-  const [groups, setGroups] = useState([]);
-  const [currentGroup, setCurrentGroup] = useState("Liste 1");
-  const [todoText, setTodoText] = useState("");
-  const [groupName, setGroupName] = useState("");
   const { t, language } = useTodoListContext();
-
+  const [groups, setGroups] = useState([]);
+  const [currentGroupId, setCurrentGroupId] = useState("");
+  const [todoText, setTodoText] = useState("");
+  const [editingTodo, setEditingTodo] = useState(null);
 
   useEffect(() => {
     loadData();
   }, []);
+
+
+// 📌 Liste kelimesinin dillerdeki karşılıkları
+const LIST_TRANSLATIONS = {
+  en: "List",
+  tr: "Liste",
+  sv: "Lista",
+  de: "Liste",
+};
+
+const updateGroupNamesOnLanguageChange = async (newLanguage, setGroups) => {
+  try {
+    const storedData = await AsyncStorage.getItem("todoGroups");
+    if (!storedData) return;
+
+    let groups = JSON.parse(storedData);
+
+    // 📌 Güncellenmiş grup isimlerini oluştur
+    const updatedGroups = groups.map((group) => {
+      const currentName = group.name;
+
+      // 📌 Eğer isim çevirilebilir bir kelime ise değiştir
+      if (Object.values(LIST_TRANSLATIONS).includes(currentName)) {
+        return { ...group, name: LIST_TRANSLATIONS[newLanguage] || LIST_TRANSLATIONS.en };
+      }
+      return group;
+    });
+
+    // 📌 Güncellenmiş listeyi AsyncStorage'a kaydet
+    await AsyncStorage.setItem("todoGroups", JSON.stringify(updatedGroups));
+
+    // 📌 State güncelle
+    setGroups(updatedGroups);
+  } catch (error) {
+    console.error("❌ Error updating group names:", error);
+  }
+};
+
+useEffect(() => {
+    updateGroupNamesOnLanguageChange(language, setGroups);
+  }, [language]);
+  
+
 
   const loadData = async () => {
     const storedData = await AsyncStorage.getItem("todoGroups");
     if (storedData) {
       setGroups(JSON.parse(storedData));
     } else {
-      setGroups([{ name: "Liste 1", todos: [] }]);
+      setGroups([{ name: t("List_1"), todos: [], id: Date.now() }]);
     }
   };
 
@@ -36,18 +77,41 @@ const TodoApp = () => {
 
   const addTodo = () => {
     if (todoText.trim() === "") return;
-    const newTodo = { id: Date.now(), text: todoText, completed: false };
-    const updatedGroups = groups.map((group) =>
-      group.name === currentGroup ? { ...group, todos: [...group.todos, newTodo] } : group
-    );
+  
+    let updatedGroups;
+    if (editingTodo) {
+      // Eğer düzenleme yapılıyorsa mevcut todo'yu güncelle
+      updatedGroups = groups.map((group) =>
+        group.id === currentGroupId
+          ? {
+              ...group,
+              todos: group.todos.map((todo) =>
+                todo.id === editingTodo ? { ...todo, text: todoText } : todo
+              ),
+            }
+          : group
+      );
+      setEditingTodo(null); // Düzenleme tamamlandı, sıfırla
+    } else {
+      // Yeni todo ekleme
+      const newTodo = { id: Date.now(), text: todoText, completed: false };
+      updatedGroups = groups.map((group) =>
+        group.id === currentGroupId
+          ? { ...group, todos: [...group.todos, newTodo] }
+          : group
+      );
+    }
+  
     setGroups(updatedGroups);
     saveData(updatedGroups);
-    setTodoText("");
+    setTodoText(""); // Input'u temizle
   };
+  
 
-  const toggleTodo = (groupName, todoId) => {
+
+  const toggleTodo = (groupId, todoId) => {
     const updatedGroups = groups.map((group) => {
-      if (group.name === groupName) {
+      if (group.id === groupId) {
         return {
           ...group,
           todos: group.todos.map((todo) =>
@@ -61,14 +125,14 @@ const TodoApp = () => {
     saveData(updatedGroups);
   };
 
-  const deleteTodo = (groupName, todoId) => {
+  const deleteTodo = (groupId, todoId) => {
     Alert.alert(
-        "Silmek istedin", 
-        "Silelim mi", 
+        t("Alert_First_Text"), 
+        t("Alert_Title"), 
         [
             {text: t("Alert_Confirm_Delete"), onPress:() => {
                 const updatedGroups = groups.map((group) => {
-                    if (group.name === groupName) {
+                    if (group.id === groupId) {
                       return {
                         ...group,
                         todos: group.todos.filter((todo) => todo.id !== todoId),
@@ -84,28 +148,42 @@ const TodoApp = () => {
       );
   };
 
+  const editTodo = (groupId, todoId) => {
+    const group = groups.find((g) => g.id === groupId);
+    const toEditTodo = group?.todos.find((todo) => todo.id === todoId);
+    
+    if (toEditTodo) {
+      setTodoText(toEditTodo.text); // Todo metnini inputa taşı
+      setEditingTodo(todoId); // Düzenlenen todo'nun ID'sini sakla
+    }
+  };
+  
+
   const addGroup = () => {
-    const newGroupName = `Liste ${groups.length + 1}`;
-    const updatedGroups = [...groups, { name: newGroupName, todos: [] }];
+    const newGroupName = t("List");
+    const updatedGroups = [...groups, { name: newGroupName, todos: [], id: Date.now() }];
     setGroups(updatedGroups);
-    setCurrentGroup(newGroupName);
+    const lastGroup = updatedGroups.at(-1); // Son elemanı al (ES2022+)
+    if (lastGroup) {
+        setCurrentGroupId(lastGroup.id);
+    }
     saveData(updatedGroups);
   };
 
-  const deleteList = (groupName) => () => {
+  const deleteList = (groupId) => () => {
       Alert.alert(
           "Silmek istedin", 
           "Silelim mi", 
           [
               {text: t("Alert_Confirm_Delete"), onPress:() => {
-                const updatedGroups = groups.filter((group) => group.name !== groupName);
+                const updatedGroups = groups.filter((group) => group.id !== groupId);
                 setGroups(updatedGroups);
                 saveData(updatedGroups);
                 if (updatedGroups.length > 0) {
-                  setCurrentGroup(updatedGroups[0].name);
+                  setCurrentGroupId(updatedGroups[0].id);
                 }
                 else {
-                  setCurrentGroup("");
+                  setCurrentGroupId("");
                 }
             }},
             {text: t("Alert_Cancel"), onPress:() => console.log("Didn't deleted")},
@@ -118,67 +196,74 @@ const TodoApp = () => {
     colors={["#02043d", "#370979", "#009dff"]}
       style={{ flex: 1, padding: 7, justifyContent: "start" }}
     >
-        <View className="p-4 pt-20 pb-[260px]">
+        <View className="p-4 pt-12 pb-[260px]">
+            <Text  className="text-[#ffe5ec] text-2xl font-bold text-center mb-2">{t("Check_List")}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex flex-row mb-4">
-            {groups.map((group) => (
+            {groups.map((group, index) => (
             <TouchableOpacity
-                key={group.name}
-                onPress={() => setCurrentGroup(group.name)}
-                className={`px-4 mr-1 rounded-lg border-r-2 border-b-2 border-[#8a817c] flex items-center justify-center h-8 mb-3 ${
-                currentGroup === group.name ? "bg-[#7f5539] " : "bg-[#d6ccc2]"
+                key={index}
+                onPress={() => setCurrentGroupId(group.id)}
+                className={`px-4 mr-1 rounded-md flex items-center justify-center h-6 mb-3 ${
+                currentGroupId === group.id ? "bg-[#3a86ff] " : "bg-[#ef476f]"
                 }`}
             >
-                <Text className={`${ currentGroup === group.name ? "text-white " : "text-gray-600" }`}>{group.name}</Text>
+                <Text className={`${ currentGroupId === group.id ? "text-white " : "text-[#f7e1d7]" }`}>{group.name} {index + 1}</Text>
             </TouchableOpacity>
             ))}
-            <TouchableOpacity onPress={addGroup} className="flex flex-row items-center justify-center p-2 bg-[#ff5400] rounded-lg h-8 flex items-center justify-center">
-            <Text className="text-white mt-[-3px]">{groups.length <= 0 &&  "Create List" }</Text>
-            <Plus color="white" />
+            <TouchableOpacity onPress={addGroup} className="flex flex-row items-center justify-center p-2 bg-[#ef476f] rounded-md h-6 flex items-center justify-center">
+            {groups.length <= 0 && <Text className="text-white mt-[-5px] text-[13px]">{t("Create_List")}</Text>}
+            <Plus color="white" size={20}/>
             </TouchableOpacity>
         </ScrollView>
         {
             groups.length <= 0 && (
             <View className="flex items-center justify-center h-12">
-                <Text className="text-2xl text-[#d6ccc2] text-center">Create a list to get started</Text>
+                <Text className="text-2xl text-[#d6ccc2] text-center">{t("Create_a_list_to_get")}</Text>
             </View>
             )
         }
         <FlatList
-            data={groups.find((g) => g.name === currentGroup)?.todos || []}
+            data={groups.find((g) => g.id === currentGroupId)?.todos || []}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-            <View className="flex-row items-center justify-between py-2 border-b border-gray-300">
+            <View className="flex-row items-center justify-between py-2 border-b border-gray-700">
                 <CheckBox
                 checked={item.completed}
-                onPress={() => toggleTodo(currentGroup, item.id)}
+                onPress={() => toggleTodo(currentGroupId, item.id)}
                 checkedColor="tomato"
                 containerStyle={{ padding: 0, margin: 0 }}
-                    // style={{ flex: 0 }} // Flex sıfırlanıyor
+                size={18}
+                
                 />
-                <Text className={`flex-1 mr-2 mx-2 min-w-0 text-[#d6ccc2] ${item.completed ? "line-through text-gray-500" : ""}`} style={{ flex: 1, flexWrap: "wrap", minWidth: 0 }}>{item.text}</Text>
-                <TouchableOpacity onPress={() => deleteTodo(currentGroup, item.id)}>
-                <Trash2 color="#ff5400" size={20}/>
-                </TouchableOpacity>
+                <Text className={`flex-1 ml-[-7px] pr-1 min-w-0 text-[#d6ccc2] ${item.completed ? "line-through text-gray-500" : ""}`} style={{ flex: 1, flexWrap: "wrap", minWidth: 0 }}>{item.text}</Text>
+                <View className="flex flex-row items-center justify-center">
+                    <TouchableOpacity className="mr-1" onPress={() => deleteTodo(currentGroupId, item.id)}>
+                    <Trash2 color="#6c757d" size={16}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => editTodo(currentGroupId, item.id)}>
+                    <Edit color="#6c757d" size={15} />
+                    </TouchableOpacity>
+                </View>
             </View>
             )}
         />
 
             {
-                groups.length > 0 && (
+                groups.length > 0 && currentGroupId && (
                     <View>
                         <TouchableOpacity className="flex-row items-center justify-center mt-4 w-auto mx-auto bg-red-500 rounded-lg px-2 py-1 mt-6 " 
-                        onPress={deleteList(currentGroup) }> 
-                            <Text className="text-white mr-2 px-2">Bu listeyi sil</Text>
+                        onPress={deleteList(currentGroupId) }> 
+                            <Text className="text-white mr-2 px-2">{t("Delete_this_list")}</Text>
                             <Trash2 color="white" size={16} />
                         </TouchableOpacity>
-                        <View className="flex-row items-center rounded-lg px-2 bg-white mt-2"
+                        <View className="flex-row items-center rounded-lg px-2 bg-[#ffe5ec] mt-2"
                           style={{ paddingVertical: Platform.OS === "ios" ? 5 : 1 }} // iOS: 3px, Android: 5px
                         >
                             <TextInput
                             value={todoText}
                             onChangeText={setTodoText}
-                            placeholder="Add a todo..."
-                            className="flex-1"
+                            placeholder={t("Add_an_item")}
+                            className="flex-1 "
                             />
                             <TouchableOpacity onPress={addTodo} className="ml-2 h-6 w-6 bg-[#ff5400] rounded-full">
                             <Plus color="#fff" />

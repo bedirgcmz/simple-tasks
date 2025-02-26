@@ -63,6 +63,7 @@ const translations = {
       Alert_Cancel: "Cancel",
       Alert_Confirm_Delete: "Yes, delete it!",
       Alert_Confirm_Edit: "Yes, edit it!",
+      Alert_First_Text: "You want to delete an item!",
       //TodoDoneAnimation
       Congratulations: "Congratulations!",
          // TimePicke.js
@@ -109,6 +110,20 @@ const translations = {
       No_todos_found: "No todos found. Cannot delete.",
       Date_Not_Found:"Not Found",
       Selected_Character: "Selected Character",
+      // check list
+      List_1 : "List 1",
+      List : "List",
+      Check_List : "Check List",
+      Create_List : "Create List",
+      Create_a_list_to_get : "Create a list to get started",
+      Delete_this_list : "Delete this list",
+      Add_an_item : "Add an item for this list...",
+
+
+
+
+
+
 
       // Notification
       Notification_Title: "ToDo Reminder",
@@ -173,6 +188,8 @@ const translations = {
       ToDo_Details: "Görev Detayları",
       Back_Button: "Geri",
       ToDo_not_found: "Görev bulunamadı!",
+      Alert_First_Text: "Bir öğeyi silmek istiyorsunuz!",
+
       // Todo Details card
       Edit_button: "Düzenle",
       Delete_button: "Sil",
@@ -238,7 +255,15 @@ const translations = {
       No_todos_found: "Hiç görev bulunamadı. Silinemiyor.",
       Date_Not_Found:"Bulunamadi",
       Selected_Character: "Seçilen Karekter",
-
+      // check list
+        List_1: "Liste 1",
+        List: "Liste",
+        Check_List: "Kontrol Listesi",
+        Create_List: "Liste Oluştur",
+        Create_a_list_to_get: "Başlamak için bir liste oluştur",
+        Delete_this_list: "Bu listeyi sil",
+        Add_an_item: "Bu listeye bir öğe ekle...",
+     
 
 
       
@@ -325,6 +350,8 @@ const translations = {
       Alert_Cancel: "Avbryt",
       Alert_Confirm_Delete: "Ja, radera det!",
       Alert_Confirm_Edit: "Ja, redigera!",
+      Alert_First_Text: "Du vill ta bort ett objekt!",
+
        // TimePicke.js
        TimePicker_Select_a_due_time: "Välj en förfallotid",//a
        TimePicker_Selected_Time: "Vald Tid",//a
@@ -368,7 +395,14 @@ const translations = {
       No_todos_found: "Inga uppgifter hittades. Kan inte radera.",
       Date_Not_Found:"Hittade inte",
       Selected_Character: "Vald karaktär",
-
+      // check list
+      List_1: "Lista 1",
+      List: "Lista",
+      Check_List: "Checklista",
+      Create_List: "Skapa Lista",
+      Create_a_list_to_get: "Skapa en lista för att komma igång",
+      Delete_this_list: "Ta bort denna lista",
+      Add_an_item: "Lägg till ett objekt i denna lista...",
 
 
 
@@ -463,6 +497,7 @@ const translations = {
       Alert_Cancel: "Abbrechen",
       Alert_Confirm_Delete: "Ja, löschen!",
       Alert_Confirm_Edit: "Ja, bearbeiten!",
+      Alert_First_Text: "Sie möchten einen Artikel löschen!",
       Congratulations: "Herzlichen Glückwunsch!",
       // TimePicke.js
       TimePicker_Select_a_due_time: "Wähle eine Fälligkeitszeit",
@@ -506,7 +541,14 @@ const translations = {
       No_todos_found: "Keine Aufgaben gefunden. Löschen nicht möglich.",
       Date_Not_Found:"Nicht gefunden",
       Selected_Character: "Ausgewähltes Zeichen",
-      
+      // check list
+      List_1: "Liste 1",
+      List: "Liste",
+      Check_List: "Checkliste",
+      Create_List: "Liste Erstellen",
+      Create_a_list_to_get: "Erstelle eine Liste, um zu starten",
+      Delete_this_list: "Diese Liste löschen",
+      Add_an_item: "Füge ein Element zu dieser Liste hinzu...",
 
      
       
