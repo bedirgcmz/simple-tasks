@@ -111,7 +111,7 @@ const translations = {
       Date_Not_Found:"Not Found",
       Selected_Character: "Selected Character",
       // check list
-      List_1 : "List 1",
+      List_1 : "List",
       List : "List",
       Check_List : "Check List",
       Create_List : "Create List",
