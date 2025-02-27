@@ -246,19 +246,18 @@ useEffect(() => {
             {
                 groups.length > 0 && currentGroupId && (
                     <View>
-                        <TouchableOpacity className="flex-row items-center justify-center mt-4 w-auto mx-auto bg-red-500 rounded-lg px-2 py-1 mt-6 " 
+                        <TouchableOpacity className="flex-row items-center justify-center mt-2 w-auto mx-auto bg-red-500 rounded-lg px-2 py-1" 
                         onPress={deleteList(currentGroupId) }> 
                             <Text className="text-white mr-2 px-2">{t("Delete_this_list")}</Text>
                             <Trash2 color="white" size={16} />
                         </TouchableOpacity>
-                        <View className="flex-row items-center rounded-lg px-2 bg-[#ffe5ec] mt-2"
-                          style={{ paddingVertical: Platform.OS === "ios" ? 5 : 3 }} // iOS: 3px, Android: 5px
+                        <View className="flex-row items-center justify-between rounded-lg px-2 bg-[#ffe5ec] mt-2"
                         >
                             <TextInput
                             value={todoText}
                             onChangeText={setTodoText}
                             placeholder={t("Add_an_item")}
-                            className="flex-1 "
+                            className="py-3"
                             />
                             <TouchableOpacity onPress={addTodo} className="ml-2 h-6 w-6 bg-[#ff5400] rounded-full">
                             <Plus color="#fff" />
