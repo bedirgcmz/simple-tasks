@@ -67,7 +67,7 @@ export async function scheduleNotification(todo, t, language) {
       console.log("⚠️ Hatırlatma zamanı geçmişte. Bildirim planlanmadı.");
       return;
     }
-
+    
     // 📌 Bildirimi planla // ${localDateTime.format("YYYY-MM-DD HH:mm")} burasi hatirlatma zamanini veriyor
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
@@ -80,7 +80,7 @@ export async function scheduleNotification(todo, t, language) {
         
         seconds: timeDiffSeconds, // 📌 UTC bazında doğru zamanlama
         repeats: false,
-        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        // type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
         // date: new Date(Date.now() + timeDiffSeconds * 1000), // 📌 Mutlak tarih belirtiyoruz
       },
     });
