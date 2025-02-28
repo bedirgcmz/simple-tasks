@@ -30,7 +30,8 @@ const LIST_TRANSLATIONS = {
 const updateGroupNamesOnLanguageChange = async (newLanguage, setGroups) => {
   try {
     const storedData = await AsyncStorage.getItem("todoGroups");
-    if (!storedData) return;
+    
+    if (!storedData || storedData === "[]" || storedData.trim() === "") return;
 
     let groups = JSON.parse(storedData);
 
@@ -42,10 +43,10 @@ const updateGroupNamesOnLanguageChange = async (newLanguage, setGroups) => {
     // 📌 Güncellenmiş listeyi AsyncStorage'a kaydet
     await AsyncStorage.setItem("todoGroups", JSON.stringify(updatedGroups));
 
-    // 📌 State güncelle
+    // 📌 State güncelle 
     setGroups(updatedGroups);
     setCurrentGroupId(updatedGroups[0].id);
-
+ 
   } catch (error) {
     console.error("❌ Error updating group names:", error);
   }
@@ -55,7 +56,7 @@ useEffect(() => {
     updateGroupNamesOnLanguageChange(language, setGroups);
   }, [language]);
   
-
+  
 
   const loadData = async () => {
     const storedData = await AsyncStorage.getItem("todoGroups");
@@ -167,8 +168,8 @@ useEffect(() => {
 
   const deleteList = (groupId) => () => {
       Alert.alert(
-          "Silmek istedin", 
-          "Silelim mi", 
+        t("Alert_First_Text"), 
+        t("Alert_Title"),  
           [
               {text: t("Alert_Confirm_Delete"), onPress:() => {
                 const updatedGroups = groups.filter((group) => group.id !== groupId);
@@ -198,21 +199,21 @@ useEffect(() => {
             <TouchableOpacity
                 key={index}
                 onPress={() => setCurrentGroupId(group.id)}
-                className={`px-4 mr-1 rounded-md flex items-center justify-center h-6 mb-3 ${
+                className={`px-4 mr-1 rounded-md flex items-center justify-center h-[28px] mb-3 ${
                 currentGroupId === group.id ? "bg-[#3a86ff] " : "bg-[#ef476f]"
                 }`}
             >
                 <Text className={`${ currentGroupId === group.id ? "text-white " : "text-[#f7e1d7]" }`}>{group.name} {index + 1}</Text>
             </TouchableOpacity>
             ))}
-            <TouchableOpacity onPress={addGroup} className="flex flex-row items-center justify-center p-2 bg-[#ef476f] rounded-md h-6 flex items-center justify-center">
-            {groups.length <= 0 && <Text className="text-white mt-[-5px] text-[13px]">{t("Create_List")}</Text>}
+            <TouchableOpacity onPress={addGroup} className="flex flex-row items-center justify-center px-2 bg-[#ef476f] rounded-md h-[28px] flex items-center justify-center">
+            {groups.length <= 0 && <Text className="text-white text-[13px]">{t("Create_List")}</Text>}
             <Plus color="white" size={20}/>
             </TouchableOpacity>
         </ScrollView>
         {
             groups.length <= 0 && (
-            <View className="flex items-center justify-center h-12">
+            <View className="flex items-center justify-center mt-6 min-h-12">
                 <Text className="text-2xl text-[#d6ccc2] text-center">{t("Create_a_list_to_get")}</Text>
             </View>
             )
