@@ -30,7 +30,7 @@ const TaskScreen = () => {
                 } else if (from) {
                   router.push(`dynamicday/${from}`); //Eger [id] sayfasina, list veya add ana sayfalarindan gelmiyorsam, [day] sayfasindan geliyorumdur. Bu satir beni yine ayni gunun sayfasina goturur.
                 } else {
-                  router.back(); // Varsayılan olarak bir önceki ekrana git
+                  router.push('/'); // Varsayılan olarak bir önceki ekrana git
                 }
               }}
             >

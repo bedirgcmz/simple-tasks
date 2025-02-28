@@ -44,6 +44,18 @@ export async function scheduleNotification(todo, t, language) {
     return;
   }
 
+  function getReminderMessage(pTodo) {
+    const timeValue = reminderMap[pTodo.reminderTime];
+  
+    if (timeValue < 60) {
+      return `${t("Notification_2")}  ${timeValue} ${t("Notification_Min")}`;
+    } else if (timeValue < 1440) {
+      return `${t("Notification_2")}  ${timeValue / 60} ${t("Notification_Huor")}`;
+    } else {
+      return `${t("Notification_2")}  ${timeValue / 1440} ${t("Notification_Day")}`;
+    }
+  }
+
   try {
     // 📌 Kullanıcının saat dilimini bul
     const userTimeZone = moment.tz.guess(); // Örneğin: "Europe/Stockholm"
@@ -72,7 +84,7 @@ export async function scheduleNotification(todo, t, language) {
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
         title: todo.title,
-        body: `${t("Notification_2")} ${todo.dueDate}/${todo.dueTime.slice(0,5)}`, // Kullanıcının yerel saatine göre göster
+        body: `${getReminderMessage(todo)}`,
         sound: "default",
         data: { todoId: todo.id }, 
       },
