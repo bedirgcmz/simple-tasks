@@ -7,6 +7,8 @@ import { scheduleNotification, cancelNotification } from "../utils/notificationU
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { router } from 'expo-router'
+import { Alert } from "react-native";
+
 
 
 // Bildirimlerin nasıl işleneceğini tanımla
@@ -21,12 +23,12 @@ Notifications.setNotificationHandler({
 // 📌 **Bildirim Yönlendirme Durumunu İzleyen Hook**
 export function useNotificationListener(setNotificationRedirect) {
   useEffect(() => {
+    if (!setNotificationRedirect) return;
+
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
       const todoId = response.notification.request.content.data.todoId;
-      // console.log("📩 Bildirime tıklandı, yönlendirilecek todoId:", todoId);
-      
       if (todoId) {
-        setNotificationRedirect(todoId); // 📌 Bildirim yönlendirmesini başlat
+        setNotificationRedirect(todoId);
       }
     });
 
@@ -60,7 +62,9 @@ export const TodoListProvider = ({ children }) => {
   const STORAGE_USERNAME_KEY = "user_username";
   const STORAGE_USERNAME_LANGUAGE = "user_language_simpletask";
   const STORAGE_USERNAME_IMAGE = "user_image_simpletask";
-  const [language, setLanguage] = useState("en");
+  const deviceLanguage = Localization.locale.split("-")[0]; // Cihazın varsayılan dili
+  const defaultLanguage = ["en", "sv", "de", "tr"].includes(deviceLanguage) ? deviceLanguage : "en"; 
+  const [language, setLanguage] = useState(defaultLanguage); // Başlangıçta geçerli bir dil ata
   const [notificationRedirect, setNotificationRedirect] = useState(null); // 📌 Bildirim yönlendirme durumu
   const [username, setUsername] = useState("");
   const [userIconImage, setUserIconImage] = useState("icon24");
@@ -74,12 +78,11 @@ useEffect(() => {
   const loadUserLanguage = async () => {
     try {
       const storedUserLanguage = await AsyncStorage.getItem(STORAGE_USERNAME_LANGUAGE);
-      if (storedUserLanguage && ["en", "sv","de","tr",].includes(storedUserLanguage)) {
+      if (storedUserLanguage && ["en", "sv", "de", "tr"].includes(storedUserLanguage)) {
         setLanguage(storedUserLanguage); //  Kayıtlı dili yükle
       } else {
-        const deviceLanguage = Localization.locale.split("-")[0]; // Cihazın varsayılan dili
-        await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, deviceLanguage);
-        setLanguage(deviceLanguage); //  Cihazın varsayılan dilini kullan
+        await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, defaultLanguage);
+        setLanguage(defaultLanguage); //  Geçerli dili ata
       }
     } catch (error) {
       console.error("❌ Error loading language:", error);
@@ -251,7 +254,8 @@ const loadTodos = async () => {
 
     // 🚀 Eğer son todo ise, silmeyi iptal et ve kullanıcıya uyarı göster
     if (todos.length === 1) {
-        alert(t("Last_todo_alert"));
+        // alert(t("Last_todo_alert"));
+        Alert.alert(t("Last_todo_alert"));
         return;
     }
     try {
@@ -334,8 +338,12 @@ const loadTodos = async () => {
   
 
   useEffect(() => {
-    translateTodosCategories(language);
+    const translateCategories = async () => {
+      await translateTodosCategories(language);
+    };
+    translateCategories();
   }, [language]);
+  
   
 
 
