@@ -197,6 +197,8 @@ const translations = {
       Category_exists_alert: "Bu kategori zaten mevcut",
       Personal_Categories: "Kişisel Kategoriler",
       No_Categories_Found: "Hiç Kategori Bulunamadı",
+      Confirm_Delete_Category: "Kategoriyi Silmeyi Onayla",
+
       // category
       Others: "Diğer",
       All_ToDos: "Tüm Görevler",
@@ -348,6 +350,8 @@ const translations = {
       Category_exists_alert: "Den här kategorin finns redan",
       Personal_Categories: "Personliga Kategorier",
       No_Categories_Found: "Inga Kategorier Hittades",
+      Confirm_Delete_Category: "Bekräfta Radering av Kategori",
+
       // category
       Others: "Övrigt",
       All_ToDos: "Alla Att Göra",
@@ -505,6 +509,8 @@ const translations = {
       Category_exists_alert: "Diese Kategorie existiert bereits",
       Personal_Categories: "Persönliche Kategorien",
       No_Categories_Found: "Keine Kategorien Gefunden",
+      Confirm_Delete_Category: "Löschen der Kategorie Bestätigen",
+
       // category
       Others: "Andere",
       All_ToDos: "Alle Aufgaben",
