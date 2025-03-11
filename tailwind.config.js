@@ -15,6 +15,7 @@ module.exports = {
         customOrangeDark: '#ff5400',
         customGray: '#343a40',
         customDarkBlue: '#002855',
+        customDefault: ""
       },
       backgroundImage: {
         'custom-gradient': "linear-gradient(90deg, rgba(1,6,27,1) 0%, rgba(67,17,39,1) 34%, rgba(147,30,54,1) 100%)",

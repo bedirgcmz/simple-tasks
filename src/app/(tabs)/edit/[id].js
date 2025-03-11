@@ -27,7 +27,7 @@ import LottieView from "lottie-react-native";
 
 const EditTodoPage = () => {
   const { id } = useLocalSearchParams();
-  const { todos, updateTodo, t, language } = useTodoListContext();
+  const { todos, updateTodo, t, language, getCategories } = useTodoListContext();
 
   // Düzenlenecek ToDo'yu bul
   const todo = todos.find((item) => item.id === id);
@@ -243,7 +243,7 @@ const EditTodoPage = () => {
                 {t("Select_a_category")}
                 </Text>
                 <View className="flex-row flex-wrap items-center justify-start bg-[#d7c8f3] py-2 rounded-lg">
-                  {categories[language]?.map((item) => (
+                  {getCategories()?.map((item) => (
                     <TouchableOpacity
                       onPress={() => {
                         setCategory(item);

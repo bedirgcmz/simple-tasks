@@ -32,6 +32,15 @@ const translations = {
       Default_Time: "Default Time",
       Select_a_remind_time: "Select a remind time!",
       Add_ToDo: "Add ToDo",
+      Create_Category: "Create Category",    
+      // Create Category Page
+      Enter_new_category: "Enter New Category",
+      Category_input_placeholder: "Enter category name..",
+      Create: "Create",
+      Category_exists_alert: "This category already exists",
+      Personal_Categories: "Personal Categories",
+      No_Categories_Found: "No Categories Found",
+      Confirm_Delete_Category: "Confirm Delete Category",
       // category
       Others: "Others",
       All_ToDos: "All ToDos",
@@ -180,6 +189,14 @@ const translations = {
       Default_Time: "Varsayılan Zaman",
       Select_a_remind_time: "Hatırlatma zamanı seçin!",
       Add_ToDo: "Görev Ekle",
+      Create_Category: "Kategori Oluştur",
+      // Create Categorı Page
+      Enter_new_category: "Yeni Kategori Oluştur",
+      Category_input_placeholder: "Kategori adı girin..",
+      Create: "Oluştur",
+      Category_exists_alert: "Bu kategori zaten mevcut",
+      Personal_Categories: "Kişisel Kategoriler",
+      No_Categories_Found: "Hiç Kategori Bulunamadı",
       // category
       Others: "Diğer",
       All_ToDos: "Tüm Görevler",
@@ -322,7 +339,15 @@ const translations = {
       Not_Yet_Selected: "Inte Vald Än",
       Default_Time: "Standardtid",
       Select_a_remind_time: "Välj en påminnelsetid!",
-      Add_ToDo: "Lägg till Att Göra",
+      Add_ToDo: "Lägg till Att Göra",    
+      Create_Category: "Skapa Kategori",
+      // Skapa Kategorisida
+      Enter_new_category: "Ange Ny Kategori",
+      Category_input_placeholder: "Ange kategorinamn..",
+      Create: "Skapa",
+      Category_exists_alert: "Den här kategorin finns redan",
+      Personal_Categories: "Personliga Kategorier",
+      No_Categories_Found: "Inga Kategorier Hittades",
       // category
       Others: "Övrigt",
       All_ToDos: "Alla Att Göra",
@@ -472,6 +497,14 @@ const translations = {
       Default_Time: "Standardzeit",
       Select_a_remind_time: "Wähle eine Erinnerungszeit!",
       Add_ToDo: "Aufgabe hinzufügen",
+      Create_Category: "Kategorie Erstellen",
+      // Kategorie-Erstellungsseite
+      Enter_new_category: "Neue Kategorie Eingeben",
+      Category_input_placeholder: "Kategorienamen eingeben..",
+      Create: "Erstellen",
+      Category_exists_alert: "Diese Kategorie existiert bereits",
+      Personal_Categories: "Persönliche Kategorien",
+      No_Categories_Found: "Keine Kategorien Gefunden",
       // category
       Others: "Andere",
       All_ToDos: "Alle Aufgaben",

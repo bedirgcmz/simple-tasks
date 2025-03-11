@@ -55,14 +55,22 @@ const CategoryCard = ({ category, completed, total, percentage }) => {
         Spaß: "Fun",
         Sonstiges: "Others",
       };
-      
+
       useEffect(() => {
-        // Eğer gelen kategori farklı bir dildeyse İngilizce karşılığını al
-        const categoryKey = categoryMap[category] || category;
+        let categoryKey;
+      
+        // Eğer kategori İngilizce ise doğrudan kullan
+        if (categoryColors[category]) {
+          categoryKey = category;
+        } else {
+          categoryKey = categoryMap[category] || category;
+        }
       
         // İngilizce karşılığına göre rengi ayarla
-        setBgColor(categoryColors[categoryKey] || "bg-default");
+        setBgColor(categoryColors[categoryKey] || "bg-customDefault"); // Varsayılan renk
       }, [category]);
+      
+
 
   return (
     <TouchableOpacity onPress={() => router.push({ pathname: `/filter`, params: { from: category } })}  className={`items-center justify-between py-2 rounded-lg mb-4 shadow-md border border-[#373f51] w-24 h-28 mr-4 mt-2 ${bgColor}`}>

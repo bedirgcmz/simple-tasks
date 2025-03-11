@@ -62,6 +62,8 @@ export const TodoListProvider = ({ children }) => {
   const STORAGE_USERNAME_KEY = "user_username";
   const STORAGE_USERNAME_LANGUAGE = "user_language_simpletask";
   const STORAGE_USERNAME_IMAGE = "user_image_simpletask";
+  const STORAGE_USER_CATEGORIES = "user_custom_categories";
+  const [userCategories, setUserCategories] = useState([]); // Kullanıcı kategorileri
   const deviceLanguage = Localization.locale.split("-")[0]; // Cihazın varsayılan dili
   const defaultLanguage = ["en", "sv", "de", "tr"].includes(deviceLanguage) ? deviceLanguage : "en"; 
   const [language, setLanguage] = useState(defaultLanguage); // Başlangıçta geçerli bir dil ata
@@ -104,6 +106,67 @@ useEffect(() => {
   loadUserImage()
 }, []);
 
+useEffect(() => {
+  const loadUserCategories = async () => {
+    try {
+      const storedCategories = await AsyncStorage.getItem(STORAGE_USER_CATEGORIES);
+      if (storedCategories) {
+        setUserCategories(JSON.parse(storedCategories));
+      }
+    } catch (error) {
+      console.error("Error loading user categories:", error);
+    }
+  };
+  loadUserCategories();
+}, []);
+
+const saveUserCategories = async (newCategories) => {
+  try {
+    await AsyncStorage.setItem(STORAGE_USER_CATEGORIES, JSON.stringify(newCategories));
+  } catch (error) {
+    console.error("Error saving user categories:", error);
+  }
+};
+
+const addUserCategory = async (newCategory, setCategory) => {
+  if (!newCategory.trim()) return;
+
+  const allCategories = [...categories[language], ...userCategories];
+
+  if (allCategories.includes(newCategory)) {
+    Alert.alert(t("Category_exists_alert"));
+    return;
+  }
+
+  const updatedCategories = [...userCategories, newCategory];
+  setUserCategories(updatedCategories);
+  await saveUserCategories(updatedCategories);
+  setCategory(newCategory); // Yeni eklenen kategoriye geç
+};
+
+const getCategories = () => {
+  return [...categories[language], ...userCategories]; // Varsayılan ve kullanıcı kategorilerini birleştir
+};
+
+const deleteUserCategory = async (categoryToDelete) => {
+  try {
+    // Kullanıcının eklediği kategorilerden kaldır
+    const updatedCategories = userCategories.filter(cat => cat !== categoryToDelete);
+    setUserCategories(updatedCategories);
+    await saveUserCategories(updatedCategories);
+
+    // Eğer bu kategoriye ait görevler varsa, onların kategorisini "Others" yap
+    const updatedTodos = todos.map(todo => 
+      todo.category === categoryToDelete ? { ...todo, category: "Others" } : todo
+    );
+
+    setTodos(updatedTodos);
+    await saveTodos(updatedTodos);
+    
+  } catch (error) {
+    console.error("❌ Error deleting category:", error);
+  }
+};
 
 
 
@@ -357,6 +420,13 @@ const loadTodos = async () => {
        setNotificationRedirect(null); // 📌 Yönlendirme tamamlandı, state’i sıfırla
      }
    }, [notificationRedirect]);
+
+   useEffect(() => {
+    setUserCategories((prev) => [...prev]); // Kullanıcı kategorileri değişmeden koru
+  }, [language]);
+  
+
+
   const value = {
     todos,
     setTodos,
@@ -379,7 +449,12 @@ const loadTodos = async () => {
     translateTodosCategories,
     categories,
     userIconImage,
-    setUserIconImage
+    setUserIconImage,
+    saveUserCategories,
+    userCategories,
+    addUserCategory,
+    getCategories,
+    deleteUserCategory
   };
 
   return <TodoListContext.Provider value={value}>{children}</TodoListContext.Provider>;

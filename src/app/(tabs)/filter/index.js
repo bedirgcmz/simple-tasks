@@ -7,29 +7,26 @@ import FilterByCategory from '../../../components/FilterByCategory';
 import TodoDoneAnimation from '../../../components/TodoDoneAnimation';
 
 const FilterTodosScreen = () => {
-  const { todos, language, categories, t } = useTodoListContext();
+  const { todos, language, categories, userCategories, t } = useTodoListContext();
   const { from  } = useLocalSearchParams();
 const categoryNames = Array.from(new Set(todos.map((item) => item.category)));
 const [selectedCategory, setSelectedCategory] = useState("All")
 
+
 useEffect(() => {
-  if (from && categories[language]?.includes(from)) {
+  if (from && (categories[language]?.includes(from) || userCategories?.includes(from))) {
     setSelectedCategory(from);
   } else {
-    setSelectedCategory("All"); 
+    setSelectedCategory("All");
   }
-}, [from, language]); 
+}, [from, language]);
 
 let filteredTodos;
 if (selectedCategory === "All") {
   filteredTodos = todos;
-} else if(from === undefined && selectedCategory === ""){
-  filteredTodos = todos;
-}else if(from !== undefined && selectedCategory !== undefined ){
+} else {
   filteredTodos = todos.filter((todo) => todo.category === selectedCategory);
-}else{
-  filteredTodos = todos.filter((todo) => todo.category === selectedCategory);
-} 
+}
 
   return (
     <ImageBackground source={require("../../../../assets/images/bg-add.jpg")} resizeMode="cover" className="flex-1 pt-10 pb-20">

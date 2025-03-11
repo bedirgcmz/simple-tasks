@@ -9,12 +9,14 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserIconImageModal from "./UserIconImageModal";
+import UserCategoriesModal from "./UserCategoriesModal";
 
 
 const SettingsModal = ({ visible, onClose }) => {
   const { setLanguage, t, username, setUsername, updateUsername, language, translateTodosCategories, STORAGE_USERNAME_LANGUAGE, userIconImage, setUserIconImage } = useTodoListContext();
   const [isEnableUsername, setIsEnableUsername] = useState(false)
   const [isUserIconImageModalOpen, setIsUserIconImageModalOpen] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const userIcons = {
     icon1: require("../../assets/images/user-icons/e1.png"),
@@ -110,19 +112,33 @@ const SettingsModal = ({ visible, onClose }) => {
               </View>
             </View>
 
-              <Text className="text-start w-full font-bold text-white mb-2">{t("Language")}</Text>
+            <Text className="text-start w-full font-bold text-white mb-2">{t("Language")}</Text>
             <View className="flex-row justify-between w-full">
               {["en", "tr", "sv", "de"].map((lang) => (
                 <TouchableOpacity 
                   key={lang} 
                   onPress={() => changeLanguage(lang)}
-                  className="bg-[#023047] px-2 py-1 rounded items-center my-1 relative"
+                  className="bg-[#00417f69] border-gray-400 px-2 py-1 rounded items-center my-1 relative"
                 >
                   <Text className="text-white text-base">{lang.toUpperCase()}</Text>
-                  {language === lang && <View className="h-[6px] w-[6px] bg-[#f07167] absolute top-0 right-0 rounded-full">
+                  {language === lang && <View className="h-[6px] w-[6px] bg-[#f07167]  absolute top-0 right-0 rounded-full">
                   </View>}
                 </TouchableOpacity>
               ))}
+            </View>
+            <View className="w-full">
+                  {/* Kullanıcı Kategorileri Butonu */}
+                <TouchableOpacity
+                  onPress={() => setIsModalVisible(true)}
+                  className="mt-8 w-full rounded-lg px-2 py-1  mb-4 border border-gray-400 flex"
+                >
+                  <Text className="text-white text-center">
+                    {t("Personal_Categories")}
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Kategori Yönetim Modali */}
+                <UserCategoriesModal isVisible={isModalVisible} onClose={() => setIsModalVisible(false)} t={t} />
             </View>
             <View className="mt-auto mb-8 w-full">
               <TouchableOpacity

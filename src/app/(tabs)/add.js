@@ -11,7 +11,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  AppState
+  AppState,
+  Alert
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTodoListContext } from "../../context/todos-context";
@@ -23,9 +24,10 @@ import TimePicker from "../../components/TimePicker";
 import LottieView from "lottie-react-native";
 import translations from "../../locales/translations"
 import moment from "moment-timezone";
+import CategoryModal from "../../components/CategoryModal";
 
 const AddTodoPage = () => {
-  const { addTodo, t, language } = useTodoListContext();
+  const { addTodo, t, language, addUserCategory, getCategories } = useTodoListContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -35,63 +37,66 @@ const AddTodoPage = () => {
   const [reminderTime, setReminderTime] = useState("2 hours before");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [opacity, setOpacity] = useState(0);
+  const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false); // 📌 Modal görünürlüğü state'i
 
-  const categories = {
-    en: [
-      "School",
-      "Finance",
-      "Shopping",
-      "Family",
-      "Travel",
-      "Health",
-      "Home",
-      "Friends",
-      "Work",
-      "Fun",
-      "Others",
-    ],
-    tr: [
-      "Okul",
-      "Finans",
-      "Alışveriş",
-      "Aile",
-      "Seyahat",
-      "Sağlık",
-      "Ev",
-      "Arkadaşlar",
-      "İş",
-      "Eğlence",
-      "Diğerleri",
-    ],
-    sv: [
-      "Skola",
-      "Ekonomi",
-      "Shopping",
-      "Familj",
-      "Resa",
-      "Hälsa",
-      "Hem",
-      "Vänner",
-      "Arbete",
-      "Nöje",
-      "Övrigt",
-    ],
-    de: [
-      "Schule",
-      "Finanzen",
-      "Einkaufen",
-      "Familie",
-      "Reisen",
-      "Gesundheit",
-      "Zuhause",
-      "Freunde",
-      "Arbeit",
-      "Spaß",
-      "Sonstiges",
-    ],
-  };
+  // const categories = {
+  //   en: [
+  //     "School",
+  //     "Finance",
+  //     "Shopping",
+  //     "Family",
+  //     "Travel",
+  //     "Health",
+  //     "Home",
+  //     "Friends",
+  //     "Work",
+  //     "Fun",
+  //     "Others",
+  //   ],
+  //   tr: [
+  //     "Okul",
+  //     "Finans",
+  //     "Alışveriş",
+  //     "Aile",
+  //     "Seyahat",
+  //     "Sağlık",
+  //     "Ev",
+  //     "Arkadaşlar",
+  //     "İş",
+  //     "Eğlence",
+  //     "Diğerleri",
+  //   ],
+  //   sv: [
+  //     "Skola",
+  //     "Ekonomi",
+  //     "Shopping",
+  //     "Familj",
+  //     "Resa",
+  //     "Hälsa",
+  //     "Hem",
+  //     "Vänner",
+  //     "Arbete",
+  //     "Nöje",
+  //     "Övrigt",
+  //   ],
+  //   de: [
+  //     "Schule",
+  //     "Finanzen",
+  //     "Einkaufen",
+  //     "Familie",
+  //     "Reisen",
+  //     "Gesundheit",
+  //     "Zuhause",
+  //     "Freunde",
+  //     "Arbeit",
+  //     "Spaß",
+  //     "Sonstiges",
+  //   ],
+  // };
 
   // Ugulama arka planda clisirken duedate eskik tarihte kalmasin, her acilista yenilensin diye isleyen useEffect
+  
+  
   useEffect(() => {
     const updateDate = () => {
       // setDueDate(moment().startOf('day').toDate());
@@ -192,6 +197,16 @@ const doneRefDat = useRef()
     }
   }
 
+  const handleCategorySelection = (selectedCategory) => {
+    if (selectedCategory === "New Category") {
+      setIsCategoryModalVisible(true); // 📌 Modalı aç
+    } else {
+      setCategory(selectedCategory);
+    }
+  };
+  
+  
+
   return (
     <KeyboardAvoidingView
     style={{ flex: 1 }}
@@ -272,7 +287,7 @@ const doneRefDat = useRef()
                 </Text>
                 <View className="flex-row flex-wrap items-center justify-start bg-[#d7c8f3] py-2 rounded-lg">
                     {
-                      categories[language]?.map((item) => (
+                      getCategories()?.map((item) => (
                         <TouchableOpacity onPress={() => 
                           {
                           setCategory(item)
@@ -284,6 +299,17 @@ const doneRefDat = useRef()
                         </TouchableOpacity>
                       ))
                     }
+                    <TouchableOpacity
+                        onPress={() => {
+                          handleCategorySelection("New Category")
+                          Keyboard.dismiss()
+                          doneRefCat?.current?.play()
+                        } 
+                      }
+                        className="bg-[#5a189a] px-2 py-[3px] mb-1 rounded-md mx-1"
+                      >
+                        <Text className="text-white">{t("Create_Category")} +</Text>
+                    </TouchableOpacity>
                      {
                       category !== "" &&
                       <LottieView
@@ -298,6 +324,14 @@ const doneRefDat = useRef()
                     }
                 </View>
               </View>
+                {/* 📌 CategoryModal Kullanımı */}
+                <CategoryModal
+                  isVisible={isCategoryModalVisible}
+                  onClose={() => setIsCategoryModalVisible(false)}
+                  onAddCategory={addUserCategory}
+                  setCategory={setCategory}
+                  t={t}
+                />
 
               {/* Son Tarih Seçimi */}
               <View>
