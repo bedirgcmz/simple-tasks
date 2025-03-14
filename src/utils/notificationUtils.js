@@ -92,7 +92,7 @@ export async function scheduleNotification(todo, t, language) {
         
         seconds: timeDiffSeconds, // 📌 UTC bazında doğru zamanlama
         repeats: false,
-        // type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
         // date: new Date(Date.now() + timeDiffSeconds * 1000), // 📌 Mutlak tarih belirtiyoruz
       },
     });
