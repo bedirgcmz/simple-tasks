@@ -1,0 +1,58 @@
+  // const categories = {
+  //   en: [
+  //     "School",
+  //     "Finance",
+  //     "Shopping",
+  //     "Family",
+  //     "Travel",
+  //     "Health",
+  //     "Home",
+  //     "Friends",
+  //     "Work",
+  //     "Fun",
+  //     "Others",
+  //   ],
+  //   tr: [
+  //     "Okul",
+  //     "Finans",
+  //     "Alışveriş",
+  //     "Aile",
+  //     "Seyahat",
+  //     "Sağlık",
+  //     "Ev",
+  //     "Arkadaşlar",
+  //     "İş",
+  //     "Eğlence",
+  //     "Diğerleri",
+  //   ],
+  //   sv: [
+  //     "Skola",
+  //     "Ekonomi",
+  //     "Shopping",
+  //     "Familj",
+  //     "Resa",
+  //     "Hälsa",
+  //     "Hem",
+  //     "Vänner",
+  //     "Arbete",
+  //     "Nöje",
+  //     "Övrigt",
+  //   ],
+  //   de: [
+  //     "Schule",
+  //     "Finanzen",
+  //     "Einkaufen",
+  //     "Familie",
+  //     "Reisen",
+  //     "Gesundheit",
+  //     "Zuhause",
+  //     "Freunde",
+  //     "Arbeit",
+  //     "Spaß",
+  //     "Sonstiges",
+  //   ],
+  // };
+
+  // Ugulama arka planda clisirken duedate eskik tarihte kalmasin, her acilista yenilensin diye isleyen useEffect
+  
+  

@@ -142,7 +142,7 @@ const translations = {
       Notification_Body: "You have a ToDo reminder",
       // Alert
       Alert_Title: "Are you sure?",
-      Alert_in_handle_add_todo: "Title and category fields are required!",
+      Alert_in_handle_add_todo: "'Title', 'Category', and 'Date' fields are required!",
       Alert_Message: "You won't be able to revert this!",
       // Toast
       Toast_Title: "ToDo Deleted",
@@ -300,7 +300,7 @@ const translations = {
       Notification_Body: "ToDo hatırlatıcısı",
       // Alert
       Alert_Title: "Emin misiniz?",
-      Alert_in_handle_add_todo: "Başlık ve kategori alanları zorunludur!",
+      Alert_in_handle_add_todo: "'Başlık', 'Kategori' ve 'Tarih' alanları zorunludur!",
       Alert_Message: "Bu işi geri alamazsınız!",
       // Toast
       Toast_Title: "ToDo Silindi",
@@ -454,7 +454,7 @@ const translations = {
       Notification_Body: "Du har en ToDo påminnelse",
       // Alert
       Alert_Title: "Är du säker?",
-      Alert_in_handle_add_todo: "Rubrik- och kategorifält är obligatoriska!",
+      Alert_in_handle_add_todo: "'Titel', 'Kategori' och 'Datum' fälten är obligatoriska!",
       Alert_Message: "Du kommer inte att kunna ångra det!",
       // Toast
       Toast_Title: "ToDo Raderad",
@@ -610,7 +610,7 @@ const translations = {
       Notification_Body: "Du hast eine ToDo Erinnerung",
       // Alert
       Alert_Title: "Bist du sicher?",
-      Alert_in_handle_add_todo: "Titel- und Kategoriefelder sind Pflichtfelder!",
+      Alert_in_handle_add_todo: "'Titel', 'Kategorie' und 'Datum' Felder sind erforderlich!",
       Alert_Message: "Du kannst es nicht rückgängig machen!",
       // Toast
       Toast_Title: "ToDo Gelöscht",

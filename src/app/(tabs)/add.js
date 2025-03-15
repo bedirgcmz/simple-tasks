@@ -39,64 +39,7 @@ const AddTodoPage = () => {
   const [opacity, setOpacity] = useState(0);
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false); // 📌 Modal görünürlüğü state'i
 
-  // const categories = {
-  //   en: [
-  //     "School",
-  //     "Finance",
-  //     "Shopping",
-  //     "Family",
-  //     "Travel",
-  //     "Health",
-  //     "Home",
-  //     "Friends",
-  //     "Work",
-  //     "Fun",
-  //     "Others",
-  //   ],
-  //   tr: [
-  //     "Okul",
-  //     "Finans",
-  //     "Alışveriş",
-  //     "Aile",
-  //     "Seyahat",
-  //     "Sağlık",
-  //     "Ev",
-  //     "Arkadaşlar",
-  //     "İş",
-  //     "Eğlence",
-  //     "Diğerleri",
-  //   ],
-  //   sv: [
-  //     "Skola",
-  //     "Ekonomi",
-  //     "Shopping",
-  //     "Familj",
-  //     "Resa",
-  //     "Hälsa",
-  //     "Hem",
-  //     "Vänner",
-  //     "Arbete",
-  //     "Nöje",
-  //     "Övrigt",
-  //   ],
-  //   de: [
-  //     "Schule",
-  //     "Finanzen",
-  //     "Einkaufen",
-  //     "Familie",
-  //     "Reisen",
-  //     "Gesundheit",
-  //     "Zuhause",
-  //     "Freunde",
-  //     "Arbeit",
-  //     "Spaß",
-  //     "Sonstiges",
-  //   ],
-  // };
 
-  // Ugulama arka planda clisirken duedate eskik tarihte kalmasin, her acilista yenilensin diye isleyen useEffect
-  
-  
   useEffect(() => {
     const updateDate = () => {
       // setDueDate(moment().startOf('day').toDate());
@@ -154,7 +97,6 @@ const handleAddTodo = () => {
     status: "pending",
     createdAt: new Date().toISOString(),
     dueDate,
-    // dueDate: new Date(dueDate).toISOString(),
     dueTime, 
     reminderTime,
     completedAt: "",
@@ -169,7 +111,6 @@ const handleAddTodo = () => {
   setDescription("");
   setCategory("");
   setDueDate("");
-  // setDueDate(moment().startOf('day').toDate());
   setDueTime('12:00');
   setReminderTime("5 minutes before"); // Varsayılan değeri sıfırla
 
