@@ -34,7 +34,7 @@ if (selectedCategory === "All") {
       {
         categoryNames.map((item) => (
           <TouchableOpacity onPress={() => setSelectedCategory(item)} key={item} >
-            <FilterByCategory categoryName={item} selectedCategory={selectedCategory}/>
+            <FilterByCategory categoryName={item} selectedCategory={selectedCategory} bgColor="" textColor=""  />
           </TouchableOpacity>
         ))
       }

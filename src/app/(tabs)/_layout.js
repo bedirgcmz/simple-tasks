@@ -132,12 +132,14 @@ useEffect(() => {
       <Tabs.Screen
         name="add"
         options={{
+          href: "/add",
           headerShown: false,
           headerTitle: "Add New Todo",
           tabBarLabel: "Add",
           tabBarShowLabel: false,
         }}
       />
+
       <Tabs.Screen
         name="dynamicid"
         options={{

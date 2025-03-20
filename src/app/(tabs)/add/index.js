@@ -15,16 +15,17 @@ import {
   Alert
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useTodoListContext } from "../../context/todos-context";
+import { useTodoListContext } from "../../../context/todos-context";
 import uuid from "react-native-uuid";
 import { router } from "expo-router";
-import CustomRemindPicker from "../../components/CustomRemindPicker";
-import FilterByCategory from "../../components/FilterByCategory";
-import TimePicker from "../../components/TimePicker";
+import CustomRemindPicker from "../../../components/CustomRemindPicker";
+import FilterByCategory from "../../../components/FilterByCategory";
+import TimePicker from "../../../components/TimePicker";
 import LottieView from "lottie-react-native";
-import translations from "../../locales/translations"
+import translations from "../../../locales/translations"
 import moment from "moment-timezone";
-import CategoryModal from "../../components/CategoryModal";
+import CategoryModal from "../../../components/CategoryModal";
+import AddTodoTabs from "../../../components/AddTodoTabs";
 
 const AddTodoPage = () => {
   const { addTodo, t, language, addUserCategory, getCategories } = useTodoListContext();
@@ -155,15 +156,16 @@ const doneRefDat = useRef()
   >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ImageBackground
-            source={require("../../../assets/images/bg-add.jpg")}
+            source={require("../../../../assets/images/bg-add.jpg")}
             resizeMode="cover"
-            className="flex-1 pt-10 pb-20"
+            className="flex-1 pt-4 pb-20"
             >
             <ScrollView
             contentContainerStyle={{ paddingBottom: 10 }}
             keyboardShouldPersistTaps="handled"
             >
             <View className="px-4 flex-1">
+              <AddTodoTabs />
               <Text className="text-[#d7c8f3] text-2xl font-bold text-center mb-4 mt-4">
                 {t("Add_New_ToDo_Page_Title")}
               </Text>
@@ -184,7 +186,7 @@ const doneRefDat = useRef()
                   <LottieView
                   style={{ width: 27, height: 27, opacity: 1}}
                   className="absolute right-0 top-[5px] z-40"
-                  source={require('../../../assets/data/done2.json')}
+                  source={require('../../../../assets/data/done2.json')}
                   ref={doneRefTit}
                   loop={false}
                   autoPlay={true}
@@ -211,7 +213,7 @@ const doneRefDat = useRef()
                   <LottieView
                   style={{ width: 27, height: 27, opacity: 1}}
                   className="absolute right-0 top-[5px] z-40"
-                  source={require('../../../assets/data/done2.json')}
+                  source={require('../../../../assets/data/done2.json')}
                   ref={doneRefDec}
                   loop={false}
                   autoPlay={true}
@@ -236,7 +238,7 @@ const doneRefDat = useRef()
                           doneRefCat?.current?.play()
                         }
                         } key={item} >
-                          <FilterByCategory categoryName={item} selectedCategory={category}/>
+                          <FilterByCategory categoryName={item} selectedCategory={category} bgColor="" textColor="" />
                         </TouchableOpacity>
                       ))
                     }
@@ -256,7 +258,7 @@ const doneRefDat = useRef()
                       <LottieView
                       style={{ width: 27, height: 27, opacity: 1}}
                       className="absolute right-0 top-[0px] z-40"
-                      source={require('../../../assets/data/done2.json')}
+                      source={require('../../../../assets/data/done2.json')}
                       ref={doneRefCat}
                       loop={false}
                       autoPlay={true}
@@ -303,7 +305,7 @@ const doneRefDat = useRef()
                       <LottieView
                       style={{ width: 27, height: 27, opacity: 1}}
                       className="absolute right-0 top-[5px] z-40"
-                      source={require('../../../assets/data/done2.json')}
+                      source={require('../../../../assets/data/done2.json')}
                       ref={doneRefDat}
                       loop={false}
                       autoPlay={true}
@@ -330,7 +332,7 @@ const doneRefDat = useRef()
               </View>
               {/* Zaman Seçimi */}
               <View className=" ">
-                <TimePicker  setDueTime={setDueTime} defaultTime={false}/>
+                <TimePicker  setDueTime={setDueTime} defaultTime={false} bgColor="" textColor=""/>
               </View>
 
               {/* Hatırlatma Seçimi */}
@@ -357,7 +359,7 @@ const doneRefDat = useRef()
                  <LottieView
                   style={{ width: 45, height: 45, opacity: opacity}}
                   className="absolute left-0"
-                  source={require('../../../assets/data/success.json')}
+                  source={require('../../../../assets/data/success.json')}
                   ref={successRef}
                   loop={false}
                   autoPlay={false}

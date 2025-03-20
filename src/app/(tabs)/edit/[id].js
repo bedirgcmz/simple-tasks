@@ -197,7 +197,7 @@ const EditTodoPage = () => {
                       }}
                       key={item}
                     >
-                      <FilterByCategory categoryName={item} selectedCategory={category} />
+                      <FilterByCategory categoryName={item} selectedCategory={category} bgColor="" textColor="" />
                     </TouchableOpacity>
                   ))}
                    {
@@ -273,7 +273,7 @@ const EditTodoPage = () => {
               </View>
 
               {/* Zaman */}
-              <TimePicker setDueTime={setDueTime} defaultTime={dueTime} />
+              <TimePicker setDueTime={setDueTime} defaultTime={dueTime} bgColor="" textColor=""/>
 
               {/* Hatırlatma */}
               <Text className="text-[#d7c8f3] text-md text-left w-full font-bold mb-2">

@@ -5,7 +5,7 @@ import moment from "moment-timezone"; // Moment.js'i import ediyoruz
 import { useTodoListContext } from "../context/todos-context";
 import LottieView from "lottie-react-native";
 
-const TimePicker = ({ setDueTime, defaultTime }) => {
+const TimePicker = ({ setDueTime, defaultTime, bgColor, textColor, }) => {
   const {  t } = useTodoListContext();
   const [hours, setHours] = useState(defaultTime ? defaultTime.slice(0,2) : "12");
   const [minutes, setMinutes] = useState(defaultTime ? defaultTime.slice(3,5) : "00");
@@ -40,16 +40,16 @@ const TimePicker = ({ setDueTime, defaultTime }) => {
 
   return (
     <View className="flex-1 items-center justify-center">
-      <Text className="font-bold text-[#d7c8f3] w-full mb-2">{t("TimePicker_Select_a_due_time")}</Text>
+      <Text className={`font-bold text-[#d7c8f3] ${textColor} w-full mb-2`}>{t("TimePicker_Select_a_due_time")}</Text>
 
       {/* Zaman Seçici Butonu */}
       <TouchableOpacity
         onPress={() => setPickerVisible(true)}
-        className="bg-[#d7c8f3] px-4 py-2 rounded-lg w-full mb-2 py-3 relative"
+        className={`bg-[#d7c8f3] ${bgColor} px-4 py-2 rounded-lg w-full mb-2 py-3 relative`}
       >
-        <Text className="text-gray-600 font-semibold text-center">
+        <Text className={`text-gray-600 ${textColor} font-semibold text-center`}>
           {controlSelectedTiem === "12:00" ? t("Default_Time") : t("TimePicker_Selected_Time")}:{" "}
-          <Text className="text-gray-800">{`${hours}:${minutes}`}</Text>
+          <Text className={` ${textColor}`}>{`${hours}:${minutes}`}</Text>
         </Text>         
          <LottieView
           style={{ width: 27, height: 27, opacity: 1}}
@@ -66,7 +66,7 @@ const TimePicker = ({ setDueTime, defaultTime }) => {
       <Modal visible={isPickerVisible} transparent={true} animationType="slide">
         <View className="flex-1 bg-black bg-opacity-50 justify-center items-center">
           <View className="bg-white w-11/12 rounded-lg p-4">
-            <Text className="text-lg font-bold text-gray-800 mb-4 text-center">
+            <Text className={`text-lg font-bold text-gray-800 mb-4 text-center`}>
               {t("TimePicker_Select_Time")}
             </Text>
 
