@@ -22,12 +22,13 @@ import { playCorrectSound } from "../../../utils/play-success-sound";
 import moment from "moment-timezone";
 import translations from "../../../locales/translations"
 import LottieView from "lottie-react-native";
+import { testNotificationLog } from "../../../utils/test";
 
 
 
 const EditTodoPage = () => {
   const { id } = useLocalSearchParams();
-  const { todos, updateTodo, t, language, getCategories } = useTodoListContext();
+  const { todos, updateTodo, t, language, getCategories, updateTodoFully } = useTodoListContext();
 
   // Düzenlenecek ToDo'yu bul
   const todo = todos.find((item) => item.id === id);
@@ -79,15 +80,13 @@ const EditTodoPage = () => {
   }, [id, todo, todos]);
 
 
-  const handleUpdateTodo = () => {
+  const handleUpdateTodo = async () => {
     if (!title || !category || !dueDate) {
       alert(t("Alert_in_handle_add_todo"));
       return;
     }
-
-    // Güncellenmiş ToDo objesi
-    const updatedTodo = {
-      ...todo,
+  
+    const updatedFields = {
       title,
       description,
       category,
@@ -95,12 +94,14 @@ const EditTodoPage = () => {
       dueTime,
       reminderTime,
     };
-
-    updateTodo(todo.id, updatedTodo);
-    playCorrectSound()
+  
+    await updateTodoFully(todo.id, updatedFields); // ✅ Yeni fonksiyon
+    playCorrectSound();
     alert(t("Alert_successfully"));
+    // setTimeout(() => testNotificationLog(todos), 500);
     router.push({ pathname: `/filter`, params: { from: category } });
   };
+  
 
   const doneRefTit = useRef()
   const doneRefDec = useRef()
@@ -280,6 +281,8 @@ const EditTodoPage = () => {
               {t("Select_a_remind_time")}
               </Text>
               <CustomRemindPicker
+                bgColor="bg-[#d7c8f3]"
+                textColor="text-gray-700"
                 options={Object.values(translations[language].reminderTime)} // Kullanıcının göreceği çeviri metinleri
                 selectedValue={translations[language].reminderTime[Object.keys(translations["en"].reminderTime)
                   .find(key => translations["en"].reminderTime[key] === reminderTime)] || translations[language].reminderTime._5_minutes_before} 

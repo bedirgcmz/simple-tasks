@@ -10,9 +10,9 @@ module.exports = {
         customGreen: '#006400',
         customOrange: '#ff7d00',
         customCoffe: '#78290f',
-        customPurple: '#89023e',
+        customPurple: '#861657',
         customTurkuaz: '#156064',
-        customOrangeDark: '#ff5400',
+        customOrangeDark: '#f26419',
         customGray: '#343a40',
         customDarkBlue: '#002855',
         customDefault: ""

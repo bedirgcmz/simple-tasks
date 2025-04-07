@@ -58,8 +58,8 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
 
   const todaysTodos = todos.filter(
     (todo) => {
-      if (!validFormat.test(todo.dueDate.trim())) {
-        console.error("Tarih Okunamadı"); // Hata mesajı fırlat
+      if (!todo.dueDate || typeof todo.dueDate !== 'string' || !validFormat.test(todo.dueDate.trim())) {
+        console.log("Tarih Okunamadı"); // Hata mesajı fırlat
         return false;
       } else {
         return isToday(todo.dueDate)
@@ -68,8 +68,8 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
   );
   const tomorrowsTodos = todos.filter(
     (todo) => {
-      if (!validFormat.test(todo.dueDate.trim())) {
-        console.error("Tarih Okunamadı"); // Hata mesajı fırlat
+      if (!todo.dueDate || typeof todo.dueDate !== 'string' || !validFormat.test(todo.dueDate.trim())) {
+        console.log("Tarih Okunamadı"); // Hata mesajı fırlat
         return false;
       } else {
         return isTomorrow(todo.dueDate)
@@ -78,8 +78,8 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
   );
   const nextDaysTodos = todos.filter(
     (todo) =>{
-      if (!validFormat.test(todo.dueDate.trim())) {
-        console.error("Tarih Okunamadı"); // Hata mesajı fırlat
+      if (!todo.dueDate || typeof todo.dueDate !== 'string' || !validFormat.test(todo.dueDate.trim())) {
+        console.log("Tarih Okunamadı"); // Hata mesajı fırlat
         return false;
       } else {
         return isNextDays(todo.dueDate) && !isTomorrow(todo.dueDate) 
@@ -89,8 +89,8 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
   );
   const pastDaysTodos = todos.filter(
     (todo) => {
-      if (!validFormat.test(todo.dueDate.trim())) {
-        console.error("Tarih Okunamadı"); // Hata mesajı fırlat
+      if (!todo.dueDate || typeof todo.dueDate !== 'string' || !validFormat.test(todo.dueDate.trim())) {
+        console.log("Tarih Okunamadı"); // Hata mesajı fırlat
         return false;
       } else {
         return isPastDays(todo.dueDate)
@@ -122,7 +122,7 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
   const renderTodoSection = (title, todos, key, image, message, cardBgColor) => (
       <View key={key} className="p-4 pb-8 border-gray-300 relative">
         {/* Kırmızı Nokta */}
-        <Text className="text-lg font-bold text-[#ef6351]">{title}
+        <Text className="text-lg font-bold text-[#90a4ae]">{title}
         {todaysTodos.length > 0 &&  key === "today" &&(
                   <View
                     className="absolute top-0 right-0 h-2 w-2 bg-[#ff5400] rounded-full"
@@ -189,7 +189,7 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
          
          {/* Completed ToDos */}
             <View className="p-4 pb-6">
-              <Text className="text-lg font-bold  text-[#ef6351]">{completedTodosTitle}</Text>
+              <Text className="text-lg font-bold  text-[#90a4ae]">{completedTodosTitle}</Text>
               <Text className="text-gray-500 mb-4 pl-1">
               {completedTodos.length} {t("Done")}
             </Text>

@@ -1,4 +1,7 @@
-import React, { useState, useRef } from "react";
+// File: app/edit-recurring/[id].js
+
+import React, { useEffect, useRef, useState } from "react";
+import { useLocalSearchParams, router } from "expo-router";
 import {
   View,
   Text,
@@ -10,14 +13,13 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTodoListContext } from "../../../context/todos-context";
-import { router } from "expo-router";
 import moment from "moment-timezone";
+import uuid from "react-native-uuid";
 import FilterByCategory from "../../../components/FilterByCategory";
 import CategoryModal from "../../../components/CategoryModal";
 import TimePicker from "../../../components/TimePicker";
 import LottieView from "lottie-react-native";
 import AddTodoTabs from "../../../components/AddTodoTabs";
-import uuid from "react-native-uuid";
 import CustomRemindPicker from "../../../components/CustomRemindPicker";
 import translations from "../../../locales/translations";
 import { scheduleNotification } from "../../../utils/notificationUtils";
@@ -33,19 +35,47 @@ const weekDays = [
   { id: 0, label: "Paz" },
 ];
 
-const AddRecurringTodoPage = () => {
-  const { addTodo, t, getCategories, addUserCategory, language, todos } =
-    useTodoListContext();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedDays, setSelectedDays] = useState([]);
-  const [dueTime, setDueTime] = useState("12:00:00");
-  const [repeatEndDate, setRepeatEndDate] = useState(null);
+const EditRecurringTodoPage = () => {
+  const { id, from } = useLocalSearchParams();
+  const {
+      todos,
+      updateAllInGroup,
+      t,
+      getCategories,
+      addUserCategory,
+      language,
+    } = useTodoListContext();
+
+    const targetTodo = todos.find(todo => todo.id === id)
+    const repeatGroupId = targetTodo?.repeatGroupId
+  const groupTodos = todos.filter((todo) => todo.repeatGroupId === repeatGroupId);
+  const sampleTodo = groupTodos[0];
+
+  const [title, setTitle] = useState(sampleTodo?.title || "");
+  const [description, setDescription] = useState(sampleTodo?.description || "");
+  const [selectedDays, setSelectedDays] = useState(
+    sampleTodo?.repeatDays || []
+  );
+  const [dueTime, setDueTime] = useState(sampleTodo?.dueTime || "12:00:00");
+  const [repeatEndDate, setRepeatEndDate] = useState(
+    sampleTodo
+      ? moment.max(groupTodos.map((t) => moment(t.dueDate))).toDate()
+      : null
+  );
+  const [category, setCategory] = useState(sampleTodo?.category || "");
+  const [reminderTime, setReminderTime] = useState(
+    sampleTodo?.reminderTime || "1 day before"
+  );
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [category, setCategory] = useState("");
-  const [reminderTime, setReminderTime] = useState("5 minutes before");
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const doneRefCat = useRef();
+
+  const toggleDay = (day) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
+  };
+  
 
   const handleReminderChange = (selectedLabel) => {
     let englishValue = "5 minutes before"; // Varsayılan değer
@@ -87,22 +117,23 @@ const AddRecurringTodoPage = () => {
     setReminderTime(englishValue);
   };
 
-  const toggleDay = (day) => {
-    setSelectedDays((prevDays) =>
-      prevDays.includes(day)
-        ? prevDays.filter((d) => d !== day)
-        : [...prevDays, day]
-    );
+  const handleCategorySelection = (selectedCategory) => {
+    if (selectedCategory === "New Category") {
+      setIsCategoryModalVisible(true);
+    } else {
+      setCategory(selectedCategory);
+      Keyboard.dismiss();
+      doneRefCat?.current?.play();
+    }
   };
 
-  const handleAddRecurringTodo = async () => {
-    if (!title || selectedDays.length === 0 || !repeatEndDate || !category) {
-      alert("Lütfen tüm bilgileri doldurun.");
+  const handleUpdateRecurringTodos = async () => {
+    if (!title || !selectedDays.length || !repeatEndDate || !category) {
+      Alert.alert("Eksik Bilgi", "Lütfen tüm alanları doldurun.");
       return;
     }
   
-    const groupId = uuid.v4();
-    const createdTodos = [];
+    const updatedTodos = [];
     const today = moment().startOf("day");
     const endDate = moment(repeatEndDate).endOf("day");
     let current = today.clone();
@@ -110,7 +141,7 @@ const AddRecurringTodoPage = () => {
     while (current.isSameOrBefore(endDate, "day")) {
       const currentDay = current.day();
       if (selectedDays.includes(currentDay)) {
-        const baseTodo = {
+        const newTodo = {
           id: uuid.v4(),
           title,
           description,
@@ -122,65 +153,48 @@ const AddRecurringTodoPage = () => {
           reminderTime,
           completedAt: null,
           isRecurring: true,
-          repeatGroupId: groupId,
+          repeatGroupId: repeatGroupId,
           repeatDays: selectedDays,
         };
   
-        // 🔔 Bildirimi planla ve yeni todo'ya ekle
-        const notificationId = await scheduleNotification(baseTodo, t, language);
-        const finalTodo = { ...baseTodo, notificationId };
+        // 🔔 Bildirim planla
+        const notificationId = await scheduleNotification(newTodo, t, language);
+        newTodo.notificationId = notificationId;
   
-        createdTodos.push(finalTodo);
+        updatedTodos.push(newTodo);
       }
       current.add(1, "day");
     }
   
-    // ✅ Asenkron şekilde sırayla todos'u ekle
-    for (const todo of createdTodos) {
-      await addTodo(todo); // await ekledik
-    }
-  
-    alert("Tekrarlı Görevler Eklendi!");
-    // testNotificationLog([...createdTodos]); // test için istersen todos yerine bu da olabilir
+    await updateAllInGroup(repeatGroupId, updatedTodos, { skipNotification: true });
+
+    Alert.alert("Güncellendi", "Tekrarlı görevler başarıyla güncellendi.");
+    // testNotificationLog(todos)
     router.push("/filter");
   };
   
 
-  const handleCategorySelection = (selectedCategory) => {
-    if (selectedCategory === "New Category") {
-      setIsCategoryModalVisible(true);
-    } else {
-      setCategory(selectedCategory);
-      Keyboard.dismiss();
-      doneRefCat?.current?.play();
-    }
-  };
-
   return (
     <ScrollView className="flex-1 bg-[#0d1b2a] p-4">
       <AddTodoTabs />
-      {/* Başlık */}
+
       <TextInput
         placeholder="Görev Başlığı"
         placeholderTextColor="gray"
         value={title}
         onChangeText={setTitle}
         className="bg-gray-700 p-3 rounded-md text-white mb-4 mt-4"
-        maxLength={60}
       />
 
-      {/* Açıklama */}
       <TextInput
-        placeholder="Açıklama (Opsiyonel)"
+        placeholder="Açıklama"
         placeholderTextColor="gray"
         value={description}
         onChangeText={setDescription}
         className="bg-gray-700 p-3 rounded-md text-white mb-4"
         multiline
-        maxLength={200}
       />
 
-      {/* Kategori */}
       <Text className="text-white text-md font-bold mb-2">Kategori Seç</Text>
       <View className="flex-row flex-wrap items-center justify-start bg-gray-700 py-2 rounded-lg">
         {getCategories()?.map((item) => (
@@ -200,7 +214,7 @@ const AddRecurringTodoPage = () => {
           onPress={() => handleCategorySelection("New Category")}
           className="bg-blue-500 px-2 py-[3px] mb-1 rounded-md mx-1"
         >
-          <Text className="text-white">{t("Create_Category")} +</Text>
+          <Text className="text-white">Kategori +</Text>
         </TouchableOpacity>
         {category !== "" && (
           <LottieView
@@ -223,7 +237,6 @@ const AddRecurringTodoPage = () => {
         t={t}
       />
 
-      {/* Gün Seçimi */}
       <Text className="text-white text-md font-bold mb-2 mt-4">
         Hangi Günlerde Tekrar Etsin?
       </Text>
@@ -247,14 +260,12 @@ const AddRecurringTodoPage = () => {
         ))}
       </View>
 
-      {/* Zaman Seçimi */}
       <TimePicker
         setDueTime={setDueTime}
         defaultTime={dueTime}
         bgColor="bg-gray-700"
         textColor="text-white"
       />
-
       {/* Hatırlatma Seçimi */}
       <Text className="text-white text-md text-left w-full font-bold mb-2">
         {t("Select_a_remind_time")}
@@ -272,7 +283,7 @@ const AddRecurringTodoPage = () => {
         }
         onValueChange={handleReminderChange}
       />
-      {/* Sonlanma Tarihi */}
+
       <Text className="text-white text-md font-bold mb-2 mt-4">
         Tekrar Sonlanma Tarihi
       </Text>
@@ -288,8 +299,6 @@ const AddRecurringTodoPage = () => {
       </TouchableOpacity>
       {showDatePicker && (
         <DateTimePicker
-          textColor="white"
-          style={{ color: "white" }}
           value={repeatEndDate || new Date()}
           mode="date"
           display="default"
@@ -300,17 +309,33 @@ const AddRecurringTodoPage = () => {
         />
       )}
 
-      {/* Kaydet */}
-      <TouchableOpacity
-        onPress={handleAddRecurringTodo}
-        className="bg-red-400 p-4 rounded-md mt-6"
-      >
-        <Text className="text-white text-center font-bold">
-          Tekrarlı Görevleri Ekle
-        </Text>
-      </TouchableOpacity>
+      <View className="flex-row justify-between">
+        <TouchableOpacity
+          onPress={handleUpdateRecurringTodos}
+          className="bg-red-400 p-4 rounded-md mt-6"
+        >
+          <Text className="text-white text-center font-bold">
+            Görevleri Güncelle
+          </Text>
+        </TouchableOpacity>
+        {/* Go Back */}
+        <TouchableOpacity
+          onPress={() => {
+            if (from == "list") {
+                router.push(`/list`); 
+            } else {
+                router.push(`/dynamicid/${targetTodo.id}`);
+            }
+          }}
+          className="bg-[#0a2472] py-4 rounded-r-md mt-6"
+        >
+          <Text className="text-white text-center font-bold px-6">
+            {t("Alert_Cancel")}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
 
-export default AddRecurringTodoPage;
+export default EditRecurringTodoPage;

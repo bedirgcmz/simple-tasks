@@ -1,22 +1,82 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import {  FontAwesome5 } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { calculateDaysLeft, truncateText } from "../utils/date-utils";
 import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
-import { showConfirmAlert } from '../utils/alerts';
 import {playSuccessSound} from "../utils/play-success-sound";
 import moment from "moment-timezone";
 
 
 const TodoCard = ({ todo, bgColor, fromText }) => {
-  const {  deleteTodo, updateTodo, setShowCongrats, t } = useTodoListContext();
+  const {  deleteTodo, updateTodo, setShowCongrats, t, deleteAllInGroup } = useTodoListContext();
+
+  const handleDelete = () => {
+    if (todo.repeatGroupId) {
+      Alert.alert(
+        "Tekrarlı Görev",
+        "Bu görev bir tekrarlama grubunun parçası. Ne yapmak istersiniz?",
+        [
+          {
+            text: "Sadece bu",
+            onPress: async () => {
+              await deleteTodo(todo.id); // Tek todo’yu sil
+            },
+            style: "default",
+          },
+          {
+            text: "Tümünü sil",
+            onPress: async () => {
+              await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
+            },
+            style: "destructive",
+          },
+          {
+            text: "Vazgeç",
+            style: "cancel",
+          },
+        ],
+        { cancelable: true }
+      );
+    } else {
+      // Tek seferlik
+      Alert.alert(
+        "Sil",
+        "Bu görevi silmek istediğinize emin misiniz?",
+        [
+          { text: "İptal", style: "cancel" },
+          {
+            text: "Sil",
+            onPress: async () => {
+              await deleteTodo(todo.id);
+            },
+            style: "destructive",
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
+  const handleUpdate = () => {
+    if (todo.repeatGroupId) {
+      router.push({
+        pathname: `/edit-recurring/${todo.id}`,
+        params: { from: "list" },
+      })
+    } else {
+      router.push({
+        pathname: `/edit/${todo.id}`,
+        params: { from: "list" },
+      })
+    }
+  }
 
   return (
     <TouchableOpacity
       className={`pt-3 mr-4 w-40 min-h-[190px] flex-col justify-between z-10 relative
-      rounded-lg shadow-xl border border-gray-700 ${bgColor}`}
+      rounded-lg shadow-xl border border-gray-700 ${bgColor} bgg-[#2f3e46]`}
       onPress={() => router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: fromText } })}
     >
          <TouchableOpacity className="absolute bottom-[23px] left-[12px]"
@@ -46,12 +106,12 @@ const TodoCard = ({ todo, bgColor, fromText }) => {
         </View>
         <View className="px-3 flex-row mt-2 mb-2 items-center justify-end">
           <TouchableOpacity className="mr-4"
-            onPress={() => router.push({ pathname: `/edit/${todo.id}`, params: { from: 'list' } })} // Edit ekranına yönlendirme
+            onPress={handleUpdate} // Edit ekranına yönlendirme
           >
             <FontAwesome5 name="edit" size={16} color="#e9ecef" />
           </TouchableOpacity>
           <TouchableOpacity 
-          onPress={() => showConfirmAlert("You want to DELETE this ToDo!","Are you sure?",deleteTodo, todo.id, t)}
+          onPress={handleDelete}
           
           >
             <FontAwesome5 name="trash" size={16} color="#e9ecef" />

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
 import React, { useRef } from "react";
 import { useTodoListContext } from "../context/todos-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -11,12 +11,68 @@ import LottieView from "lottie-react-native";
 import moment from "moment-timezone";
 
 const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
-  const { todos, deleteTodo, updateTodo, setShowCongrats, t, language } =
+  const { todos, deleteTodo, updateTodo, setShowCongrats, t, language, deleteAllInGroup } =
     useTodoListContext();
   const todo = todos.find((todo) => todo.id === pTodoId);
 
-  const confettiRef = useRef()
 
+  const handleDelete = () => {
+    if (todo.repeatGroupId) {
+      Alert.alert(
+        "Tekrarlı Görev",
+        "Bu görev bir tekrarlama grubunun parçası. Ne yapmak istersiniz?",
+        [
+          {
+            text: "Sadece bu",
+            onPress: async () => {
+              await deleteTodo(todo.id); // Tek todo’yu sil
+            },
+            style: "default",
+          },
+          {
+            text: "Tümünü sil",
+            onPress: async () => {
+              await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
+            },
+            style: "destructive",
+          },
+          {
+            text: "Vazgeç",
+            style: "cancel",
+          },
+        ],
+        { cancelable: true }
+      );
+    } else {
+      // Tek seferlik
+      Alert.alert(
+        "Sil",
+        "Bu görevi silmek istediğinize emin misiniz?",
+        [
+          { text: "İptal", style: "cancel" },
+          { text: "Sil", onPress: async () => { await deleteTodo(todo.id) }, style: "destructive" },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
+  const handleUpdate = () => {
+    if (todo.repeatGroupId) {
+      router.push({
+        pathname: `/edit-recurring/${pTodoId}`,
+        params: { from: "details" },
+      })
+    } else {
+      router.push({
+        pathname: `/edit/${pTodoId}`,
+        params: { from: "details" },
+      })
+    }
+  }
+
+
+  const confettiRef = useRef()
   const playConfetti = () => {
     confettiRef?.current?.play()
   }
@@ -116,12 +172,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
               {/* Edit Button */}
               <View className="flex-row justify-end gap-2">
                 <TouchableOpacity
-                  onPress={() =>
-                    router.push({
-                      pathname: `/edit/${todo.id}`,
-                      params: { from: "details" },
-                    })
-                  } // Edit ekranına yönlendirme
+                  onPress={handleUpdate} // Edit ekranına yönlendirme
                   className="flex-row items-center space-x-2 px-2 py-1 rounded-lg bg-gray-600"
                 >
                   <Text className="text-white text-[14px]">{t("Edit_button")}</Text>
@@ -130,15 +181,8 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
 
                 {/* Delete Button */}
                 <TouchableOpacity
-                  onPress={() =>
-                    showConfirmAlert(
-                      t("You_want_to_DELETE"),
-                      t("Are_you_sure"),
-                      deleteTodo,
-                      todo.id,
-                      t
-                    )
-                  }
+                onPress={handleDelete}
+                  
                   className="flex-row items-center space-x-2 px-2 py-1 rounded-lg bg-gray-600"
                 >
                   <Text>

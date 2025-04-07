@@ -15,7 +15,7 @@ const translations = {
       todayTodosTitle: "Today's ToDos",
       tomorrowTodosTitle: "Tomorrow's ToDos",
       nextDaysTodosTitle: "Next Days' ToDos",
-      pastDaysTodosTitle: "Today's ToDos",
+      pastDaysTodosTitle: "Past Days's ToDos",
       completedTodosTitle: "Completed ToDos",
       todayTodosMessage : "Enjoy yourself today, you don't have any todo.",
       tomorrowTodosMessage  : "You'll have time to have fun tomorrow.",

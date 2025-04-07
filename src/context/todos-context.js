@@ -8,7 +8,8 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { router } from 'expo-router'
 import { Alert } from "react-native";
-
+import { testNotificationLog } from '../utils/test';
+import { migrateOldTodos } from "../utils/migrateUtils";
 
 
 // Bildirimlerin nasıl işleneceğini tanımla
@@ -71,9 +72,6 @@ export const TodoListProvider = ({ children }) => {
   const [username, setUsername] = useState("");
   const [userIconImage, setUserIconImage] = useState("icon24");
   const t = (key) => translations[language][key] || key;
-
-
-  
 
 //  useEffect içinde async fonksiyon ile resim ve dil secimini baslangicta yukle
 useEffect(() => {
@@ -268,6 +266,10 @@ const deleteUserCategory = async (categoryToDelete) => {
     dueTime: "12:00:00",
     reminderTime: '1 day before',
     completedAt: null,
+    isRecurring: true,
+    repeatGroupId: null,
+    repeatDays: null,
+    notificationId : null
   };
 
 
@@ -298,21 +300,22 @@ const loadTodos = async () => {
     }
   };
 
-  // Yeni görev ekleme ve bildirim zamanlama
   const addTodo = async (newTodo) => {
-    const updatedTodos = [newTodo, ...todos];
-    setTodos(updatedTodos);
-    saveTodos(updatedTodos);
-
-    // Bildirim zamanla
-    await scheduleNotification(newTodo , t, language);
+    setTodos((prev) => {
+      const updated = [newTodo, ...prev];
+      saveTodos(updated); // güncel listeyi kaydet
+      return updated;
+    });
   };
+  
+  
+  
 
   const deleteTodo = async (id) => {
-       // 🚀 `todos` dizisini kontrol et, null veya undefined hatalarını önle
-       if (!todos || todos.length === 0) {
-        console.warn(t("No_todos_found"));
-        return;
+    // 🚀 `todos` dizisini kontrol et, null veya undefined hatalarını önle
+    if (!todos || todos.length === 0) {
+    console.warn(t("No_todos_found"));
+    return;
     }
 
     // 🚀 Eğer son todo ise, silmeyi iptal et ve kullanıcıya uyarı göster
@@ -327,44 +330,143 @@ const loadTodos = async () => {
       const todoToDelete = todos.find((todo) => todo.id === id);
       if (todoToDelete) {
         // console.log(todoToDelete);
-        await cancelNotification(id); // 📌 Önce bildirimi iptal et
+        await cancelNotification(todoToDelete.notificationId); // 📌 Önce bildirimi iptal et
       }
   
       const updatedTodos = todos.filter((todo) => todo.id !== id);
       setTodos(updatedTodos);
       await saveTodos(updatedTodos);
+      // testNotificationLog(updatedTodos);
   
-      // 📋 **Silinen todo’nun bildirim kayıtlarını tekrar kontrol et**
-      const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
-      console.log("📋 Scheduled Notifications AFTER DELETE:", JSON.stringify(scheduledNotifications, null, 2));
+      // // 📋 **Silinen todo’nun bildirim kayıtlarını tekrar kontrol et**
+      // const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
+      // console.log("📋 Scheduled Notifications AFTER DELETE:", JSON.stringify(scheduledNotifications, null, 2));
   
     } catch (error) {
       console.log("❌ Error in deleteTodo:", error);
     }
   };
 
-  const updateTodo = async (id, updatedTodo) => {
-    const updatedTodos = todos.map((todo) =>
-      todo.id === id ? { ...todo, ...updatedTodo } : todo
-    );
+  useEffect(() => {
+    // testNotificationLog(todos)
+  },[todos])
+
+  const updateTodo = async (id, updates) => {
+    const currentTodo = todos.find((t) => t.id === id);
+    if (!currentTodo) return;
   
-    setTodos(updatedTodos);
-    saveTodos(updatedTodos);
+    let updatedTodo = { ...currentTodo, ...updates };
   
-    if (updatedTodo.status === "done") {
-      await cancelNotification(id);
-    } else if (updatedTodo.reminderTime || updatedTodo.dueDate || updatedTodo.dueTime) {
-      // console.log(`🔄 Güncellenen Todo için Bildirim Yönetimi: ${id}`);
-      
-      // **ÖNCE** eski bildirimi iptal et
-      await cancelNotification(id);
-      
-      // **SONRA** yeni bildirimi oluştur
-      setTimeout(async () => {
-        await scheduleNotification(updatedTodo, t);
-      }, 1000); // 1 saniye gecikme ile yeni bildirimi planla
+    // 🔁 Status güncellemesiyle bildirim kontrolü
+    if (updates.status) {
+      if (updates.status === "done") {
+        await cancelNotification(currentTodo.notificationId);
+        updatedTodo.notificationId = null;
+      } else if (updates.status === "pending") {
+        const newNotificationId = await scheduleNotification(updatedTodo, t, language);
+        updatedTodo.notificationId = newNotificationId;
+      }
+    }
+  
+    // 🔄 Todo'yu güncelle
+    setTodos((prev) => {
+      const updated = prev.map((todo) => (todo.id === id ? updatedTodo : todo));
+      saveTodos(updated);
+      return updated;
+    });
+  };
+  
+  const updateTodoFully = async (id, updatedFields) => {
+    const existingTodo = todos.find((t) => t.id === id);
+    if (!existingTodo) return;
+  
+    // Bildirimi iptal et (varsa)
+    if (existingTodo.notificationId) {
+      await cancelNotification(existingTodo.notificationId);
+    }
+  
+    const updatedTodo = {
+      ...existingTodo,
+      ...updatedFields,
+      notificationId: null,
+    };
+  
+    // Yeni bildirim sadece 'pending' ise ayarlanır
+    if (updatedTodo.status === "pending") {
+      const newNotificationId = await scheduleNotification(updatedTodo, t, language);
+      updatedTodo.notificationId = newNotificationId;
+    }
+  
+    // Güncelle
+    setTodos((prev) => {
+      const updated = prev.map((todo) => (todo.id === id ? updatedTodo : todo));
+      saveTodos(updated);
+      return updated;
+    });
+  };
+  
+
+  const deleteAllInGroup = async (groupId) => {
+    try {
+      const groupTodos = todos.filter((todo) => todo.repeatGroupId === groupId);
+  
+      // 📛 Bildirimleri iptal et
+      for (const todo of groupTodos) {
+        if (todo.notificationId) {
+          await cancelNotification(todo.notificationId);
+        }
+      }
+  
+      // ✅ Todos listesini filtrele
+      const updated = todos.filter((todo) => todo.repeatGroupId !== groupId);
+      setTodos(updated);
+      await saveTodos(updated);
+    } catch (error) {
+      console.error("❌ deleteAllInGroup içinde hata:", error);
     }
   };
+  
+
+const updateAllInGroup = async (groupId, newTodos, options = { skipNotification: false }) => {
+  const oldGroupTodos = todos.filter((t) => t.repeatGroupId === groupId);
+
+  // 1. Eski bildirimleri iptal et
+  for (const oldTodo of oldGroupTodos) {
+    if (oldTodo.notificationId) {
+      await cancelNotification(oldTodo.notificationId);
+    }
+  }
+
+  // 2. Eski todoları sil, yenileri ekle
+  const updated = [
+    ...todos.filter((t) => t.repeatGroupId !== groupId),
+    ...newTodos,
+  ];
+  setTodos(updated);
+  await saveTodos(updated);
+
+  // 3. Yeni bildirimleri planla (opsiyonel)
+  if (!options.skipNotification) {
+    for (const newTodo of newTodos) {
+      const notificationId = await scheduleNotification(newTodo, t, language);
+      newTodo.notificationId = notificationId;
+    }
+
+    // tekrar save et notificationId'ler eklenmiş haliyle
+    setTodos((prev) => {
+      const withNotis = prev.map((todo) => {
+        const found = newTodos.find((nt) => nt.id === todo.id);
+        return found ? found : todo;
+      });
+      saveTodos(withNotis);
+      return withNotis;
+    });
+  }
+};
+
+
+
+
 
   //Username islemleri
   const loadUsername = async () => {
@@ -390,15 +492,15 @@ const loadTodos = async () => {
     }
   };
 
+    useEffect(() => {
+      const initApp = async () => {
+        await loadTodos(); // önce todoları yükle
+        await migrateOldTodos(todos, setTodos, saveTodos); // sonra migrasyonu yap
+        await loadUsername(); // diğer ayarlar
+      };
+      initApp();
+    }, []);
 
-  useEffect(() => {
-    const initApp = async () => {
-      await loadTodos();
-      await loadUsername(); 
-    };
-    initApp();
-  }, []);
-  
 
   useEffect(() => {
     const translateCategories = async () => {
@@ -433,6 +535,7 @@ const loadTodos = async () => {
     addTodo,
     deleteTodo,
     updateTodo,
+    updateTodoFully,
     setDueTime, 
     showCongrats, 
     setShowCongrats,
@@ -454,7 +557,9 @@ const loadTodos = async () => {
     userCategories,
     addUserCategory,
     getCategories,
-    deleteUserCategory
+    deleteUserCategory,
+    deleteAllInGroup,
+    updateAllInGroup
   };
 
   return <TodoListContext.Provider value={value}>{children}</TodoListContext.Provider>;

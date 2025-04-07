@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, FlatList, ScrollView, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CheckBox } from "react-native-elements";
 import { Trash2, Edit, Plus } from "lucide-react-native";
 import { useTodoListContext } from "../../context/todos-context";
-import {Alert} from 'react-native';
 import { LinearGradient } from "expo-linear-gradient";
 import { Platform } from "react-native";
 

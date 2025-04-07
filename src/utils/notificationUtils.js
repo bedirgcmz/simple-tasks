@@ -103,6 +103,7 @@ export async function scheduleNotification(todo, t, language) {
     const storedNotifications = JSON.parse(await AsyncStorage.getItem(STORAGE_KEY)) || {};
     storedNotifications[todo.id] = notificationId;
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications));
+    return notificationId;
 
   } catch (error) {
     console.log("❌ scheduleNotification fonksiyonunda hata:", error);
@@ -110,41 +111,27 @@ export async function scheduleNotification(todo, t, language) {
 }
 
 
-export async function cancelNotification(todoId) {
+// Yeni: doğrudan notificationId ile çalışır
+export const cancelNotification = async (notificationId) => {
   try {
-    // console.log(`🗑 Cancelling notification for todo: ${todoId}`);
-
-    // 📌 Tüm planlanmış bildirimleri al
-    const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
-    // console.log("📋 All Scheduled Notifications BEFORE DELETE:", JSON.stringify(scheduledNotifications, null, 2));
-
-    // 📌 Bildirim ID'lerini AsyncStorage’den al
-    const storedNotifications = JSON.parse(await AsyncStorage.getItem(STORAGE_KEY)) || {};
-
-    // console.log("Storage de bulunan tum bildirimler:", storedNotifications);
-    // **İlk olarak, ilgili bildirimi iptal et**
-    if (storedNotifications[todoId]) {
-      // console.log(`🔻 Found notification in storage, cancelling: ${storedNotifications[todoId]}`);
-      await Notifications.cancelScheduledNotificationAsync(storedNotifications[todoId]);
-      delete storedNotifications[todoId];
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications));
-    } else {
-      // console.log(`❌ No matching notification found in storage for: ${todoId}`);
+    if (!notificationId) {
+      console.warn("⚠️ Bildirim iptali için geçersiz notificationId");
+      return;
     }
 
-    // 📌 **Tüm planlanmış bildirimleri kontrol et ve ID'yi karşılaştırarak sil**
-    for (const notification of scheduledNotifications) {
-      if (notification.content.title.includes(todoId)) {
-        // console.log(`🔻 Removing scheduled notification: ${notification.identifier}`);
-        await Notifications.cancelScheduledNotificationAsync(notification.identifier);
-      }
-    }
-
-    // 📋 Güncellenmiş bildirimi listele
-    const updatedNotifications = await Notifications.getAllScheduledNotificationsAsync();
-    // console.log("📋 Currently Scheduled Notifications AFTER DELETE:", JSON.stringify(updatedNotifications, null, 2));
-
+    await Notifications.cancelScheduledNotificationAsync(notificationId);
+    console.log("🗑 Bildirim iptal edildi:", notificationId);
   } catch (error) {
-    console.log("❌ Error in cancelNotification:", error);
+    console.error("❌ Bildirim iptal hatası:", error);
   }
-}
+};
+
+// Tüm bildirimleri temizle
+export const clearAllScheduledNotifications = async () => {
+  try {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+    console.log("🧹 Tüm planlanmış bildirimler temizlendi.");
+  } catch (error) {
+    console.error("❌ Bildirim temizleme hatası:", error);
+  }
+};

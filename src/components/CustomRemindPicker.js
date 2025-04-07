@@ -3,15 +3,15 @@ import { Modal, Text, View, TouchableOpacity, FlatList } from 'react-native';
 import { useTodoListContext } from '../context/todos-context';
 import LottieView from "lottie-react-native";
 
-const CustomRemindPicker = ({ options, selectedValue, onValueChange }) => {
+const CustomRemindPicker = ({ options, selectedValue, onValueChange, bgColor, textColor,  }) => {
   const { t } = useTodoListContext();
   const [modalVisible, setModalVisible] = useState(false);
   const doneRefRim = useRef()
 
   return (
     <View>
-      <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-[#d7c8f3] p-3 rounded-md">
-        <Text className="text-center text-gray-600">{selectedValue || "Select an option"}</Text>
+      <TouchableOpacity onPress={() => setModalVisible(true)} className={`${bgColor} p-3 rounded-md`}>
+        <Text className={`text-center ${textColor}`}>{selectedValue || "Select an option"}</Text>
         <LottieView
           style={{ width: 27, height: 27, opacity: 1}}
           className="absolute right-0 top-[5px] z-40"

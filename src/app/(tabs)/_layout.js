@@ -29,19 +29,23 @@ const TabsLayout = () => {
 
  
 
-useEffect(() => {
-  const todaysTodos = todos.filter(
-    (todo) => {
-      const validFormat = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD formatı için regex
+  useEffect(() => {
+    const validFormat = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
+  
+    const todaysTodos = todos.filter((todo) => {
+      if (!todo?.dueDate || typeof todo.dueDate !== "string") return false;
+  
       if (!validFormat.test(todo.dueDate.trim())) {
-        console.error("Tarih Okunamadı"); // Hata mesajı fırlat
-      } else {
-        isToday(todo.dueDate) && todo.status !== "done"
+        console.error("Tarih Okunamadı:", todo.dueDate);
+        return false;
       }
-    }
-  );
-  setTodayToDos(todaysTodos);
-}, [todos]); // todos  değiştiğinde çalışır
+  
+      return isToday(todo.dueDate) && todo.status !== "done";
+    });
+  
+    setTodayToDos(todaysTodos);
+  }, [todos]);
+  
 
   return (
     <Tabs
@@ -181,8 +185,20 @@ useEffect(() => {
         options={{
           href: null,
           headerShown: false,
-          headerTitle: "Filter",
-          tabBarLabel: "Filter",
+          headerTitle: "Edit",
+          tabBarLabel: "Edit",
+          tabBarShowLabel: false,
+          // tabBarStyle: { display: "none" },
+          
+        }}
+      />
+      <Tabs.Screen
+        name="edit-recurring/[id]"
+        options={{
+          href: null,
+          headerShown: false,
+          headerTitle: "Edit Recurring",
+          tabBarLabel: "Edit Recurring",
           tabBarShowLabel: false,
           // tabBarStyle: { display: "none" },
           
