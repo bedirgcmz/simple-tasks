@@ -6,7 +6,7 @@ import { calculateDaysLeft, truncateText } from "../utils/date-utils";
 import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
 import {playSuccessSound} from "../utils/play-success-sound";
-import moment from "moment-timezone";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 
 const TodoCard = ({ todo, bgColor, fromText }) => {
@@ -15,39 +15,38 @@ const TodoCard = ({ todo, bgColor, fromText }) => {
   const handleDelete = () => {
     if (todo.repeatGroupId) {
       Alert.alert(
-        "Tekrarlı Görev",
-        "Bu görev bir tekrarlama grubunun parçası. Ne yapmak istersiniz?",
+        t("Recurring_Task"),
+        t("Recurring_Delete_Question"),
         [
           {
-            text: "Sadece bu",
+            text: t("Only_This"),
             onPress: async () => {
               await deleteTodo(todo.id); // Tek todo’yu sil
             },
             style: "default",
           },
           {
-            text: "Tümünü sil",
+            text: t("Delete_All"),
             onPress: async () => {
               await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
             },
             style: "destructive",
           },
           {
-            text: "Vazgeç",
+            text: t("Cancel"),
             style: "cancel",
           },
         ],
         { cancelable: true }
       );
     } else {
-      // Tek seferlik
       Alert.alert(
-        "Sil",
-        "Bu görevi silmek istediğinize emin misiniz?",
+        t("Delete"),
+        t("Delete_Confirmation"),
         [
-          { text: "İptal", style: "cancel" },
+          { text: t("Cancel"), style: "cancel" },
           {
-            text: "Sil",
+            text: t("Delete"),
             onPress: async () => {
               await deleteTodo(todo.id);
             },
@@ -79,6 +78,12 @@ const TodoCard = ({ todo, bgColor, fromText }) => {
       rounded-lg shadow-xl border border-gray-700 ${bgColor} bgg-[#2f3e46]`}
       onPress={() => router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: fromText } })}
     >
+      {
+                todo.isRecurring && 
+              <View className="absolute right-2 top-1">
+                  <MaterialIcons name="event-repeat" size={18} color="white" />
+              </View>
+              }
          <TouchableOpacity className="absolute bottom-[23px] left-[12px]"
         onPress={() => 
           {

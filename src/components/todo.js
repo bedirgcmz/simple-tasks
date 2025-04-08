@@ -12,39 +12,38 @@ const Todo = ({ todo, index, fromText }) => {
   const handleDelete = () => {
     if (todo.repeatGroupId) {
       Alert.alert(
-        "Tekrarlı Görev",
-        "Bu görev bir tekrarlama grubunun parçası. Ne yapmak istersiniz?",
+        t("Recurring_Task"),
+        t("Recurring_Delete_Question"),
         [
           {
-            text: "Sadece bu",
+            text: t("Only_This"),
             onPress: async () => {
               await deleteTodo(todo.id); // Tek todo’yu sil
             },
             style: "default",
           },
           {
-            text: "Tümünü sil",
+            text: t("Delete_All"),
             onPress: async () => {
               await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
             },
             style: "destructive",
           },
           {
-            text: "Vazgeç",
+            text: t("Cancel"),
             style: "cancel",
           },
         ],
         { cancelable: true }
       );
     } else {
-      // Tek seferlik
       Alert.alert(
-        "Sil",
-        "Bu görevi silmek istediğinize emin misiniz?",
+        t("Delete"),
+        t("Delete_Confirmation"),
         [
-          { text: "İptal", style: "cancel" },
+          { text: t("Cancel"), style: "cancel" },
           {
-            text: "Sil",
+            text: t("Delete"),
             onPress: async () => {
               await deleteTodo(todo.id);
             },

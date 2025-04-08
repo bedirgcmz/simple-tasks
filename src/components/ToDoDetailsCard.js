@@ -5,10 +5,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { calculateDaysLeft, calculateReminderDateTime, formatToShortDate } from "../utils/date-utils";
 import { router } from "expo-router";
-import { showConfirmAlert } from "../utils/alerts";
 import { playSuccessSound } from "../utils/play-success-sound";
 import LottieView from "lottie-react-native";
-import moment from "moment-timezone";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
   const { todos, deleteTodo, updateTodo, setShowCongrats, t, language, deleteAllInGroup } =
@@ -19,43 +18,49 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
   const handleDelete = () => {
     if (todo.repeatGroupId) {
       Alert.alert(
-        "Tekrarlı Görev",
-        "Bu görev bir tekrarlama grubunun parçası. Ne yapmak istersiniz?",
+        t("Recurring_Task"),
+        t("Recurring_Delete_Question"),
         [
           {
-            text: "Sadece bu",
+            text: t("Only_This"),
             onPress: async () => {
               await deleteTodo(todo.id); // Tek todo’yu sil
             },
             style: "default",
           },
           {
-            text: "Tümünü sil",
+            text: t("Delete_All"),
             onPress: async () => {
               await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
             },
             style: "destructive",
           },
           {
-            text: "Vazgeç",
+            text: t("Cancel"),
             style: "cancel",
           },
         ],
         { cancelable: true }
       );
     } else {
-      // Tek seferlik
       Alert.alert(
-        "Sil",
-        "Bu görevi silmek istediğinize emin misiniz?",
+        t("Delete"),
+        t("Delete_Confirmation"),
         [
-          { text: "İptal", style: "cancel" },
-          { text: "Sil", onPress: async () => { await deleteTodo(todo.id) }, style: "destructive" },
+          { text: t("Cancel"), style: "cancel" },
+          {
+            text: t("Delete"),
+            onPress: async () => {
+              await deleteTodo(todo.id);
+            },
+            style: "destructive",
+          },
         ],
         { cancelable: true }
       );
     }
   };
+  
 
   const handleUpdate = () => {
     if (todo.repeatGroupId) {
@@ -109,11 +114,17 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
             
             {/* Days Left */}
             <View
-              className={`mb-3 border border-[#e9ecef] rounded-t-md items-center 
+              className={`mb-3 border border-[#e9ecef] rounded-t-md items-center relative 
             ${todo.status === "done" ? "bg-[#fe9092]" : "bg-[#6c757d]"}
             `}
             >
               <Text className="text-lg text-white">{calculateDaysLeft(todo, t)}</Text>
+              {
+                todo.isRecurring && 
+              <View className="absolute right-2 top-1">
+                  <MaterialIcons name="event-repeat" size={20} color="white" />
+              </View>
+              }
             </View>
 
             <View className="px-2">

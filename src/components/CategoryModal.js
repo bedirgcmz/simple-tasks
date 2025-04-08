@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Modal, View, Text, TextInput, Button } from "react-native";
+import { TouchableOpacity } from "react-native";
+import { Modal, View, Text, TextInput, Button, Touchable } from "react-native";
 
 const CategoryModal = ({ isVisible, onClose, onAddCategory, setCategory, t }) => {
   const [newCategory, setNewCategory] = useState("");
@@ -27,10 +28,15 @@ const handleAdd = async () => {
             onChangeText={setNewCategory}
             placeholder={t("Category_input_placeholder")}
             style={{ borderBottomWidth: 1, marginBottom: 10 }}
+            maxLength={18}
           />
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Button title={t("Cancel")} onPress={onClose} />
-            <Button title={t("Create")} onPress={handleAdd} />
+            <TouchableOpacity  onPress={onClose} >
+            <Text className="bg-gray-400 text-white px-3 py-1 rounded-md">{t("Cancel")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleAdd} >
+            <Text className="bg-red-400 text-white px-3 py-1 rounded-md">{t("Create")}</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

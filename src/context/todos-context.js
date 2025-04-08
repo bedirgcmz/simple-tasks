@@ -266,7 +266,7 @@ const deleteUserCategory = async (categoryToDelete) => {
     dueTime: "12:00:00",
     reminderTime: '1 day before',
     completedAt: null,
-    isRecurring: true,
+    isRecurring: false,
     repeatGroupId: null,
     repeatDays: null,
     notificationId : null
@@ -309,8 +309,6 @@ const loadTodos = async () => {
   };
   
   
-  
-
   const deleteTodo = async (id) => {
     // 🚀 `todos` dizisini kontrol et, null veya undefined hatalarını önle
     if (!todos || todos.length === 0) {
@@ -347,9 +345,9 @@ const loadTodos = async () => {
     }
   };
 
-  useEffect(() => {
-    // testNotificationLog(todos)
-  },[todos])
+  // useEffect(() => {
+  //   // testNotificationLog(todos)
+  // },[todos])
 
   const updateTodo = async (id, updates) => {
     const currentTodo = todos.find((t) => t.id === id);
