@@ -111,7 +111,7 @@ const TimePicker = ({ setDueTime, defaultTime, bgColor, textColor, }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleConfirm}
-                className="bg-blue-500 px-4 py-2 rounded-lg"
+                className="bg-red-400 px-4 py-2 rounded-lg"
               >
                 <Text className="text-white font-semibold">{t("TimePicker_Confirm")}</Text>
               </TouchableOpacity>
