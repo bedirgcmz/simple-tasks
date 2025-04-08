@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams, router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTodoListContext } from "../../../context/todos-context";
-import Todo from '../../../components/Todo';
 import { LinearGradient } from "expo-linear-gradient";
 import TodoDoneAnimation from '../../../components/TodoDoneAnimation';
 import TodoCard from '../../../components/TodoCard';
