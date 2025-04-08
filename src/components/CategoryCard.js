@@ -74,7 +74,7 @@ const CategoryCard = ({ category, completed, total, percentage }) => {
 
   return (
     <TouchableOpacity onPress={() => router.push({ pathname: `/filter`, params: { from: category } })}  className={`items-center justify-between py-2 rounded-lg mb-4 shadow-md border border-[#373f51] w-24 h-28 mr-4 mt-2 ${bgColor}`}>
-      <Text className='text-sm font-bold text-white'>{category}</Text>
+      <Text className='text-sm font-bold text-white text-center'>{category}</Text>
       <Text className='text-white font-bold'>{completed}/{total}</Text>
       <Text className='text-white font-bold text-md'>{percentage}%</Text>
     </TouchableOpacity>

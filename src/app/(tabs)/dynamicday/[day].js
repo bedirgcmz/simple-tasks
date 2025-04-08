@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams, router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -6,12 +6,16 @@ import { useTodoListContext } from "../../../context/todos-context";
 import { LinearGradient } from "expo-linear-gradient";
 import TodoDoneAnimation from '../../../components/TodoDoneAnimation';
 import TodoCard from '../../../components/TodoCard';
-
+import QuickAddTodoModal from "../../../components/QuickAddTodoModal";
+import plusIcon from "../../../../assets/images/plusIcon.gif"
+import LottieView from "lottie-react-native";
 
 const DaysTodos = () => {
   const { day } = useLocalSearchParams();
   const [thisDaysTodos, setThisDaysTodos] = useState([])
   const { todos, t } = useTodoListContext();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [rotated, setRotated] = useState(false);
 
   const ThisDayTodos = () => {
     
@@ -64,6 +68,33 @@ const DaysTodos = () => {
             <Text className="text-white text-md font-bold">{t("Back_Button")}</Text>
 
       </TouchableOpacity>
+      <TouchableOpacity
+        className={`bg-[#001d3d] w-14 h-14 rounded-full items-center justify-center absolute bottom-[80px] right-5 z-50 transform transition-transform duration-300 ease-in-out${
+          rotated ? "rotate-45" : "rotate-0"
+        }`}
+        onPress={() => {
+          setRotated(true);
+          setModalVisible(true);
+        }}
+      >
+        {/* <Text className="text-4xl text-white">+</Text> */}
+        <LottieView
+          source={require("../../../../assets/data/plusIcon.json")}
+          autoPlay
+          loop
+          speed={.6}
+          style={{ width: 60, height: 60 }}
+        />
+      </TouchableOpacity>
+
+      <QuickAddTodoModal
+        visible={modalVisible}
+        selectedDate={day}
+        onClose={() => {
+          setModalVisible(false);
+          setRotated(false);
+        }}
+      />
     </LinearGradient>
 
   )

@@ -287,7 +287,7 @@ const AddTodoPage = () => {
                   )}
                 </View>
               </View>
-              {/* 📌 CategoryModal Kullanımı */}
+              {/* 📌 Create New CategoryModal Kullanımı */}
               <CategoryModal
                 isVisible={isCategoryModalVisible}
                 onClose={() => setIsCategoryModalVisible(false)}
