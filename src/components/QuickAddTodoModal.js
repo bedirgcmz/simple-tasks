@@ -73,7 +73,7 @@ const QuickAddTodoModal = ({ visible, onClose, selectedDate }) => {
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1 justify-end">
-        <View className="bg-[#d7c8f3] rounded-t-2xl p-4 max-h-[95%]">
+        <View className="bg-[#d7c8f3] rounded-t-2xl p-4 max-h-[95%] pb-16">
             <TouchableOpacity onPress={onClose} className="absolute right-3 top-[-36px] bg-gray-400 rounded-full z-234888 w-8 h-8 text-centerflex items-center justify-center"><Text className="text-white bg-red font-bold">X</Text></TouchableOpacity>
           <ScrollView showsVerticalScrollIndicator={false}>
             <TextInput

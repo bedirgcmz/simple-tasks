@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTodoListContext } from "../context/todos-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -10,8 +10,9 @@ import LottieView from "lottie-react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
-  const { todos, deleteTodo, updateTodo, setShowCongrats, t, language, deleteAllInGroup } =
-    useTodoListContext();
+  const { todos, deleteTodo, updateTodo, t, language, deleteAllInGroup } = useTodoListContext();
+    const [confettiVisible, setConfettiVisible] = useState(false);
+
   const todo = todos.find((todo) => todo.id === pTodoId);
 
 
@@ -79,8 +80,21 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
 
   const confettiRef = useRef()
   const playConfetti = () => {
-    confettiRef?.current?.play()
-  }
+    setConfettiVisible(true);
+    setTimeout(() => {
+      confettiRef?.current?.play();
+    }, 100); // animasyon render edildikten sonra başlat
+    setTimeout(() => {
+      setConfettiVisible(false);
+    }, 3000); // 2 saniye sonra kaldır
+  };
+
+  useEffect(() => {
+    if(todo.status === "done"){
+      playConfetti()
+    }
+  },[todo])
+  
   
   return (
     <View className="">
@@ -101,7 +115,6 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
                 });
                 todo.status === "done" ? <Text></Text> : playSuccessSound();
                 todo.status === "done" ? <Text></Text> : playConfetti();
-                setShowCongrats(todo.status === "done" ? false : true);
               }}
               className="p-2 absolute bottom-[0] left-[0]"
             >
@@ -208,6 +221,8 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
               </View>
             </View>
           </View>
+          {
+            confettiVisible && 
           <LottieView
           style={{ width: 300, height: 300, 
             position: 'absolute', 
@@ -223,6 +238,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
           autoPlay={false}
           speed={2.3}
           />
+          }
 
       </View>
     </View>

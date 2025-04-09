@@ -9,7 +9,7 @@ import { Platform } from "react-native";
 import { router } from 'expo-router'
 import { Alert } from "react-native";
 import { testNotificationLog } from '../utils/test';
-import { migrateOldTodos } from "../utils/migrateUtils";
+import { migrateOldTodosSafely } from "../utils/migrateUtils";
 
 
 // Bildirimlerin nasıl işleneceğini tanımla
@@ -273,6 +273,26 @@ const deleteUserCategory = async (categoryToDelete) => {
   };
 
 
+// const loadTodos = async () => {
+//   try {
+//     const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
+
+//     if (storedTodos && storedTodos !== "[]") { 
+//       const parsedTodos = JSON.parse(storedTodos);
+//       if (Array.isArray(parsedTodos) && parsedTodos.length > 0) {
+//         setTodos(parsedTodos);
+//       }
+//     } else { 
+//       const defaultTodos = [initialTodo];
+//       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(defaultTodos));
+//       setTodos(defaultTodos);
+//     }
+//   } catch (error) {
+//     console.error("❌ Error loading todos:", error);
+//   }
+// };
+
+
 const loadTodos = async () => {
   try {
     const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
@@ -280,17 +300,18 @@ const loadTodos = async () => {
     if (storedTodos && storedTodos !== "[]") { 
       const parsedTodos = JSON.parse(storedTodos);
       if (Array.isArray(parsedTodos) && parsedTodos.length > 0) {
-        setTodos(parsedTodos);
+        return parsedTodos;
       }
-    } else { 
-      const defaultTodos = [initialTodo];
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(defaultTodos));
-      setTodos(defaultTodos);
-    }
+    } 
+    // Eğer hiç kayıt yoksa initial todo dön
+    return [initialTodo];
+
   } catch (error) {
     console.error("❌ Error loading todos:", error);
+    return [initialTodo]; // Hata olursa da yine başlangıç todo'su dön
   }
 };
+
 
   const saveTodos = async (updatedTodos) => {
     try {
@@ -462,10 +483,6 @@ const updateAllInGroup = async (groupId, newTodos, options = { skipNotification:
   }
 };
 
-
-
-
-
   //Username islemleri
   const loadUsername = async () => {
     try {
@@ -492,9 +509,13 @@ const updateAllInGroup = async (groupId, newTodos, options = { skipNotification:
 
     useEffect(() => {
       const initApp = async () => {
-        await loadTodos(); // önce todoları yükle
-        await migrateOldTodos(todos, setTodos, saveTodos); // sonra migrasyonu yap
-        await loadUsername(); // diğer ayarlar
+        const loadedTodos = await loadTodos(); // önce kesinlikle datayı al
+    
+        const migratedTodos = await migrateOldTodosSafely(loadedTodos); // migrasyonu uygula
+        setTodos(migratedTodos); // en son state'e ata
+    
+        await saveTodos(migratedTodos); // dosyaya kaydet
+        await loadUsername(); // diğer ayarları yap
       };
       initApp();
     }, []);

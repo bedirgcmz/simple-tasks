@@ -7,7 +7,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import TodoDoneAnimation from '../../../components/TodoDoneAnimation';
 import TodoCard from '../../../components/TodoCard';
 import QuickAddTodoModal from "../../../components/QuickAddTodoModal";
-import plusIcon from "../../../../assets/images/plusIcon.gif"
 import LottieView from "lottie-react-native";
 
 const DaysTodos = () => {
