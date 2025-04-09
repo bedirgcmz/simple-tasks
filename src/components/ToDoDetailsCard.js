@@ -3,13 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTodoListContext } from "../context/todos-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { calculateDaysLeft, calculateReminderDateTime, formatToShortDate } from "../utils/date-utils";
+import { calculateDaysLeft, calculateReminderDateTime, formatToShortDate, shouldShowOffIcon } from "../utils/date-utils";
 import { router } from "expo-router";
 import { playSuccessSound } from "../utils/play-success-sound";
 import LottieView from "lottie-react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
+const ToDoDetailsCard = ({ pTodoId, pPageTitle, setIsLoading }) => {
   const { todos, deleteTodo, updateTodo, t, language, deleteAllInGroup } = useTodoListContext();
     const [confettiVisible, setConfettiVisible] = useState(false);
 
@@ -25,14 +25,18 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
           {
             text: t("Only_This"),
             onPress: async () => {
+              setIsLoading(true)
               await deleteTodo(todo.id); // Tek todo’yu sil
+              setIsLoading(false)
             },
             style: "default",
           },
           {
             text: t("Delete_All"),
             onPress: async () => {
+              setIsLoading(true)
               await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
+              setIsLoading(false)
             },
             style: "destructive",
           },
@@ -52,7 +56,9 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
           {
             text: t("Delete"),
             onPress: async () => {
+              setIsLoading(true)
               await deleteTodo(todo.id);
+              setIsLoading(false)
             },
             style: "destructive",
           },
@@ -180,7 +186,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle }) => {
                 <View className="flex-row items-center text-gray-500">
                   <View className="flex-row items-center">
                     {
-                      todo.status === "done" ?
+                      shouldShowOffIcon(todo) ?
                       <Ionicons name="notifications-off" size={19} color="#495057" /> :
                       <Ionicons name="notifications" size={19} color="#fe9092" />
 

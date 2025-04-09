@@ -22,6 +22,7 @@ import CustomRemindPicker from "../../../components/CustomRemindPicker";
 import translations from "../../../locales/translations";
 import { scheduleNotification } from "../../../utils/notificationUtils";
 import { testNotificationLog } from "../../../utils/test";
+import { playCorrectSound } from "../../../utils/play-success-sound";
 
 const weekDays = {
   en: [
@@ -77,6 +78,8 @@ const AddRecurringTodoPage = () => {
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const doneRefCat = useRef();
   const [opacity, setOpacity] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const handleReminderChange = (selectedLabel) => {
     let englishValue = "5 minutes before"; // Default value
@@ -132,6 +135,8 @@ const AddRecurringTodoPage = () => {
       return;
     }
 
+    setIsLoading(true);
+
     const groupId = uuid.v4();
     const createdTodos = [];
     const today = moment().startOf("day");
@@ -169,8 +174,14 @@ const AddRecurringTodoPage = () => {
       await addTodo(todo);
     }
 
+    setIsLoading(false);
+    playCorrectSound();
+    playSuccess();
     Alert.alert(t("Recurring_todos_added"));
-    router.push("/filter");
+    // router.push("/filter");
+    setTimeout(() => {
+      router.push({ pathname: `/filter`, params: { from: category } });
+    }, 500);
   };
   const doneRefTit = useRef();
   const doneRefDec = useRef();
@@ -189,7 +200,6 @@ const AddRecurringTodoPage = () => {
 
   const successRef = useRef();
   const playSuccess = () => {
-    if (title && category) {
       setOpacity(1); // Görünür yap
       successRef?.current?.reset();
       successRef?.current?.play();
@@ -197,7 +207,7 @@ const AddRecurringTodoPage = () => {
       setTimeout(() => {
         setOpacity(0); // Opaklık sıfırlanır, gizlenir
       }, 1500); // Animasyonun süresine göre ayarla
-    }
+    
   };
 
   return (
@@ -389,24 +399,37 @@ const AddRecurringTodoPage = () => {
 
       <TouchableOpacity
           onPress={() => {
-            playSuccess();
             handleAddRecurringTodo();
             Keyboard.dismiss();
           }}
-        className="bg-red-400 p-4 rounded-md mt-6"
+        className="bg-red-400 p-4 rounded-md mt-6 h-[52px]"
       >
-        <Text className="text-white text-center font-bold">
-          {t("Add_Recurring_Todos")}
-        </Text>
-        <LottieView
+        {
+          isLoading ? (
+            <LottieView
+            source={require("../../../../assets/data/loadingAddTodo.json")}
+            className="absolute left-[42%] top-[-16px]"
+            autoPlay
+            loop
+            speed={1.2}
+            style={{ width: 80, height: 80 }}
+          />
+          ) : (
+            <Text className="text-white text-center font-bold">
+              {t("Add_Recurring_Todos")}
+            </Text>
+          )
+        }
+         <LottieView
                   style={{ width: 45, height: 45, opacity: opacity }}
                   className="absolute left-0"
                   source={require("../../../../assets/data/success.json")}
                   ref={successRef}
                   loop={false}
                   autoPlay={false}
-                  speed={1}
+                  speed={1.5}
                 />
+      
       </TouchableOpacity>
     </ScrollView>
   );

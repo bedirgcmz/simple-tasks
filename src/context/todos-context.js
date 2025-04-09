@@ -424,19 +424,48 @@ const loadTodos = async () => {
     });
   };
   
-
   const deleteAllInGroup = async (groupId) => {
     try {
       const groupTodos = todos.filter((todo) => todo.repeatGroupId === groupId);
+      const hasOtherGroup = todos.some(
+        (todo) => todo.repeatGroupId && todo.repeatGroupId !== groupId
+      );
+      const hasNonGroupTodo = todos.some((todo) => !todo.repeatGroupId);
   
-      // 📛 Bildirimleri iptal et
+      // 🔒 Eğer bu grup silinirse sistemde başka todo kalmıyorsa:
+      if (!hasOtherGroup && !hasNonGroupTodo) {
+        const fallbackTodo = { ...groupTodos[0] };
+  
+        // Tek todo haline getir
+        fallbackTodo.id = Date.now().toString();
+        fallbackTodo.isRecurring = false;
+        fallbackTodo.repeatGroupId = null;
+        fallbackTodo.repeatDays = null;
+  
+        // Bildirimi iptal et (varsa)
+        if (fallbackTodo.notificationId) {
+          await cancelNotification(fallbackTodo.notificationId);
+          fallbackTodo.notificationId = null;
+        }
+  
+        // Yeni bildirim kur
+        const newNotificationId = await scheduleNotification(fallbackTodo, t, language);
+        fallbackTodo.notificationId = newNotificationId;
+  
+        // Sadece fallback todo’yu kaydet
+        setTodos([fallbackTodo]);
+        await saveTodos([fallbackTodo]);
+        return;
+      }
+  
+      // 🔕 Grup içindeki tüm bildirimleri iptal et
       for (const todo of groupTodos) {
         if (todo.notificationId) {
           await cancelNotification(todo.notificationId);
         }
       }
   
-      // ✅ Todos listesini filtrele
+      // 🎯 Sadece bu grubu kaldır
       const updated = todos.filter((todo) => todo.repeatGroupId !== groupId);
       setTodos(updated);
       await saveTodos(updated);
@@ -444,6 +473,28 @@ const loadTodos = async () => {
       console.error("❌ deleteAllInGroup içinde hata:", error);
     }
   };
+  
+
+
+  // const deleteAllInGroup = async (groupId) => {
+  //   try {
+  //     const groupTodos = todos.filter((todo) => todo.repeatGroupId === groupId);
+  
+  //     // 📛 Bildirimleri iptal et
+  //     for (const todo of groupTodos) {
+  //       if (todo.notificationId) {
+  //         await cancelNotification(todo.notificationId);
+  //       }
+  //     }
+  
+  //     // ✅ Todos listesini filtrele
+  //     const updated = todos.filter((todo) => todo.repeatGroupId !== groupId);
+  //     setTodos(updated);
+  //     await saveTodos(updated);
+  //   } catch (error) {
+  //     console.error("❌ deleteAllInGroup içinde hata:", error);
+  //   }
+  // };
   
 
 const updateAllInGroup = async (groupId, newTodos, options = { skipNotification: false }) => {

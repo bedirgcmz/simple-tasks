@@ -6,7 +6,7 @@ import { useTodoListContext } from "../context/todos-context";
 import { playCorrectSound } from "../utils/play-success-sound";
 import { calculateDaysLeft } from "../utils/date-utils";
 
-const Todo = ({ todo, index, fromText }) => {
+const Todo = ({ todo, index, fromText, setIsLoading }) => {
   const { deleteTodo, updateTodo, setShowCongrats, t, deleteAllInGroup } = useTodoListContext();
 
   const handleDelete = () => {
@@ -18,14 +18,18 @@ const Todo = ({ todo, index, fromText }) => {
           {
             text: t("Only_This"),
             onPress: async () => {
-              await deleteTodo(todo.id); // Tek todo’yu sil
+              setIsLoading(true)
+              await deleteTodo(todo.id);
+              setIsLoading(false)
             },
             style: "default",
           },
           {
             text: t("Delete_All"),
             onPress: async () => {
+              setIsLoading(true)
               await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
+              setIsLoading(false)
             },
             style: "destructive",
           },
@@ -45,7 +49,9 @@ const Todo = ({ todo, index, fromText }) => {
           {
             text: t("Delete"),
             onPress: async () => {
+              setIsLoading(true)
               await deleteTodo(todo.id);
+              setIsLoading(false)
             },
             style: "destructive",
           },

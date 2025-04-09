@@ -41,6 +41,8 @@ const EditTodoPage = () => {
   const [dueTime, setDueTime] = useState(todo?.dueTime || "");
   const [reminderTime, setReminderTime] = useState(todo?.reminderTime || "2 hours before");
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [opacity, setOpacity] = useState(0);
 
   const handleReminderChange = (selectedLabel) => {
     let englishValue = "5 minutes before"; // Varsayılan değer
@@ -86,6 +88,7 @@ const EditTodoPage = () => {
       return;
     }
   
+    setIsLoading(true)
     const updatedFields = {
       title,
       description,
@@ -96,7 +99,9 @@ const EditTodoPage = () => {
     };
   
     await updateTodoFully(todo.id, updatedFields); // ✅ Yeni fonksiyon
+    setIsLoading(false)
     playCorrectSound();
+    playSuccess()
     alert(t("Alert_successfully"));
     // setTimeout(() => testNotificationLog(todos), 500);
     router.push({ pathname: `/filter`, params: { from: category } });
@@ -107,7 +112,16 @@ const EditTodoPage = () => {
   const doneRefDec = useRef()
   const doneRefCat = useRef()
   const doneRefDat = useRef()
+  const successRef = useRef();
+  const playSuccess = () => {
+      setOpacity(1); // Görünür yap
+      successRef?.current?.reset();
+      successRef?.current?.play();
 
+      setTimeout(() => {
+        setOpacity(0); // Opaklık sıfırlanır, gizlenir
+      }, 1500); // Animasyonun süresine göre ayarla
+  };
 
   return (
     <KeyboardAvoidingView
@@ -293,12 +307,35 @@ const EditTodoPage = () => {
                 {/* ToDo Güncelle */}
                 <TouchableOpacity
                   onPress={handleUpdateTodo}
-                  className="bg-red-400 py-4 rounded-l-md mt-6 flex-1"
+                  className="bg-red-400 py-4 rounded-l-md mt-6 flex-1 h-[52px]"
                 >
+              {
+                isLoading ? (
+                  <LottieView
+                  source={require("../../../../assets/data/loadingAddTodo.json")}
+                  className="absolute left-[40%] top-[-16px]"
+                  autoPlay
+                  loop
+                  speed={1.2}
+                  style={{ width: 80, height: 80 }}
+                />
+                ) : (
                   <Text className="text-white text-center font-bold">{t("Update")}</Text>
+                )
+              }
+                <LottieView
+                  style={{ width: 45, height: 45, opacity: opacity }}
+                  className="absolute left-0"
+                  source={require("../../../../assets/data/success.json")}
+                  ref={successRef}
+                  loop={false}
+                  autoPlay={false}
+                  speed={1.5}
+                />
                 </TouchableOpacity>
                 {/* Go Back */}
                 <TouchableOpacity
+                disabled={isLoading}
                   onPress={() => {
                     router.push(`/dynamicid/${todo.id}`)
                     setDueDate(todo.dueDate)

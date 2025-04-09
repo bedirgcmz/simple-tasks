@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView,  Pressable} from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useTodoListContext } from "../../../context/todos-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import ToDoDetailsCard from "../../../components/ToDoDetailsCard";
+import LottieView from "lottie-react-native";
 
 const TaskScreen = () => {
   const { id, from } = useLocalSearchParams();
   const { todos, t } = useTodoListContext();
   const todo = todos.find((todo) => todo.id === id);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <LinearGradient
@@ -19,7 +21,7 @@ const TaskScreen = () => {
       {
         todo ? (
           <View className="flex-1 p-3 pt-20">
-            <ToDoDetailsCard pTodoId={id} pPageTitle={t("ToDo_Details")}/>
+            <ToDoDetailsCard pTodoId={id} pPageTitle={t("ToDo_Details")} setIsLoading={setIsLoading}/>
             <Pressable
               className="bg-[#001d3d] h-10 w-[110px] pb-2 pr-4 rounded-full items-center flex-row gap-2 justify-center absolute bottom-[100px] right-[36%]"
               onPress={() => {
@@ -44,7 +46,17 @@ const TaskScreen = () => {
           </View>
         )
       }
-    {/* <TodoDoneAnimation  /> */}
+     {
+        isLoading &&
+        <LottieView
+            source={require("../../../../assets/data/loadingAddTodo.json")}
+            className="absolute left-[35%] top-[45%] z-[3333]"
+            autoPlay
+            loop
+            speed={1.2}
+            style={{ width: 140, height: 140 }}
+          />
+      }
     </LinearGradient>
   );
 };

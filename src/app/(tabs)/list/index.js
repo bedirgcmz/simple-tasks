@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, ScrollView, Image, ImageBackground, StatusBar } from "react-native";
 import { useTodoListContext } from "../../../context/todos-context";
 import TodoCard from "../../../components/TodoCard";
 import TodoDoneAnimation from "../../../components/TodoDoneAnimation";
 import moment from "moment-timezone";
+import LottieView from "lottie-react-native";
 
 const TodoBoardScreen = () => {
   const { todos, t } = useTodoListContext();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Kullanıcının saat dilimini al
 const userTimezone = moment.tz.guess();
@@ -143,6 +145,7 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
                   todo={todo}
                   bgColor={cardBgColor}
                   fromText="list"
+                  setIsLoading={setIsLoading}
                 />
               ))}
             </ScrollView>
@@ -212,6 +215,20 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
             </View>
         <View className="h-20"></View>
         </ScrollView>
+        {
+        isLoading &&
+        <LottieView
+            source={require("../../../../assets/data/loadingAddTodo.json")}
+            className="absolute left-[35%] top-[45%] z-[3333]"
+            autoPlay
+            loop
+            speed={1.2}
+            style={{ width: 140, height: 140 }}
+          />
+        // <View className="absolute left-0 top-0 w-screen h-screen bg-black mb-[-120px] opacity-0 z-[2222]">
+
+        // </View>
+      }
     <TodoDoneAnimation  />
     </ImageBackground>
 

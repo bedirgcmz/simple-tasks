@@ -28,6 +28,7 @@ import CategoryModal from "../../../components/CategoryModal";
 import AddTodoTabs from "../../../components/AddTodoTabs";
 import { scheduleNotification } from "../../../utils/notificationUtils";
 import { testNotificationLog } from "../../../utils/test";
+import { playCorrectSound } from "../../../utils/play-success-sound";
 
 const AddTodoPage = () => {
   const { addTodo, t, language, addUserCategory, getCategories, todos } =
@@ -41,6 +42,7 @@ const AddTodoPage = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [opacity, setOpacity] = useState(0);
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false); // 📌 Modal görünürlüğü state'i
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const updateDate = () => {
@@ -105,6 +107,8 @@ const AddTodoPage = () => {
       alert(t("Alert_in_handle_add_todo"));
       return;
     }
+
+    setIsLoading(true)
   
     const newTodo = {
       id: uuid.v4(),
@@ -128,7 +132,7 @@ const AddTodoPage = () => {
     const finalTodo = { ...newTodo, notificationId };
     addTodo(finalTodo);
   
-    console.log("Eklenen todo bilgileri:", finalTodo);
+    // console.log("Eklenen todo bilgileri:", finalTodo);
     
     // State’leri sıfırla
     setTitle("");
@@ -138,10 +142,13 @@ const AddTodoPage = () => {
     setDueTime("12:00");
     setReminderTime("5 minutes before");
     
+    setIsLoading(false)
+    playCorrectSound();
+    playSuccess()
     // testNotificationLog(todos)
     setTimeout(() => {
       router.push({ pathname: `/filter`, params: { from: category } });
-    }, 1500);
+    }, 500);
   };
   
   const doneRefTit = useRef();
@@ -151,7 +158,6 @@ const AddTodoPage = () => {
 
   const successRef = useRef();
   const playSuccess = () => {
-    if (title && category) {
       setOpacity(1); // Görünür yap
       successRef?.current?.reset();
       successRef?.current?.play();
@@ -159,7 +165,6 @@ const AddTodoPage = () => {
       setTimeout(() => {
         setOpacity(0); // Opaklık sıfırlanır, gizlenir
       }, 1500); // Animasyonun süresine göre ayarla
-    }
   };
 
   const handleCategorySelection = (selectedCategory) => {
@@ -382,15 +387,28 @@ const AddTodoPage = () => {
               {/* ToDo Ekle */}
               <TouchableOpacity
                 onPress={() => {
-                  playSuccess();
                   handleAddTodo();
                   Keyboard.dismiss();
                 }}
-                className="bg-red-400 py-4 rounded-md mt-6 flex-row items-center justify-center"
+                className="bg-red-400 py-4 rounded-md mt-6 h-[52px] flex-row items-center justify-center"
               >
-                <Text className="text-white text-center font-bold">
+              {
+                isLoading ? (
+                  <LottieView
+                  source={require("../../../../assets/data/loadingAddTodo.json")}
+                  className="absolute left-[40%] top-[-16px]"
+                  autoPlay
+                  loop
+                  speed={1.2}
+                  style={{ width: 80, height: 80 }}
+                />
+                ) : (
+                  <Text className="text-white text-center font-bold">
                   {t("Add_ToDo")}
                 </Text>
+                )
+              }
+
                 <LottieView
                   style={{ width: 45, height: 45, opacity: opacity }}
                   className="absolute left-0"
@@ -398,7 +416,7 @@ const AddTodoPage = () => {
                   ref={successRef}
                   loop={false}
                   autoPlay={false}
-                  speed={1}
+                  speed={1.5}
                 />
               </TouchableOpacity>
             </View>

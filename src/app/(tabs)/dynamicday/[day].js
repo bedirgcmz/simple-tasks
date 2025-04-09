@@ -15,6 +15,7 @@ const DaysTodos = () => {
   const { todos, t } = useTodoListContext();
   const [modalVisible, setModalVisible] = useState(false);
   const [rotated, setRotated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const ThisDayTodos = () => {
     
@@ -46,7 +47,7 @@ const DaysTodos = () => {
       
       {thisDaysTodos.map((todo, index) => (
         <View key={index} className="mb-4 w-[47%] ml-[4px] mr-[-8px] mb-3">
-          <TodoCard todo={todo} bgColor={"bg-[#bb4d0015]"} fromText={day}/>
+          <TodoCard todo={todo} bgColor={"bg-[#bb4d0015]"} fromText={day} setIsLoading={setIsLoading}/>
         </View>
       ))}
       {
@@ -94,6 +95,17 @@ const DaysTodos = () => {
           setRotated(false);
         }}
       />
+      {
+        isLoading &&
+        <LottieView
+            source={require("../../../../assets/data/loadingAddTodo.json")}
+            className="absolute left-[35%] top-[45%] z-[3333]"
+            autoPlay
+            loop
+            speed={1.2}
+            style={{ width: 140, height: 140 }}
+          />
+      }
     </LinearGradient>
 
   )

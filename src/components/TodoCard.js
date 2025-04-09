@@ -9,7 +9,7 @@ import {playSuccessSound} from "../utils/play-success-sound";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 
-const TodoCard = ({ todo, bgColor, fromText }) => {
+const TodoCard = ({ todo, bgColor, fromText, setIsLoading }) => {
   const {  deleteTodo, updateTodo, setShowCongrats, t, deleteAllInGroup } = useTodoListContext();
 
   const handleDelete = () => {
@@ -21,14 +21,18 @@ const TodoCard = ({ todo, bgColor, fromText }) => {
           {
             text: t("Only_This"),
             onPress: async () => {
+              setIsLoading(true)
               await deleteTodo(todo.id); // Tek todo’yu sil
+              setIsLoading(false)
             },
             style: "default",
           },
           {
             text: t("Delete_All"),
             onPress: async () => {
+              setIsLoading(true)
               await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
+              setIsLoading(false)
             },
             style: "destructive",
           },
@@ -48,7 +52,9 @@ const TodoCard = ({ todo, bgColor, fromText }) => {
           {
             text: t("Delete"),
             onPress: async () => {
+              setIsLoading(true)
               await deleteTodo(todo.id);
+              setIsLoading(false)
             },
             style: "destructive",
           },

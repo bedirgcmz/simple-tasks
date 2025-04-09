@@ -116,3 +116,31 @@ export function calculateDaysLeft(todo, t) {
       return `${daysLeft} ${t("calculateDays_text_7")}`; // Örn: "5 gün kaldı"
   }
 }
+
+
+export function shouldShowOffIcon(todo) {
+  const { dueDate, dueTime, reminderTime, status } = todo;
+
+  if (status === "done") return true;
+
+  const reminderMap = {
+    "5 minutes before": 5,
+    "10 minutes before": 10,
+    "30 minutes before": 30,
+    "1 hour before": 60,
+    "2 hours before": 120,
+    "6 hours before": 360,
+    "1 day before": 1440,
+    "1 week before": 10080,
+  };
+
+  const reminderMinutes = reminderMap[reminderTime];
+  if (!reminderMinutes) return true;
+
+  const timezone = moment.tz.guess();
+  const localDateTime = moment.tz(`${dueDate} ${dueTime}`, "YYYY-MM-DD HH:mm:ss", timezone);
+  const reminderMoment = localDateTime.clone().subtract(reminderMinutes, "minutes");
+  const now = moment();
+
+  return reminderMoment.isBefore(now); // Geçmişteyse = artık bildirim gelmez
+}

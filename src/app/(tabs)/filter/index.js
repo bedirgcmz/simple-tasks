@@ -5,12 +5,14 @@ import Todo from '../../../components/Todo';
 import { useLocalSearchParams } from 'expo-router';
 import FilterByCategory from '../../../components/FilterByCategory';
 import TodoDoneAnimation from '../../../components/TodoDoneAnimation';
+import LottieView from "lottie-react-native";
 
 const FilterTodosScreen = () => {
   const { todos, language, categories, userCategories, t } = useTodoListContext();
   const { from  } = useLocalSearchParams();
 const categoryNames = Array.from(new Set(todos.map((item) => item.category)));
 const [selectedCategory, setSelectedCategory] = useState("All")
+const [isLoading, setIsLoading] = useState(false);
 
 
 useEffect(() => {
@@ -48,7 +50,7 @@ if (selectedCategory === "All") {
         data={filteredTodos}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (
-          <Todo todo={item} index={index} fromText="filter"/>
+          <Todo todo={item} index={index} fromText="filter" setIsLoading={setIsLoading}/>
         )}
       />
       <TodoDoneAnimation />
@@ -56,8 +58,18 @@ if (selectedCategory === "All") {
           style="light"
           backgroundColor="transparent"
           translucent={true}
-    
     /> 
+     {
+        isLoading &&
+        <LottieView
+            source={require("../../../../assets/data/loadingAddTodo.json")}
+            className="absolute left-[35%] top-[45%] z-[3333]"
+            autoPlay
+            loop
+            speed={1.2}
+            style={{ width: 140, height: 140 }}
+          />
+      }
 </ImageBackground>
   );
 };

@@ -24,6 +24,7 @@ import CustomRemindPicker from "../../../components/CustomRemindPicker";
 import translations from "../../../locales/translations";
 import { scheduleNotification } from "../../../utils/notificationUtils";
 import { testNotificationLog } from "../../../utils/test";
+import { playCorrectSound } from "../../../utils/play-success-sound";
 
 const weekDays = {
   en: [
@@ -101,6 +102,8 @@ const EditRecurringTodoPage = () => {
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const doneRefCat = useRef();
   const [opacity, setOpacity] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const toggleDay = (day) => {
     setSelectedDays((prev) =>
@@ -164,6 +167,7 @@ const EditRecurringTodoPage = () => {
       return;
     }
 
+    setIsLoading(true)
     const updatedTodos = [];
     const today = moment().startOf("day");
     const endDate = moment(repeatEndDate).endOf("day");
@@ -201,6 +205,9 @@ const EditRecurringTodoPage = () => {
       skipNotification: true,
     });
 
+    setIsLoading(false)
+    playCorrectSound();
+    playSuccess();
     Alert.alert(t("Updated"), t("Alert_successfully_Recurring"));
     // testNotificationLog(todos)
     router.push("/filter");
@@ -409,27 +416,40 @@ const EditRecurringTodoPage = () => {
       <View className="flex-row justify-between">
         <TouchableOpacity
           onPress={() => {
-            playSuccess();
             handleUpdateRecurringTodos();
             Keyboard.dismiss();
           }}
-          className="bg-red-400 p-4 rounded-l-md mt-6 flex-1"
+          className="bg-red-400 p-4 rounded-l-md mt-6 flex-1 h-[52px]"
         >
-          <Text className="text-white text-center font-bold">
+           {
+          isLoading ? (
+            <LottieView
+            source={require("../../../../assets/data/loadingAddTodo.json")}
+            className="absolute left-[42%] top-[-16px]"
+            autoPlay
+            loop
+            speed={1.2}
+            style={{ width: 80, height: 80 }}
+          />
+          ) : (
+            <Text className="text-white text-center font-bold">
             {t("Edit_Recurring_Todos")}
           </Text>
-          <LottieView
+          )
+        }
+            <LottieView
                   style={{ width: 45, height: 45, opacity: opacity }}
                   className="absolute left-0 top-[2px]"
                   source={require("../../../../assets/data/success.json")}
                   ref={successRef}
                   loop={false}
                   autoPlay={false}
-                  speed={1}
+                  speed={1.5}
                 />
         </TouchableOpacity>
         {/* Go Back */}
         <TouchableOpacity
+          disabled={isLoading}
           onPress={() => {
             if (from == "list") {
               router.push(`/list`);
