@@ -65,13 +65,17 @@ export const TodoListProvider = ({ children }) => {
   const STORAGE_USERNAME_IMAGE = "user_image_simpletask";
   const STORAGE_USER_CATEGORIES = "user_custom_categories";
   const [userCategories, setUserCategories] = useState([]); // Kullanıcı kategorileri
-  const deviceLanguage = Localization.locale.split("-")[0]; // Cihazın varsayılan dili
-  const defaultLanguage = ["en", "sv", "de", "tr"].includes(deviceLanguage) ? deviceLanguage : "en"; 
+  // const deviceLanguage = Localization.locale.split("-")[0]; // Cihazın varsayılan dili
+  // const defaultLanguage = ["en", "sv", "de", "tr"].includes(deviceLanguage) ? deviceLanguage : "en"; 
+  const locales = Localization.getLocales?.() ?? [];
+  const deviceLanguage = locales[0]?.languageCode || locales[0]?.languageTag?.split("-")[0] || "en";
+  const defaultLanguage = ["en", "sv", "de", "tr"].includes(deviceLanguage) ? deviceLanguage : "en";
   const [language, setLanguage] = useState(defaultLanguage); // Başlangıçta geçerli bir dil ata
   const [notificationRedirect, setNotificationRedirect] = useState(null); // 📌 Bildirim yönlendirme durumu
   const [username, setUsername] = useState("");
   const [userIconImage, setUserIconImage] = useState("icon24");
-  const t = (key) => translations[language][key] || key;
+  // const t = (key) => translations[language][key] || key;
+  const t = (key) => translations?.[language]?.[key] || key;
 
 //  useEffect içinde async fonksiyon ile resim ve dil secimini baslangicta yukle
 useEffect(() => {

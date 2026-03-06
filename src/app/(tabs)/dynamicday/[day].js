@@ -41,7 +41,7 @@ const DaysTodos = () => {
       {thisDaysTodos.length !== 0 && 
       <View className="text-center pt-4 pb-2 flex-col items-center justify-centerv w-full">
         <Text className="font-bold text-yellow-600 text-lg">{day}</Text>
-        <Text className="text-white text-lg text center">{t("todos_of_the_day")}</Text>
+        <Text className="text-white text-lg text-center">{t("todos_of_the_day")}</Text>
       </View>}
         <TodoDoneAnimation />
       

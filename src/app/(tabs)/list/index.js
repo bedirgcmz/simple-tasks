@@ -122,7 +122,7 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
   );
  
   const renderTodoSection = (title, todos, key, image, message, cardBgColor) => (
-      <View key={key} className="p-4 pb-8 border-gray-300 relative">
+      <View key={key} className="p-2 pb-8 border-gray-300 relative border border-white/30 mb-2 rounded-lg bg-[#ffffff15]">
         {/* Kırmızı Nokta */}
         <Text className="text-lg font-bold text-[#90a4ae]">{title}
         {todaysTodos.length > 0 &&  key === "today" &&(
@@ -172,7 +172,7 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
   
   return (
     <ImageBackground source={require("../../../../assets/images/home-bg-2.jpg")} resizeMode="cover" className="flex-1 pt-10 ">
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1 p-2">
           <StatusBar
           barStyle="light-content" 
           backgroundColor="transparent" // Status bar arka planı
@@ -191,7 +191,7 @@ const validFormat = /^\d{4}-\d{2}-\d{2}$/;
           {renderTodoSection(pastDaysTodosTitle, pastDaysTodos, "past-days", "find-something.png", pastDaysTodosMessage, "bg-customOrangeDark",)}
          
          {/* Completed ToDos */}
-            <View className="p-4 pb-6">
+            <View className="p-2 pb-6  border border-white/30 mb-2 rounded-lg bg-[#ffffff15]">
               <Text className="text-lg font-bold  text-[#90a4ae]">{completedTodosTitle}</Text>
               <Text className="text-gray-500 mb-4 pl-1">
               {completedTodos.length} {t("Done")}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1041175005371",
+    "project_id": "simple-task-c384f",
+    "storage_bucket": "simple-task-c384f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041175005371:android:923eaefb20448599ad819e",
+        "android_client_info": {
+          "package_name": "com.bgSweden.simpletask"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDePeOwy0qOZlqZV-VD4dkczujUzazsoBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
