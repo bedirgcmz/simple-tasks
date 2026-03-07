@@ -123,7 +123,7 @@ const FilterTodosScreen = () => {
     <ImageBackground
       source={require("../../../../assets/images/bg-add.jpg")}
       resizeMode="cover"
-      className="flex-1 pt-10 pb-20"
+      className="flex-1 pt-10 pb-[100px]"
     >
       <View className="flex-row flex-wrap pt-6 px-2 items-center justify-center">
         {categoryNames.map((item) => (
@@ -149,7 +149,7 @@ const FilterTodosScreen = () => {
       </View>
 
       <FlatList
-        className="p-2"
+        className="p-2 mb-4"
         data={filteredTodos}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (

@@ -516,7 +516,6 @@ const updateAllInGroup = async (groupId, newTodos, options = { skipNotification:
         await saveTodos(migratedTodos); // dosyaya kaydet
         await loadUsername(); // diğer ayarları yap
         setIsTodosReady(true);
-        console.log("INIT_APP_DONE", { migratedTodosLength: migratedTodos?.length });
       };
       initApp();
     }, []);
