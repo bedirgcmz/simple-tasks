@@ -5,11 +5,13 @@ import { useTodoListContext } from './../../context/todos-context';
 import { View } from 'react-native';
 import moment from "moment-timezone";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 
 const TabsLayout = () => {
   const { todos } = useTodoListContext(); // Context'ten todos alınıyor
   const [todayToDos, setTodayToDos] = useState([])
+  const insets = useSafeAreaInsets();
 
   // Kullanıcının saat dilimini al
   const userTimezone = moment.tz.guess();
@@ -91,7 +93,7 @@ const TabsLayout = () => {
           backgroundColor: "#0d1b2a", // Tab bar arka plan rengi
           height: 45, // Tab bar yüksekliği
           position: "absolute",
-          bottom: 20, // Tab barın alt kenarı
+          bottom: Math.max(insets.bottom, 10), // Tab barın alt kenarı
           borderWidth: 1,
           borderTopWidth: 0.5, // Tab barın üstündeki sınır
           borderTopColor: "#adb5bd", // Sınır rengi

@@ -69,11 +69,11 @@ const Todo = ({ todo, index, fromText, setIsLoading }) => {
           params: { from: fromText },
         })
       }
-      className={`flex-1 flex-row items-center justify-between my-2 border-b border-[#6c757d] rounded-lg shadow bg-[#6c757d36] ${
-        index % 2 !== 0 && "bgg-[#343a40]"
+      className={`flex-row items-center justify-between my-2 shadow-xl/30 rounded-lg backdrop-blur-sm border border-[2px] border-[#ffffff10] ${
+        index % 2 !== 0 ? "bg-[#ffffff08]" : "bg-[#6c757d36]"
       }`}
     >
-      <View className="flex-1 flex-row items-center gap-1 justify-start">
+      <View className="flex-1 flex-row items-center">
         <TouchableOpacity
           className="p-2"
           onPress={() => {
@@ -81,7 +81,7 @@ const Todo = ({ todo, index, fromText, setIsLoading }) => {
               ...todo,
               status: todo.status === "done" ? "pending" : "done",
             });
-            todo.status === "done" ? "" : playCorrectSound();
+            if (todo.status !== "done") playCorrectSound();
             setShowCongrats(todo.status === "done" ? false : true);
           }}
         >
@@ -91,31 +91,89 @@ const Todo = ({ todo, index, fromText, setIsLoading }) => {
             <Ionicons name="square-outline" size={20} color="gray" />
           )}
         </TouchableOpacity>
+  
         <Text
-          className="flex-1 py-2 text-white pr-2"
-          style={
-            todo.status === "done"
-              ? { textDecorationLine: "line-through" }
-              : null
-          }
+          className="flex-1 py-2 pr-2 text-white"
+          style={{
+            textDecorationLine: todo.status === "done" ? "line-through" : "none",
+          }}
+          numberOfLines={1}
         >
           {todo.title}
         </Text>
       </View>
+  
       {todo.status !== "done" ? (
-        <Text className="text-red-400 text-[12px] tracking-tighter">
+        <Text className="text-red-400 text-[12px] px-1">
           {calculateDaysLeft(todo, t)}
         </Text>
       ) : (
-        <Text className="text-green-600 text-[12px] tracking-tighter">
+        <Text className="text-green-500 text-[12px] px-1">
           {t("Great")}
         </Text>
       )}
+  
       <TouchableOpacity className="p-2 pl-1" onPress={handleDelete}>
         <Ionicons name="trash-outline" size={18} color="gray" />
       </TouchableOpacity>
     </TouchableOpacity>
   );
+
+  // return (
+  //   <TouchableOpacity
+  //     onPress={() =>
+  //       router.push({
+  //         pathname: `/dynamicid/${todo.id}`,
+  //         params: { from: fromText },
+  //       })
+  //     }
+  //     className={`flex-1 flex-row items-center justify-between my-2 border-b border-[#6c757d] rounded-lg shadow bg-[#6c757d36] ${
+  //       index % 2 !== 0 && "bg-[#343a40]"
+  //     }`}
+  //   >
+  //     <View className="flex-1 flex-row items-center gap-1 justify-start">
+  //       <TouchableOpacity
+  //         className="p-2"
+  //         onPress={() => {
+  //           updateTodo(todo.id, {
+  //             ...todo,
+  //             status: todo.status === "done" ? "pending" : "done",
+  //           });
+  //           todo.status === "done" ? "" : playCorrectSound();
+  //           setShowCongrats(todo.status === "done" ? false : true);
+  //         }}
+  //       >
+  //         {todo.status === "done" ? (
+  //           <Ionicons name="checkbox" size={20} color="#fe9092" />
+  //         ) : (
+  //           <Ionicons name="square-outline" size={20} color="gray" />
+  //         )}
+  //       </TouchableOpacity>
+  //       <Text
+  //         className="flex-1 py-2 text-white pr-2"
+  //         style={
+  //           todo.status === "done"
+  //             ? { textDecorationLine: "line-through" }
+  //             : null
+  //         }
+  //       >
+  //         {todo.title}
+  //       </Text>
+  //     </View>
+  //     {todo.status !== "done" ? (
+  //       <Text className="text-red-400 text-[12px] tracking-tighter">
+  //         {calculateDaysLeft(todo, t)}
+  //       </Text>
+  //     ) : (
+  //       <Text className="text-green-600 text-[12px] tracking-tighter">
+  //         {t("Great")}
+  //       </Text>
+  //     )}
+  //     <TouchableOpacity className="p-2 pl-1" onPress={handleDelete}>
+  //       <Ionicons name="trash-outline" size={18} color="gray" />
+  //     </TouchableOpacity>
+  //   </TouchableOpacity>
+  // );
 };
 
 export default Todo;

@@ -132,7 +132,6 @@ const AddTodoPage = () => {
     const finalTodo = { ...newTodo, notificationId };
     addTodo(finalTodo);
   
-    // console.log("Eklenen todo bilgileri:", finalTodo);
     
     // State’leri sıfırla
     setTitle("");

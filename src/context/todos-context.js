@@ -8,8 +8,8 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { router } from 'expo-router'
 import { Alert } from "react-native";
-import { testNotificationLog } from '../utils/test';
 import { migrateOldTodosSafely } from "../utils/migrateUtils";
+
 
 
 // Bildirimlerin nasıl işleneceğini tanımla
@@ -65,8 +65,6 @@ export const TodoListProvider = ({ children }) => {
   const STORAGE_USERNAME_IMAGE = "user_image_simpletask";
   const STORAGE_USER_CATEGORIES = "user_custom_categories";
   const [userCategories, setUserCategories] = useState([]); // Kullanıcı kategorileri
-  // const deviceLanguage = Localization.locale.split("-")[0]; // Cihazın varsayılan dili
-  // const defaultLanguage = ["en", "sv", "de", "tr"].includes(deviceLanguage) ? deviceLanguage : "en"; 
   const locales = Localization.getLocales?.() ?? [];
   const deviceLanguage = locales[0]?.languageCode || locales[0]?.languageTag?.split("-")[0] || "en";
   const defaultLanguage = ["en", "sv", "de", "tr"].includes(deviceLanguage) ? deviceLanguage : "en";
@@ -74,7 +72,7 @@ export const TodoListProvider = ({ children }) => {
   const [notificationRedirect, setNotificationRedirect] = useState(null); // 📌 Bildirim yönlendirme durumu
   const [username, setUsername] = useState("");
   const [userIconImage, setUserIconImage] = useState("icon24");
-  // const t = (key) => translations[language][key] || key;
+  const [isTodosReady, setIsTodosReady] = useState(false);
   const t = (key) => translations?.[language]?.[key] || key;
 
 //  useEffect içinde async fonksiyon ile resim ve dil secimini baslangicta yukle
@@ -277,26 +275,6 @@ const deleteUserCategory = async (categoryToDelete) => {
   };
 
 
-// const loadTodos = async () => {
-//   try {
-//     const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
-
-//     if (storedTodos && storedTodos !== "[]") { 
-//       const parsedTodos = JSON.parse(storedTodos);
-//       if (Array.isArray(parsedTodos) && parsedTodos.length > 0) {
-//         setTodos(parsedTodos);
-//       }
-//     } else { 
-//       const defaultTodos = [initialTodo];
-//       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(defaultTodos));
-//       setTodos(defaultTodos);
-//     }
-//   } catch (error) {
-//     console.error("❌ Error loading todos:", error);
-//   }
-// };
-
-
 const loadTodos = async () => {
   try {
     const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
@@ -348,31 +326,20 @@ const loadTodos = async () => {
         return;
     }
     try {
-      // console.log(`🗑 Deleting todo: ${id}`);
   
       const todoToDelete = todos.find((todo) => todo.id === id);
       if (todoToDelete) {
-        // console.log(todoToDelete);
         await cancelNotification(todoToDelete.notificationId); // 📌 Önce bildirimi iptal et
       }
   
       const updatedTodos = todos.filter((todo) => todo.id !== id);
       setTodos(updatedTodos);
       await saveTodos(updatedTodos);
-      // testNotificationLog(updatedTodos);
-  
-      // // 📋 **Silinen todo’nun bildirim kayıtlarını tekrar kontrol et**
-      // const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
-      // console.log("📋 Scheduled Notifications AFTER DELETE:", JSON.stringify(scheduledNotifications, null, 2));
-  
     } catch (error) {
       console.log("❌ Error in deleteTodo:", error);
     }
   };
 
-  // useEffect(() => {
-  //   // testNotificationLog(todos)
-  // },[todos])
 
   const updateTodo = async (id, updates) => {
     const currentTodo = todos.find((t) => t.id === id);
@@ -480,27 +447,6 @@ const loadTodos = async () => {
   
 
 
-  // const deleteAllInGroup = async (groupId) => {
-  //   try {
-  //     const groupTodos = todos.filter((todo) => todo.repeatGroupId === groupId);
-  
-  //     // 📛 Bildirimleri iptal et
-  //     for (const todo of groupTodos) {
-  //       if (todo.notificationId) {
-  //         await cancelNotification(todo.notificationId);
-  //       }
-  //     }
-  
-  //     // ✅ Todos listesini filtrele
-  //     const updated = todos.filter((todo) => todo.repeatGroupId !== groupId);
-  //     setTodos(updated);
-  //     await saveTodos(updated);
-  //   } catch (error) {
-  //     console.error("❌ deleteAllInGroup içinde hata:", error);
-  //   }
-  // };
-  
-
 const updateAllInGroup = async (groupId, newTodos, options = { skipNotification: false }) => {
   const oldGroupTodos = todos.filter((t) => t.repeatGroupId === groupId);
 
@@ -565,26 +511,25 @@ const updateAllInGroup = async (groupId, newTodos, options = { skipNotification:
     useEffect(() => {
       const initApp = async () => {
         const loadedTodos = await loadTodos(); // önce kesinlikle datayı al
-    
         const migratedTodos = await migrateOldTodosSafely(loadedTodos); // migrasyonu uygula
         setTodos(migratedTodos); // en son state'e ata
-    
         await saveTodos(migratedTodos); // dosyaya kaydet
         await loadUsername(); // diğer ayarları yap
+        setIsTodosReady(true);
+        console.log("INIT_APP_DONE", { migratedTodosLength: migratedTodos?.length });
       };
       initApp();
     }, []);
 
-
   useEffect(() => {
+    if (!isTodosReady) return;
+  
     const translateCategories = async () => {
       await translateTodosCategories(language);
     };
+  
     translateCategories();
-  }, [language]);
-  
-  
-
+  }, [language, isTodosReady]);
 
    // 📌 **Bildirim Dinleyiciyi Burada Kullan**
    useNotificationListener(setNotificationRedirect);
@@ -633,7 +578,8 @@ const updateAllInGroup = async (groupId, newTodos, options = { skipNotification:
     getCategories,
     deleteUserCategory,
     deleteAllInGroup,
-    updateAllInGroup
+    updateAllInGroup,
+    isTodosReady
   };
 
   return <TodoListContext.Provider value={value}>{children}</TodoListContext.Provider>;
