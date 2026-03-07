@@ -2,6 +2,8 @@
 # Dependencies
 # -----------------------------
 node_modules
+.idea/
+.vscode/
 
 # -----------------------------
 # Expo
@@ -31,7 +33,6 @@ inspect-prebuild
 inspect-postbuild
 out_apks
 out.apks
-tools
 
 # -----------------------------
 # Logs
