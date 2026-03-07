@@ -31,7 +31,6 @@
     "@types/react": "19.2.14",
     "csstype": "3.2.3",
     "expo": "^55.0.4",
-    "expo-av": "^15.1.7",
     "expo-build-properties": "~55.0.9",
     "expo-constants": "~55.0.7",
     "expo-dev-client": "~55.0.10",
