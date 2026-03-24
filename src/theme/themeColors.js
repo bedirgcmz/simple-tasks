@@ -20,8 +20,8 @@ export const THEME = {
   // ==================
   gradient: {
     // Status gradients
-    done: ['#4ade80', '#22c55e'],            // Green
-    pending: ['#3b82f6', '#1d4ed8'],         // Blue
+    done: ['#0d9488', '#0f766e'],            // Teal
+    pending: ['#4f46e5', '#3730a3'],         // Indigo
     important: ['#f97316', '#ea580c'],       // Orange
 
     // Action gradients
@@ -119,5 +119,5 @@ export const getStatusGradient = (status) => {
  * Helper function to get status color
  */
 export const getStatusColor = (status) => {
-  return status === 'done' ? THEME.accent.green : THEME.accent.blue;
+  return status === 'done' ? '#0d9488' : '#4f46e5';
 };

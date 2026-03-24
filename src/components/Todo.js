@@ -6,8 +6,10 @@ import { useTodoListContext } from "../context/todos-context";
 import { playCorrectSound } from "../utils/play-success-sound";
 import { calculateDaysLeft } from "../utils/date-utils";
 
-const Todo = ({ todo, index, fromText, setIsLoading }) => {
+const Todo = ({ todo, fromText, setIsLoading }) => {
   const { deleteTodo, updateTodo, setShowCongrats, t, deleteAllInGroup } = useTodoListContext();
+
+  const isDone = todo.status === "done";
 
   const handleDelete = () => {
     if (todo.repeatGroupId) {
@@ -18,25 +20,22 @@ const Todo = ({ todo, index, fromText, setIsLoading }) => {
           {
             text: t("Only_This"),
             onPress: async () => {
-              setIsLoading(true)
+              setIsLoading(true);
               await deleteTodo(todo.id);
-              setIsLoading(false)
+              setIsLoading(false);
             },
             style: "default",
           },
           {
             text: t("Delete_All"),
             onPress: async () => {
-              setIsLoading(true)
-              await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
-              setIsLoading(false)
+              setIsLoading(true);
+              await deleteAllInGroup(todo.repeatGroupId);
+              setIsLoading(false);
             },
             style: "destructive",
           },
-          {
-            text: t("Cancel"),
-            style: "cancel",
-          },
+          { text: t("Cancel"), style: "cancel" },
         ],
         { cancelable: true }
       );
@@ -49,9 +48,9 @@ const Todo = ({ todo, index, fromText, setIsLoading }) => {
           {
             text: t("Delete"),
             onPress: async () => {
-              setIsLoading(true)
+              setIsLoading(true);
               await deleteTodo(todo.id);
-              setIsLoading(false)
+              setIsLoading(false);
             },
             style: "destructive",
           },
@@ -64,57 +63,69 @@ const Todo = ({ todo, index, fromText, setIsLoading }) => {
   return (
     <TouchableOpacity
       onPress={() =>
-        router.push({
-          pathname: `/dynamicid/${todo.id}`,
-          params: { from: fromText },
-        })
+        router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: fromText } })
       }
-      className={`flex-row items-center justify-between my-2 shadow-xl/30 rounded-lg backdrop-blur-sm border border-[2px] border-[#ffffff10] ${
-        index % 2 !== 0 ? "bg-[#ffffff08]" : "bg-[#6c757d36]"
-      }`}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginVertical: 4,
+        borderRadius: 14,
+        backgroundColor: isDone ? 'rgba(74,222,128,0.07)' : 'rgba(255,255,255,0.08)',
+        borderWidth: 1,
+        borderColor: isDone ? 'rgba(74,222,128,0.22)' : 'rgba(255,255,255,0.13)',
+        shadowColor: '#000',
+        shadowOpacity: 0.25,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 3 },
+      }}
     >
-      <View className="flex-1 flex-row items-center">
+      {/* Checkbox + Title */}
+      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
         <TouchableOpacity
-          className="p-2"
+          style={{ padding: 10 }}
           onPress={() => {
-            updateTodo(todo.id, {
-              ...todo,
-              status: todo.status === "done" ? "pending" : "done",
-            });
-            if (todo.status !== "done") playCorrectSound();
-            setShowCongrats(todo.status === "done" ? false : true);
+            updateTodo(todo.id, { ...todo, status: isDone ? "pending" : "done" });
+            if (!isDone) playCorrectSound();
+            setShowCongrats(!isDone);
           }}
         >
-          {todo.status === "done" ? (
-            <Ionicons name="checkbox" size={20} color="#fe9092" />
+          {isDone ? (
+            <Ionicons name="checkbox" size={20} color="#4ade80" />
           ) : (
-            <Ionicons name="square-outline" size={20} color="gray" />
+            <Ionicons name="square-outline" size={20} color="rgba(255,255,255,0.40)" />
           )}
         </TouchableOpacity>
-  
+
         <Text
-          className="flex-1 py-2 pr-2 text-white"
           style={{
-            textDecorationLine: todo.status === "done" ? "line-through" : "none",
+            flex: 1,
+            paddingVertical: 10,
+            paddingRight: 8,
+            fontSize: 15,
+            color: isDone ? 'rgba(255,255,255,0.40)' : 'rgba(255,255,255,0.90)',
+            textDecorationLine: isDone ? 'line-through' : 'none',
           }}
           numberOfLines={1}
         >
           {todo.title}
         </Text>
       </View>
-  
-      {todo.status !== "done" ? (
-        <Text className="text-red-400 text-[12px] px-1">
-          {calculateDaysLeft(todo, t)}
-        </Text>
-      ) : (
-        <Text className="text-green-500 text-[12px] px-1">
+
+      {/* Days left / Done label */}
+      {isDone ? (
+        <Text style={{ color: '#4ade80', fontSize: 12, paddingHorizontal: 6, fontWeight: '600' }}>
           {t("Great")}
         </Text>
+      ) : (
+        <Text style={{ color: '#f87171', fontSize: 12, paddingHorizontal: 6, fontWeight: '500' }}>
+          {calculateDaysLeft(todo, t)}
+        </Text>
       )}
-  
-      <TouchableOpacity className="p-2 pl-1" onPress={handleDelete}>
-        <Ionicons name="trash-outline" size={18} color="gray" />
+
+      {/* Delete */}
+      <TouchableOpacity style={{ padding: 10, paddingLeft: 4 }} onPress={handleDelete}>
+        <Ionicons name="trash-outline" size={17} color="rgba(248,113,113,0.55)" />
       </TouchableOpacity>
     </TouchableOpacity>
   );

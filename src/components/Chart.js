@@ -15,18 +15,16 @@ const Chart = () => {
 
     const pieData = [
         {
-        value: completedTodosCount,
-        color: "#52b788",
-        focused: true,
-        text: "47%",
+          value: completedTodosCount,
+          color: "#0d9488",
+          focused: true,
         },
         {
-        value: remainingTodosCount,
-        color: "#ff9f1c",
-        text: "40%",
+          value: remainingTodosCount,
+          color: "#4f46e5",
         },
-      ]
-      
+      ];
+
   return (
     <View>
       <PieChart
@@ -34,11 +32,10 @@ const Chart = () => {
           donut
           showGradient
           semiCircle
-        //   focusOnPress
           sectionAutoFocus
           radius={70}
           innerRadius={60}
-          innerCircleColor={'#002855'}
+          innerCircleColor={'#0c0820'}
           centerLabelComponent={() => {
             return (
               <View style={{justifyContent: 'center', alignItems: 'center'}}>

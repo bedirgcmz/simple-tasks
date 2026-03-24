@@ -11,8 +11,8 @@ const ChartSection = () => {
     <View className="flex-row justify-between items-center px-4 mt-4 w-full">
         <View className="items-start">
             <Text className="text-white"> {language === "tr" ? "" : <Text>{t("My")}</Text>}<Text className="font-bold text-white">{t("All_Todos")}</Text></Text>
-            <Text className="font-bold text-[36px] text-white">
-              <Text className="text-[#f07167] font-extralight text-[24px]">{completedTodos}/</Text>
+            <Text style={{ fontWeight: '700', fontSize: 36, color: 'white' }}>
+              <Text style={{ color: '#0d9488', fontWeight: '300', fontSize: 24 }}>{completedTodos}/</Text>
               {todos.length}</Text>
         </View>
       <Chart />

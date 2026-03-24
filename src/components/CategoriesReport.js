@@ -21,8 +21,8 @@ const CategoriesReport = () => {
     const categoryNames = Array.from(new Set(todos.map((item) => item.category)));
 
     return (
-        <View horizontal showsHorizontalScrollIndicator={false} className="px-4 mt-4 mb-2">
-            <Text className="text-white text-lg font-bold">
+        <View style={{ paddingHorizontal: 16, marginTop: 16, marginBottom: 4 }}>
+            <Text style={{ color: 'white', fontSize: 15, fontWeight: '700', marginBottom: 2 }}>
                 {t("Categories_Report")}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
