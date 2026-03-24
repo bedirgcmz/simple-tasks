@@ -4,6 +4,7 @@ import { useLocalSearchParams, router } from "expo-router";
 import { useTodoListContext } from "../../../context/todos-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ToDoDetailsCard from "../../../components/ToDoDetailsCard";
 import LottieView from "lottie-react-native";
 
@@ -12,6 +13,9 @@ const TaskScreen = () => {
   const { todos, t } = useTodoListContext();
   const todo = todos.find((todo) => todo.id === id);
   const [isLoading, setIsLoading] = useState(false);
+  const insets = useSafeAreaInsets();
+  // tab bar height (45) + tab bar bottom offset (max 10, insets) + extra margin
+  const backButtonBottom = Math.max(insets.bottom, 10) + 45 + 14;
 
   const handleBack = () => {
     if (from === 'list') {
@@ -45,7 +49,7 @@ const TaskScreen = () => {
           </ScrollView>
 
           {/* Back button — fixed footer, outside ScrollView */}
-          <View style={{ position: 'absolute', bottom: 78, left: 0, right: 0, alignItems: 'center' }}>
+          <View style={{ position: 'absolute', bottom: backButtonBottom, left: 0, right: 0, alignItems: 'center' }}>
             <Pressable
               onPress={handleBack}
               style={{

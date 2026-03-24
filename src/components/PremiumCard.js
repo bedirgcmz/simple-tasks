@@ -42,20 +42,11 @@ export const PremiumCard = ({
   }
 
   // Glass card (standard)
+  // Shadow wrapper (outer) + clipped content (inner) — prevents overflow:hidden from clipping shadow
   return (
     <View
-      className={`
-        rounded-2xl
-        border
-        overflow-hidden
-        shadow-lg
-        backdrop-blur-lg
-        ${isGlass ? 'bg-white/8' : 'bg-white/12'}
-        ${className}
-      `}
+      className={`rounded-2xl ${className}`}
       style={{
-        borderColor: borderColor,
-        borderWidth: 1,
         shadowColor: '#000',
         shadowOpacity: 0.55,
         shadowRadius: 20,
@@ -64,8 +55,18 @@ export const PremiumCard = ({
       }}
       {...props}
     >
-      <View className={padContent}>
-        {children}
+      <View
+        style={{
+          borderRadius: 16,
+          overflow: 'hidden',
+          backgroundColor: isGlass ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.14)',
+          borderWidth: 1,
+          borderColor: borderColor,
+        }}
+      >
+        <View className={padContent}>
+          {children}
+        </View>
       </View>
     </View>
   );
