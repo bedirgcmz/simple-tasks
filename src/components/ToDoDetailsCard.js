@@ -147,79 +147,67 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle, setIsLoading }) => {
           colors={statusGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0.8 }}
-          className="rounded-2xl mb-5 px-5 pt-4 pb-4"
           style={{
+            borderRadius: 16,
+            marginBottom: 16,
+            paddingHorizontal: 14,
+            paddingVertical: 12,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             shadowColor: statusGlowColor,
             shadowOpacity: 0.45,
             shadowRadius: 14,
             shadowOffset: { width: 0, height: 6 },
           }}
         >
-          {/* Top row: status text + checkbox */}
-          <View className="flex-row items-center justify-between mb-3">
-            <View className="flex-1 mr-3">
-              <Text
-                className="text-white/70 text-xs uppercase font-semibold mb-1"
-                style={{ letterSpacing: 2 }}
-              >
-                {isDone ? t("Done") : "In Progress"}
-              </Text>
-              <Text className="text-white text-xl font-extrabold">
-                {calculateDaysLeft(todo, t)}
-              </Text>
-            </View>
+          {/* Left: status label + days left */}
+          <View style={{ flex: 1, marginRight: 10 }}>
+            <Text style={{ color: 'rgba(255,255,255,0.70)', fontSize: 10, letterSpacing: 2, fontWeight: '600', textTransform: 'uppercase', marginBottom: 3 }}>
+              {isDone ? t("Done") : "In Progress"}
+            </Text>
+            <Text style={{ color: 'white', fontSize: 18, fontWeight: '800' }}>
+              {calculateDaysLeft(todo, t)}
+            </Text>
+          </View>
 
+          {/* Right: checkbox + category stacked */}
+          <View style={{ alignItems: 'center', gap: 6 }}>
             <TouchableOpacity
               onPress={handleToggleStatus}
               activeOpacity={0.75}
-              className="w-14 h-14 items-center justify-center rounded-2xl"
               style={{
+                width: 38, height: 38,
+                alignItems: 'center', justifyContent: 'center',
+                borderRadius: 12,
                 backgroundColor: 'rgba(255,255,255,0.22)',
                 borderWidth: 1.5,
                 borderColor: 'rgba(255,255,255,0.35)',
               }}
             >
               {isDone ? (
-                <Ionicons name="checkbox" size={30} color="white" />
+                <Ionicons name="checkbox" size={22} color="white" />
               ) : (
-                <Ionicons name="square-outline" size={30} color="white" />
+                <Ionicons name="square-outline" size={22} color="white" />
               )}
             </TouchableOpacity>
-          </View>
 
-          {/* Bottom row: category + recurring badges */}
-          <View className="flex-row gap-2 items-center">
-            <View
-              className="rounded-full flex-row items-center gap-1.5"
-              style={{
-                paddingHorizontal: 10,
-                paddingVertical: 4,
-                backgroundColor: 'rgba(0,0,0,0.20)',
-                borderWidth: 1,
-                borderColor: 'rgba(255,255,255,0.20)',
-              }}
-            >
-              <Ionicons name="bookmarks" size={11} color="rgba(255,255,255,0.85)" />
-              <Text
-                className="font-semibold text-xs"
-                style={{ color: 'rgba(255,255,255,0.85)' }}
-              >
+            {/* Category badge */}
+            <View style={{
+              flexDirection: 'row', alignItems: 'center', gap: 4,
+              paddingHorizontal: 8, paddingVertical: 3,
+              borderRadius: 20,
+              backgroundColor: 'rgba(0,0,0,0.22)',
+              borderWidth: 1, borderColor: 'rgba(255,255,255,0.20)',
+            }}>
+              <Ionicons name="bookmarks" size={10} color="rgba(255,255,255,0.85)" />
+              <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 11, fontWeight: '600' }}>
                 {todo.category}
               </Text>
+              {todo.isRecurring && (
+                <MaterialIcons name="event-repeat" size={11} color="rgba(255,255,255,0.85)" />
+              )}
             </View>
-
-            {todo.isRecurring && (
-              <View
-                className="px-2 py-1 rounded-full flex-row items-center gap-1"
-                style={{
-                  backgroundColor: 'rgba(0,0,0,0.20)',
-                  borderWidth: 1,
-                  borderColor: 'rgba(255,255,255,0.20)',
-                }}
-              >
-                <MaterialIcons name="event-repeat" size={12} color="rgba(255,255,255,0.85)" />
-              </View>
-            )}
           </View>
         </LinearGradient>
 
