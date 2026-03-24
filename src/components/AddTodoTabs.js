@@ -10,7 +10,6 @@ const AddTodoTabs = () => {
   const pathname = usePathname();
   const isAdd = pathname === "/add";
 
-  // Simple animation using React Native Animated API
   const translateX = useRef(new Animated.Value(isAdd ? 0 : (width * 0.9) / 2)).current;
 
   useEffect(() => {
@@ -26,48 +25,60 @@ const AddTodoTabs = () => {
   };
 
   return (
-    <View className="mt-10 items-center">
+    <View style={{ marginTop: 40, alignItems: 'center' }}>
       <View
         style={{
           width: width * 0.9,
-          height: 33,
-          borderRadius: 20,
-          backgroundColor: "#d1d5db", // Tailwind gray-300
-          overflow: "hidden",
-          flexDirection: "row",
+          height: 40,
+          borderRadius: 24,
+          backgroundColor: 'rgba(255,255,255,0.10)',
+          borderWidth: 1,
+          borderColor: 'rgba(255,255,255,0.15)',
+          overflow: 'hidden',
+          flexDirection: 'row',
         }}
       >
-        {/* Moving Indicator */}
+        {/* Sliding indicator */}
         <Animated.View
           style={{
-            position: "absolute",
+            position: 'absolute',
             width: (width * 0.9) / 2,
-            height: 33,
-            borderRadius: 20,
-            backgroundColor: isAdd ? "#360ca3" : "#4b5563", // blue-800 or gray-700
+            height: 40,
+            borderRadius: 24,
+            backgroundColor: isAdd ? 'rgba(96,165,250,0.32)' : 'rgba(167,139,250,0.32)',
+            borderWidth: 1,
+            borderColor: isAdd ? 'rgba(96,165,250,0.50)' : 'rgba(167,139,250,0.50)',
             transform: [{ translateX }],
           }}
         />
 
-        {/* Tek Seferlik */}
+        {/* One-time tab */}
         <TouchableOpacity
           onPress={() => handleTabPress("/add")}
-          style={{ width: (width * 0.9) / 2, height: 33 }}
-          className=" flex justify-center items-center"
+          style={{ width: (width * 0.9) / 2, height: 40, justifyContent: 'center', alignItems: 'center' }}
         >
-          <Text className={`font-bold ${isAdd ? "text-white" : "text-gray-800"}`}>
-          {t("One_time")}
+          <Text style={{
+            fontWeight: '700',
+            fontSize: 13,
+            color: isAdd ? '#93c5fd' : 'rgba(255,255,255,0.45)',
+            letterSpacing: 0.3,
+          }}>
+            {t("One_time")}
           </Text>
         </TouchableOpacity>
 
-        {/* Tekrarlı */}
+        {/* Recurring tab */}
         <TouchableOpacity
           onPress={() => handleTabPress("/add/add-recurring")}
-          style={{ width: (width * 0.9) / 2, height: 33 }}
-          className="justify-center items-center"
+          style={{ width: (width * 0.9) / 2, height: 40, justifyContent: 'center', alignItems: 'center' }}
         >
-          <Text className={`font-bold ${!isAdd ? "text-white" : "text-gray-800"}`}>
-          {t("Recurring")}
+          <Text style={{
+            fontWeight: '700',
+            fontSize: 13,
+            color: !isAdd ? '#c4b5fd' : 'rgba(255,255,255,0.45)',
+            letterSpacing: 0.3,
+          }}>
+            {t("Recurring")}
           </Text>
         </TouchableOpacity>
       </View>

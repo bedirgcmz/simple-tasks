@@ -1,120 +1,163 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Modal } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import moment from "moment-timezone"; // Moment.js'i import ediyoruz
+import moment from "moment-timezone";
 import { useTodoListContext } from "../context/todos-context";
 import LottieView from "lottie-react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { LinearGradient } from "expo-linear-gradient";
 
-const TimePicker = ({ setDueTime, defaultTime, bgColor, textColor, }) => {
-  const {  t } = useTodoListContext();
-  const [hours, setHours] = useState(defaultTime ? defaultTime.slice(0,2) : "12");
-  const [minutes, setMinutes] = useState(defaultTime ? defaultTime.slice(3,5) : "00");
+const TimePicker = ({ setDueTime, defaultTime }) => {
+  const { t } = useTodoListContext();
+  const [hours, setHours] = useState(defaultTime ? defaultTime.slice(0, 2) : "12");
+  const [minutes, setMinutes] = useState(defaultTime ? defaultTime.slice(3, 5) : "00");
   const [isPickerVisible, setPickerVisible] = useState(false);
-  const doneRefTim = useRef()
+  const doneRefTim = useRef();
 
   useEffect(() => {
-      setHours(defaultTime ? defaultTime.slice(0, 2) : "12");
-      setMinutes(defaultTime ? defaultTime.slice(3, 5) : "00");
-  },[defaultTime, setDueTime])
+    setHours(defaultTime ? defaultTime.slice(0, 2) : "12");
+    setMinutes(defaultTime ? defaultTime.slice(3, 5) : "00");
+  }, [defaultTime, setDueTime]);
 
   const handleConfirm = () => {
-    
-    // Moment.js ile yerel zamanı oluşturuyoruz (sadece saat ve dakika bilgisiyle)
     const localTime = moment()
       .set({ hour: parseInt(hours), minute: parseInt(minutes), second: 0 })
-      .format("HH:mm:ss"); // ISO formatında yerel zaman
-
-    // Seçilen zamanı dışarı gönder
-    setDueTime(localTime); // setDueTime fonksiyonunu çağırıyoruz
-    // console.log("Tim Picker local format:", localTime); // Konsole yazdırıyoruz
-    setPickerVisible(false); // Modalı kapatıyoruz
+      .format("HH:mm:ss");
+    setDueTime(localTime);
+    setPickerVisible(false);
   };
 
-  const generateOptions = (max) => {
-    return Array.from({ length: max + 1 }, (_, i) =>
-      i.toString().padStart(2, "0")
-    );
-  };
+  const generateOptions = (max) =>
+    Array.from({ length: max + 1 }, (_, i) => i.toString().padStart(2, "0"));
 
-  const controlSelectedTiem = `${hours}:${minutes}`
+  const controlSelectedTime = `${hours}:${minutes}`;
 
   return (
-    <View className="flex-1 items-center justify-center">
-      <Text className={`font-bold text-[#d7c8f3] ${textColor} w-full mb-2`}>{t("TimePicker_Select_a_due_time")}</Text>
+    <View style={{ marginBottom: 16 }}>
+      {/* Section label */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+        <Ionicons name="time-outline" size={13} color="#60a5fa" />
+        <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '600', letterSpacing: 1.5, textTransform: 'uppercase' }}>
+          {t("TimePicker_Select_a_due_time")}
+        </Text>
+      </View>
 
-      {/* Zaman Seçici Butonu */}
+      {/* Trigger button */}
       <TouchableOpacity
         onPress={() => setPickerVisible(true)}
-        className={`bg-[#d7c8f3] ${bgColor} px-4 py-2 rounded-lg w-full mb-2 py-3 relative`}
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1,
+          borderColor: 'rgba(96,165,250,0.28)',
+          borderRadius: 14,
+          paddingHorizontal: 14,
+          paddingVertical: 13,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8,
+        }}
       >
-        <Text className={`text-gray-600 ${textColor} font-semibold text-center`}>
-          {controlSelectedTiem === "12:00" ? t("Default_Time") : t("TimePicker_Selected_Time")}:{" "}
-          <Text className={` ${textColor}`}>{`${hours}:${minutes}`}</Text>
-        </Text>         
-         <LottieView
-          style={{ width: 27, height: 27, opacity: 1}}
-          className="absolute right-0 top-[5px] z-40"
+        <Ionicons name="time-outline" size={16} color="#60a5fa" />
+        <Text style={{ color: 'white', fontWeight: '600', flex: 1 }}>
+          {controlSelectedTime === "12:00" ? t("Default_Time") : t("TimePicker_Selected_Time")}
+          {"  "}
+          <Text style={{ color: '#93c5fd' }}>{`${hours}:${minutes}`}</Text>
+        </Text>
+        <LottieView
+          style={{ width: 24, height: 24 }}
           source={require('../../assets/data/done2.json')}
           ref={doneRefTim}
           loop={false}
           autoPlay={true}
           speed={2}
-         />
+        />
       </TouchableOpacity>
 
       {/* Modal */}
-      <Modal visible={isPickerVisible} transparent={true} animationType="slide">
-        <View className="flex-1 bg-black bg-opacity-50 justify-center items-center">
-          <View className="bg-white w-11/12 rounded-lg p-4">
-            <Text className={`text-lg font-bold text-gray-800 mb-4 text-center`}>
+      <Modal visible={isPickerVisible} transparent animationType="slide">
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{
+            backgroundColor: 'rgba(12,8,35,0.97)',
+            borderWidth: 1,
+            borderColor: 'rgba(255,255,255,0.14)',
+            borderRadius: 24,
+            padding: 20,
+            width: '88%',
+          }}>
+            <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold', textAlign: 'center', marginBottom: 16 }}>
               {t("TimePicker_Select_Time")}
             </Text>
 
-            {/* Saat ve Dakika */}
-            <View className="flex-row justify-between">
-              {/* Saat */}
-              <View className="flex-1 items-center">
-                <Text className="text-gray-700 font-semibold mb-2">{t("TimePicker_Hours")} </Text>
+            <View style={{ flexDirection: 'row' }}>
+              {/* Hours */}
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={{ color: 'rgba(255,255,255,0.55)', fontWeight: '600', marginBottom: 6, fontSize: 12, letterSpacing: 1, textTransform: 'uppercase' }}>
+                  {t("TimePicker_Hours")}
+                </Text>
                 <Picker
                   selectedValue={hours}
-                  onValueChange={(itemValue) => setHours(itemValue)}
-                  style={{ width: "100%" }}
+                  onValueChange={(val) => setHours(val)}
+                  style={{ width: '100%', color: 'white' }}
+                  itemStyle={{ color: 'white' }}
                 >
-                  {generateOptions(23).map((hour) => (
-                    <Picker.Item key={hour} label={hour} value={hour} />
+                  {generateOptions(23).map((h) => (
+                    <Picker.Item key={h} label={h} value={h} />
                   ))}
                 </Picker>
               </View>
 
-              {/* Dakika */}
-              <View className="flex-1 items-center">
-                <Text className="text-gray-700 font-semibold mb-2">{t("TimePicker_Minutes")}</Text>
+              {/* Divider */}
+              <View style={{ width: 1, backgroundColor: 'rgba(255,255,255,0.10)', marginVertical: 8 }} />
+
+              {/* Minutes */}
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={{ color: 'rgba(255,255,255,0.55)', fontWeight: '600', marginBottom: 6, fontSize: 12, letterSpacing: 1, textTransform: 'uppercase' }}>
+                  {t("TimePicker_Minutes")}
+                </Text>
                 <Picker
                   selectedValue={minutes}
-                  onValueChange={(itemValue) => setMinutes(itemValue)}
-                  style={{ width: "100%" }}
+                  onValueChange={(val) => setMinutes(val)}
+                  style={{ width: '100%', color: 'white' }}
+                  itemStyle={{ color: 'white' }}
                 >
-                  {generateOptions(59).map((minute) => (
-                    <Picker.Item key={minute} label={minute} value={minute} />
+                  {generateOptions(59).map((m) => (
+                    <Picker.Item key={m} label={m} value={m} />
                   ))}
                 </Picker>
               </View>
             </View>
 
             {/* Buttons */}
-            <View className="flex-row justify-between mt-4">
+            <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
               <TouchableOpacity
                 onPress={() => setPickerVisible(false)}
-                className="bg-gray-300 px-4 py-2 rounded-lg"
+                style={{
+                  flex: 1, alignItems: 'center', paddingVertical: 12,
+                  backgroundColor: 'rgba(255,255,255,0.08)',
+                  borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)',
+                  borderRadius: 12,
+                }}
               >
-                <Text className="text-gray-800 font-semibold">{t("TimePicker_Cancel")}</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.65)', fontWeight: '600' }}>
+                  {t("TimePicker_Cancel")}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleConfirm}
-                className="bg-red-400 px-4 py-2 rounded-lg"
+
+              <LinearGradient
+                colors={['#60a5fa', '#3b82f6']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{ flex: 1, borderRadius: 12, overflow: 'hidden' }}
               >
-                <Text className="text-white font-semibold">{t("TimePicker_Confirm")}</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleConfirm}
+                  style={{ alignItems: 'center', paddingVertical: 12 }}
+                >
+                  <Text style={{ color: 'white', fontWeight: '700' }}>
+                    {t("TimePicker_Confirm")}
+                  </Text>
+                </TouchableOpacity>
+              </LinearGradient>
             </View>
           </View>
         </View>

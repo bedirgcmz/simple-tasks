@@ -84,16 +84,27 @@ const TodoCard = ({ todo, fromText, setIsLoading }) => {
   const statusColor = getStatusColor(todo.status);
 
   return (
+    // Shadow wrapper — overflow:hidden olan element'e shadow uygulanamaz iOS'ta
+    <View
+      className="mr-4"
+      style={{
+        borderRadius: 16,
+        shadowColor: '#000',
+        shadowOpacity: 0.5,
+        shadowRadius: 16,
+        shadowOffset: { width: 0, height: 6 },
+      }}
+    >
     <TouchableOpacity
       activeOpacity={0.85}
-      className="mr-4 w-44 min-h-[210px] overflow-hidden rounded-2xl z-10 relative"
+      className="w-44 min-h-[210px] overflow-hidden rounded-2xl z-10 relative"
+      style={{
+        backgroundColor: 'rgba(255,255,255,0.10)',
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.20)',
+      }}
       onPress={() => router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: fromText } })}
     >
-      {/* ==================== CARD GLASS BACKGROUND ==================== */}
-      <View
-        className="absolute inset-0 bg-white/8 border border-white/10"
-        style={{ borderWidth: 1 }}
-      />
 
       {/* ==================== CARD CONTENT ==================== */}
       <View className="flex-1 flex-col justify-between p-3 relative z-10">
@@ -105,9 +116,8 @@ const TodoCard = ({ todo, fromText, setIsLoading }) => {
         )}
 
         {/* Title & Status Checkbox */}
-        <View className="flex-row items-start gap-2 mb-2">
+        <View className="flex-row items-center gap-2 mb-2">
           <TouchableOpacity
-            className="pt-1"
             onPress={() => {
               updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })
               todo.status === "done" ? "" : playSuccessSound()
@@ -123,23 +133,31 @@ const TodoCard = ({ todo, fromText, setIsLoading }) => {
 
           <View className="flex-1">
             <Text
-              className={`text-sm font-bold leading-4 flex-1 ${isDone ? 'text-white/50 line-through' : 'text-white'}`}
-              numberOfLines={2}
+              className={`text-sm font-bold leading-4 ${isDone ? 'text-white/50 line-through' : 'text-white'}`}
+              numberOfLines={1}
+              ellipsizeMode="tail"
             >
-              {truncateText(todo.title, 24)}
+              {todo.title}
             </Text>
           </View>
         </View>
 
-        {/* Description */}
-        {todo.description && (
-          <Text className="text-xs text-white/60 mb-2 leading-4">
-            {truncateText(todo.description, 50)}
+        {/* Description — sabit 2 satır yüksekliği, tüm kartlar hizalı kalır */}
+        <View className="mb-2" style={{ height: 32 }}>
+          <Text
+            className="text-xs text-white/60 leading-4"
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
+            {todo.description ?? ""}
           </Text>
-        )}
+        </View>
 
         {/* Date & Time */}
-        <View className="flex-row items-center gap-2 mb-3 bg-white/5 rounded-lg p-2">
+        <View
+          className="flex-row items-center gap-2 mb-3 rounded-lg px-2 pb-1 pt-0 mt-1"
+          style={{ backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)' }}
+        >
           <Ionicons name="calendar" size={14} color="#93c5fd" />
           <View className="flex-1">
             <Text className="text-xs text-white/60">{todo.dueDate}</Text>
@@ -152,13 +170,15 @@ const TodoCard = ({ todo, fromText, setIsLoading }) => {
         {/* Action Buttons */}
         <View className="flex-row gap-2 mb-2">
           <TouchableOpacity
-            className="flex-1 items-center justify-center py-1 rounded-lg bg-white/10 border border-white/15"
+            className="flex-1 items-center justify-center py-1 rounded-lg"
+            style={{ backgroundColor: 'rgba(255,255,255,0.10)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)' }}
             onPress={handleUpdate}
           >
             <MaterialCommunityIcons name="pencil" size={14} color="#93c5fd" />
           </TouchableOpacity>
           <TouchableOpacity
-            className="flex-1 items-center justify-center py-1 rounded-lg bg-white/10 border border-white/15"
+            className="flex-1 items-center justify-center py-1 rounded-lg"
+            style={{ backgroundColor: 'rgba(255,255,255,0.10)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)' }}
             onPress={handleDelete}
           >
             <MaterialCommunityIcons name="trash-can" size={14} color="#f87171" />
@@ -178,6 +198,7 @@ const TodoCard = ({ todo, fromText, setIsLoading }) => {
         </Text>
       </LinearGradient>
     </TouchableOpacity>
+    </View>
   );
 };
 

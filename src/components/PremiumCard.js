@@ -56,6 +56,11 @@ export const PremiumCard = ({
       style={{
         borderColor: borderColor,
         borderWidth: 1,
+        shadowColor: '#000',
+        shadowOpacity: 0.55,
+        shadowRadius: 20,
+        shadowOffset: { width: 0, height: 8 },
+        elevation: 12,
       }}
       {...props}
     >
