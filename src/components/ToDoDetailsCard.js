@@ -3,18 +3,32 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTodoListContext } from "../context/todos-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { calculateDaysLeft, calculateReminderDateTime, formatToShortDate, shouldShowOffIcon } from "../utils/date-utils";
 import { router } from "expo-router";
 import { playSuccessSound } from "../utils/play-success-sound";
 import LottieView from "lottie-react-native";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { PremiumCard } from "./PremiumCard";
+import { PremiumButton } from "./PremiumButton";
+import { getStatusGradient, getStatusColor } from "../theme/themeColors";
+import { LinearGradient } from "expo-linear-gradient";
 
+/**
+ * 🎨 Premium ToDoDetailsCard
+ * Enhanced visual design with glassmorphism, gradients, and premium components
+ */
 const ToDoDetailsCard = ({ pTodoId, pPageTitle, setIsLoading }) => {
   const { todos, deleteTodo, updateTodo, t, language, deleteAllInGroup } = useTodoListContext();
-    const [confettiVisible, setConfettiVisible] = useState(false);
+  const [confettiVisible, setConfettiVisible] = useState(false);
+  const confettiRef = useRef();
 
   const todo = todos.find((todo) => todo.id === pTodoId);
 
+  if (!todo) return null;
+
+  // ==================
+  // HANDLERS
+  // ==================
 
   const handleDelete = () => {
     if (todo.repeatGroupId) {
@@ -25,25 +39,22 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle, setIsLoading }) => {
           {
             text: t("Only_This"),
             onPress: async () => {
-              setIsLoading(true)
-              await deleteTodo(todo.id); // Tek todo’yu sil
-              setIsLoading(false)
+              setIsLoading(true);
+              await deleteTodo(todo.id);
+              setIsLoading(false);
             },
             style: "default",
           },
           {
             text: t("Delete_All"),
             onPress: async () => {
-              setIsLoading(true)
-              await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
-              setIsLoading(false)
+              setIsLoading(true);
+              await deleteAllInGroup(todo.repeatGroupId);
+              setIsLoading(false);
             },
             style: "destructive",
           },
-          {
-            text: t("Cancel"),
-            style: "cancel",
-          },
+          { text: t("Cancel"), style: "cancel" },
         ],
         { cancelable: true }
       );
@@ -56,9 +67,9 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle, setIsLoading }) => {
           {
             text: t("Delete"),
             onPress: async () => {
-              setIsLoading(true)
+              setIsLoading(true);
               await deleteTodo(todo.id);
-              setIsLoading(false)
+              setIsLoading(false);
             },
             style: "destructive",
           },
@@ -67,186 +78,216 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle, setIsLoading }) => {
       );
     }
   };
-  
 
   const handleUpdate = () => {
     if (todo.repeatGroupId) {
       router.push({
         pathname: `/edit-recurring/${pTodoId}`,
         params: { from: "details" },
-      })
+      });
     } else {
       router.push({
         pathname: `/edit/${pTodoId}`,
         params: { from: "details" },
-      })
+      });
     }
-  }
+  };
 
+  const handleToggleStatus = async () => {
+    await updateTodo(todo.id, {
+      ...todo,
+      status: todo.status === "done" ? "pending" : "done",
+    });
 
-  const confettiRef = useRef()
+    if (todo.status !== "done") {
+      playSuccessSound();
+      playConfetti();
+    }
+  };
+
   const playConfetti = () => {
     setConfettiVisible(true);
     setTimeout(() => {
       confettiRef?.current?.play();
-    }, 100); // animasyon render edildikten sonra başlat
+    }, 100);
     setTimeout(() => {
       setConfettiVisible(false);
-    }, 3000); // 2 saniye sonra kaldır
+    }, 3000);
   };
 
   useEffect(() => {
-    if(todo.status === "done"){
-      playConfetti()
+    if (todo.status === "done") {
+      playConfetti();
     }
-  },[todo])
-  
-  
+  }, [todo]);
+
+  // ==================
+  // RENDER
+  // ==================
+
+  const isDone = todo.status === "done";
+  const statusGradient = getStatusGradient(todo.status);
+
   return (
-    <View className="">
-      <Text className="font-bold text-2xl text-center text-white mb-4">
+    <View className="flex-1">
+      {/* ==================== HEADER ==================== */}
+      <Text className="font-bold text-2xl text-center text-white mb-6">
         {pPageTitle}
       </Text>
-      <View className="z-10 rounded-md bg-[#ebd9fc]">
-          <View
-            className={`border-4 rounded-md shadow-lg transparan z-20 pb-3 ${
-              todo.status === "done" ? "border-[#fe9092]" : "border-[#6c757d]"
-            }`}
-          >
-            <TouchableOpacity
-              onPress={() => {
-                updateTodo(todo.id, {
-                  ...todo,
-                  status: todo.status === "done" ? "pending" : "done",
-                });
-                todo.status === "done" ? <Text></Text> : playSuccessSound();
-                todo.status === "done" ? <Text></Text> : playConfetti();
-              }}
-              className="p-2 absolute bottom-[0] left-[0]"
-            >
-              {todo.status === "done" ? (
-                <Text><Ionicons name="checkbox" size={32} color="#fe9092" /></Text>
-              ) : (
-                <Text><Ionicons name="square-outline" size={32} color="gray" /></Text>
-              )}
-            </TouchableOpacity>
-            
-            {/* Days Left */}
-            <View
-              className={`mb-3 border border-[#e9ecef] rounded-t-md items-center relative 
-            ${todo.status === "done" ? "bg-[#fe9092]" : "bg-[#6c757d]"}
-            `}
-            >
-              <Text className="text-lg text-white">{calculateDaysLeft(todo, t)}</Text>
-              {
-                todo.isRecurring && 
-              <View className="absolute right-2 top-1">
-                  <MaterialIcons name="event-repeat" size={20} color="white" />
-              </View>
-              }
-            </View>
 
-            <View className="px-2">
-              {/* Todo Category */}
-              <View className="flex-row items-center justify-end gap-2">
-                <Text className="text-xl font-bold text-[#fe9092]">
-                  {todo.category}
-                </Text>
-                <Text><Ionicons name="bookmarks" size={12} color="#fe9092" /></Text>
-              </View>
-
-              {/* ToDo Title */}
-              <View className="mb-2 flex-row items-center justify-start gap-2 ">
-                <Text><Ionicons name="ellipse" size={12} color="#6c757d" /></Text>
-                <Text className="text-lg font-bold text-[#495057] pr-2 w-[91%]">
-                  {todo.title}
-                </Text>
-              </View>
-
-              {/* ToDo Description */}
-              <ScrollView className="mb-4 max-h-[220px]"
-              contentContainerStyle={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "flex-start", gap: 8, paddingBottom:22 }}
-              >
-                <View className="pt-1">
-                  <Text><Ionicons name="document-text-outline" size={18} color="black" /></Text>
-                </View>
-                <Text className="text-[15px] w-[87%] text-gray-600">
-                  {todo.description}
-                </Text>
-              </ScrollView>
-
-              {/* ToDo Dates */}
-              <View className="mb-4 flex-row justify-between px-2">
-                <View className="flex-row items-center text-sm text-gray-500">
-                  <Text><Ionicons name="calendar" size={18} color="#495057" /></Text>
-                  <Text className="ml-1 tracking-tighter  text-[13px]">{formatToShortDate(todo.dueDate, language, t)}</Text>
-                    <Text className="ml-1 tracking-tighter  text-[13px]">- {todo.dueTime.slice(0, 5)}</Text>
-                  
-                </View>
-                <View className="flex-row items-center text-gray-500">
-                  <View className="flex-row items-center">
-                    {
-                      shouldShowOffIcon(todo) ?
-                      <Ionicons name="notifications-off" size={19} color="#495057" /> :
-                      <Ionicons name="notifications" size={19} color="#fe9092" />
-
-                    }
-                    <Text className="ml-1 tracking-tighter text-[13px]">
-                      {formatToShortDate(calculateReminderDateTime(todo).slice(0, 11), language, t)} {" "}
-                      {calculateReminderDateTime(todo).slice(11, 16)}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-
-              {/* Edit Button */}
-              <View className="flex-row justify-end gap-2">
-                <TouchableOpacity
-                  onPress={handleUpdate} // Edit ekranına yönlendirme
-                  className="flex-row items-center space-x-2 px-2 py-1 rounded-lg bg-gray-600"
-                >
-                  <Text className="text-white text-[14px]">{t("Edit_button")}</Text>
-                  <Text><MaterialCommunityIcons name="pencil" size={14} color="white" /></Text>
-                </TouchableOpacity>
-
-                {/* Delete Button */}
-                <TouchableOpacity
-                onPress={handleDelete}
-                  
-                  className="flex-row items-center space-x-2 px-2 py-1 rounded-lg bg-gray-600"
-                >
-                  <Text>
-                    <MaterialCommunityIcons
-                      name="trash-can"
-                      size={16}
-                      color="white"
-                    />
-                  </Text>
-                  <Text className="text-white  text-[14px]">{t("Delete_button")}</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+      {/* ==================== MAIN CARD ==================== */}
+      <PremiumCard className="mb-4">
+        {/* STATUS HEADER with gradient */}
+        <LinearGradient
+          colors={statusGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          className="rounded-xl mb-4 p-3 flex-row items-center justify-between"
+        >
+          <View className="flex-1">
+            <Text className="text-white/80 text-xs uppercase tracking-wider mb-1">
+              {isDone ? "Completed" : "In Progress"}
+            </Text>
+            <Text className="text-white text-lg font-bold">
+              {calculateDaysLeft(todo, t)}
+            </Text>
           </View>
-          {
-            confettiVisible && 
-          <LottieView
-          style={{ width: 300, height: 300, 
-            position: 'absolute', 
-            bottom: 1, 
-            left: 1, 
+
+          {/* Toggle Checkbox */}
+          <TouchableOpacity
+            onPress={handleToggleStatus}
+            className="w-12 h-12 items-center justify-center rounded-lg bg-white/20"
+          >
+            {isDone ? (
+              <Ionicons name="checkbox" size={28} color="white" />
+            ) : (
+              <Ionicons name="square-outline" size={28} color="white" />
+            )}
+          </TouchableOpacity>
+        </LinearGradient>
+
+        {/* CATEGORY BADGE */}
+        <View className="mb-4 flex-row gap-2 items-center">
+          <LinearGradient
+            colors={['rgba(249, 115, 22, 0.2)', 'rgba(249, 115, 22, 0.1)']}
+            className="rounded-full px-3 py-1 flex-row items-center gap-1"
+          >
+            <Ionicons name="bookmarks" size={12} color="#fb923c" />
+            <Text className="text-orange-300 font-semibold text-sm">
+              {todo.category}
+            </Text>
+          </LinearGradient>
+
+          {/* Recurring indicator */}
+          {todo.isRecurring && (
+            <View className="px-2 py-1 rounded-full bg-blue-500/20 border border-blue-400/30">
+              <MaterialIcons name="event-repeat" size={14} color="#60a5fa" />
+            </View>
+          )}
+        </View>
+
+        {/* TITLE */}
+        <View className="mb-4">
+          <Text className="text-white text-xl font-bold leading-6">
+            {todo.title}
+          </Text>
+        </View>
+
+        {/* DESCRIPTION */}
+        {todo.description && (
+          <View className="bg-white/5 rounded-lg p-3 border border-white/10 mb-4">
+            <View className="flex-row gap-2 mb-2">
+              <Ionicons name="document-text" size={14} color="#60a5fa" />
+              <Text className="text-white/60 text-xs uppercase tracking-wider">
+                Description
+              </Text>
+            </View>
+            <Text className="text-white/90 text-base leading-6 ml-5">
+              {todo.description}
+            </Text>
+          </View>
+        )}
+
+        {/* DATE & TIME INFO */}
+        <View className="gap-3 mb-4">
+          {/* Due Date */}
+          <View className="bg-white/5 rounded-lg p-3 border border-white/10">
+            <View className="flex-row items-center gap-2 mb-2">
+              <Ionicons name="calendar" size={14} color="#60a5fa" />
+              <Text className="text-white/60 text-xs uppercase tracking-wider">
+                Due Date
+              </Text>
+            </View>
+            <Text className="text-white text-base font-semibold ml-6">
+              {formatToShortDate(todo.dueDate, language, t)} at{" "}
+              <Text className="text-blue-300">
+                {todo.dueTime.slice(0, 5)}
+              </Text>
+            </Text>
+          </View>
+
+          {/* Reminder */}
+          <View className="bg-white/5 rounded-lg p-3 border border-white/10">
+            <View className="flex-row items-center gap-2 mb-2">
+              <Ionicons
+                name={shouldShowOffIcon(todo) ? "notifications-off" : "notifications"}
+                size={14}
+                color={shouldShowOffIcon(todo) ? "#94a3b8" : "#fbbf24"}
+              />
+              <Text className="text-white/60 text-xs uppercase tracking-wider">
+                Reminder
+              </Text>
+            </View>
+            <Text className="text-white text-base font-semibold ml-6">
+              {calculateReminderDateTime(todo).slice(0, 16)}
+            </Text>
+          </View>
+        </View>
+
+        {/* ACTION BUTTONS */}
+        <View className="flex-row gap-3 mt-6">
+          <View className="flex-1">
+            <PremiumButton
+              variant="primary"
+              size="md"
+              label={t("Edit_button")}
+              onPress={handleUpdate}
+              leftIcon={<MaterialCommunityIcons name="pencil" size={16} color="white" />}
+              fullWidth
+            />
+          </View>
+
+          <View className="flex-1">
+            <PremiumButton
+              variant="danger"
+              size="md"
+              label={t("Delete_button")}
+              onPress={handleDelete}
+              leftIcon={<MaterialCommunityIcons name="trash-can" size={16} color="white" />}
+              fullWidth
+            />
+          </View>
+        </View>
+      </PremiumCard>
+
+      {/* CONFETTI ANIMATION */}
+      {confettiVisible && (
+        <LottieView
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
             width: "100%",
-            height: "84%",
-            zIndex:15
+            height: "100%",
+            zIndex: 15,
           }}
           source={require('../../assets/data/confetti.json')}
           ref={confettiRef}
           loop={false}
           autoPlay={false}
           speed={2.3}
-          />
-          }
-
-      </View>
+        />
+      )}
     </View>
   );
 };
