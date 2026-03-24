@@ -1,11 +1,17 @@
 // utils/debugUtils.js
-import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+const isExpoGo = Constants.executionEnvironment === "storeClient";
+let Notifications = null;
+if (!isExpoGo) {
+  try { Notifications = require("expo-notifications"); } catch (_) {}
+}
 
 export const testNotificationLog = async (todos) => {
   try {
     console.log("🧪 testNotificationLog başladı...");
 
     const activeNotificationCount = todos.filter(todo => todo.notificationId).length;
+    if (!Notifications) { console.warn("⚠️ Notifications not available in Expo Go"); return; }
     const scheduled = await Notifications.getAllScheduledNotificationsAsync();
 
     const expoNotificationCount = scheduled.length;
