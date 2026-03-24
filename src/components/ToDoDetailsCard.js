@@ -10,6 +10,7 @@ import { playSuccessSound } from "../utils/play-success-sound";
 import LottieView from "lottie-react-native";
 import { PremiumCard } from "./PremiumCard";
 import { PremiumButton } from "./PremiumButton";
+import { InfoSection } from "./InfoSection";
 import { getStatusGradient, getStatusColor } from "../theme/themeColors";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -211,37 +212,20 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle, setIsLoading }) => {
         {/* DATE & TIME INFO */}
         <View className="gap-3 mb-4">
           {/* Due Date */}
-          <View className="bg-white/5 rounded-lg p-3 border border-white/10">
-            <View className="flex-row items-center gap-2 mb-2">
-              <Ionicons name="calendar" size={14} color="#60a5fa" />
-              <Text className="text-white/60 text-xs uppercase tracking-wider">
-                Due Date
-              </Text>
-            </View>
-            <Text className="text-white text-base font-semibold ml-6">
-              {formatToShortDate(todo.dueDate, language, t)} at{" "}
-              <Text className="text-blue-300">
-                {todo.dueTime.slice(0, 5)}
-              </Text>
-            </Text>
-          </View>
+          <InfoSection
+            icon="calendar"
+            label="Due Date"
+            value={`${formatToShortDate(todo.dueDate, language, t)} at ${todo.dueTime.slice(0, 5)}`}
+            highlight={true}
+          />
 
           {/* Reminder */}
-          <View className="bg-white/5 rounded-lg p-3 border border-white/10">
-            <View className="flex-row items-center gap-2 mb-2">
-              <Ionicons
-                name={shouldShowOffIcon(todo) ? "notifications-off" : "notifications"}
-                size={14}
-                color={shouldShowOffIcon(todo) ? "#94a3b8" : "#fbbf24"}
-              />
-              <Text className="text-white/60 text-xs uppercase tracking-wider">
-                Reminder
-              </Text>
-            </View>
-            <Text className="text-white text-base font-semibold ml-6">
-              {calculateReminderDateTime(todo).slice(0, 16)}
-            </Text>
-          </View>
+          <InfoSection
+            icon={shouldShowOffIcon(todo) ? "notifications-off" : "notifications"}
+            iconColor={shouldShowOffIcon(todo) ? "#94a3b8" : "#fbbf24"}
+            label="Reminder"
+            value={calculateReminderDateTime(todo).slice(0, 16)}
+          />
         </View>
 
         {/* ACTION BUTTONS */}
