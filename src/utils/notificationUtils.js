@@ -1,27 +1,41 @@
-import * as Notifications from "expo-notifications";
-import moment from "moment-timezone"; // moment-timezone'ı kullandık
+import moment from "moment-timezone";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatToShortDate } from "./date-utils";
 import { useEffect } from "react";
 
+// Safely import notifications (SDK 55+ Expo Go doesn't support it)
+let Notifications = null;
+try {
+  Notifications = require("expo-notifications");
+} catch (error) {
+  console.warn("⚠️ Notifications not available:", error.message);
+}
+
 const STORAGE_KEY = "app_scheduled_notifications";
 
-// AsyncStorage'dan tüm bildirimleri silmek için
-Notifications.addNotificationReceivedListener(async (notification) => {
-  console.log("📩 Received Notification:", notification);
+// Only set up listener if Notifications is available
+if (Notifications) {
+  Notifications.addNotificationReceivedListener(async (notification) => {
+    console.log("📩 Received Notification:", notification);
 
-  const notificationId = notification.request.identifier;
+    const notificationId = notification.request.identifier;
 
-  // Bildirimi Expo'dan tamamen kaldır
-  await Notifications.cancelScheduledNotificationAsync(notificationId);
+    // Bildirimi Expo'dan tamamen kaldır
+    await Notifications.cancelScheduledNotificationAsync(notificationId);
 
-  // Bildirim ID'sini AsyncStorage'dan sil
-  const storedNotifications = JSON.parse(await AsyncStorage.getItem(STORAGE_KEY)) || {};
-  delete storedNotifications[notificationId]; // İlgili bildirimi sil
-  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications)); // Güncellenmiş veriyi kaydet
-});
+    // Bildirim ID'sini AsyncStorage'dan sil
+    const storedNotifications = JSON.parse(await AsyncStorage.getItem(STORAGE_KEY)) || {};
+    delete storedNotifications[notificationId]; // İlgili bildirimi sil
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storedNotifications));
+  });
+}
 
 export async function scheduleNotification(todo, t, language) {
+  if (!Notifications) {
+    console.warn("⚠️ Notifications not available in Expo Go");
+    return null;
+  }
+
   if (!todo || !todo.dueDate || !todo.dueTime || !todo.reminderTime) {
     console.log("❌ Geçersiz todo verisi:", todo);
     return;
@@ -113,6 +127,11 @@ export async function scheduleNotification(todo, t, language) {
 
 // Yeni: doğrudan notificationId ile çalışır
 export const cancelNotification = async (notificationId) => {
+  if (!Notifications) {
+    console.warn("⚠️ Notifications not available in Expo Go");
+    return null;
+  }
+
   try {
     if (!notificationId) {
       console.warn("⚠️ Bildirim iptali için geçersiz notificationId");
@@ -128,6 +147,11 @@ export const cancelNotification = async (notificationId) => {
 
 // Tüm bildirimleri temizle
 export const clearAllScheduledNotifications = async () => {
+  if (!Notifications) {
+    console.warn("⚠️ Notifications not available in Expo Go");
+    return null;
+  }
+
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
     console.log("🧹 Tüm planlanmış bildirimler temizlendi.");
