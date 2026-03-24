@@ -8,35 +8,20 @@ import { router } from 'expo-router'
 import { Alert } from "react-native";
 import { migrateOldTodosSafely, migrateStorageKeys } from "../utils/migrateUtils";
 
-// Optional notifications (SDK 55+ requires dev build)
-let scheduleNotification = null;
-let cancelNotification = null;
-let Notifications = null;
+// Dummy notification functions (SDK 55+ Expo Go doesn't support notifications)
+const scheduleNotification = async () => {
+  console.warn("⚠️ Notifications not available in Expo Go (use dev build)");
+  return null;
+};
 
-try {
-  const notificationUtils = require("../utils/notificationUtils");
-  scheduleNotification = notificationUtils.scheduleNotification;
-  cancelNotification = notificationUtils.cancelNotification;
-  Notifications = require("expo-notifications");
-} catch (error) {
-  console.warn("⚠️ Notifications not available:", error.message);
-  // Provide dummy functions so app doesn't crash
-  scheduleNotification = async () => null;
-  cancelNotification = async () => null;
-}
+const cancelNotification = async () => {
+  console.warn("⚠️ Notifications not available in Expo Go (use dev build)");
+  return null;
+};
 
 
 
-// Bildirimlerin nasıl işleneceğini tanımla
-if (Notifications) {
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-    }),
-  });
-}
+// Notifications only available with dev build (not in Expo Go)
 
 // 📌 **Bildirim Yönlendirme Durumunu İzleyen Hook**
 export function useNotificationListener(setNotificationRedirect) {
