@@ -2,13 +2,19 @@ import moment from "moment-timezone";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatToShortDate } from "./date-utils";
 import { useEffect } from "react";
+import Constants from "expo-constants";
 
-// Safely import notifications (SDK 55+ Expo Go doesn't support it)
+// expo-notifications is NOT available in Expo Go on Android (SDK 53+)
+// Check execution environment before requiring to prevent crash
+const isExpoGo = Constants.executionEnvironment === "storeClient";
+
 let Notifications = null;
-try {
-  Notifications = require("expo-notifications");
-} catch (error) {
-  console.warn("⚠️ Notifications not available:", error.message);
+if (!isExpoGo) {
+  try {
+    Notifications = require("expo-notifications");
+  } catch (error) {
+    console.warn("⚠️ Notifications not available:", error.message);
+  }
 }
 
 const STORAGE_KEY = "app_scheduled_notifications";
