@@ -19,6 +19,13 @@ const cancelNotification = async () => {
   return null;
 };
 
+// Dummy Notifications object for Expo Go compatibility
+const Notifications = {
+  addNotificationResponseReceivedListener: () => ({ remove: () => {} }),
+  setNotificationChannelAsync: async () => null,
+  AndroidImportance: { MAX: 5 },
+};
+
 
 
 // Notifications only available with dev build (not in Expo Go)
@@ -43,7 +50,7 @@ export function useNotificationListener(setNotificationRedirect) {
 
 // Android için özel kanal oluştur
 async function configureAndroidChannel() {
-  if (!Notifications || Platform.OS !== "android") return;
+  if (Platform.OS !== "android") return;
 
   try {
     await Notifications.setNotificationChannelAsync("default", {
@@ -57,6 +64,7 @@ async function configureAndroidChannel() {
   }
 }
 
+// Safe call - no await needed for dummy version
 configureAndroidChannel();
 
 export const TodoListContext = createContext();
