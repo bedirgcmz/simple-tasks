@@ -3,28 +3,45 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment-timezone'; // moment-timezone'ı kullandık
 import * as Localization from "expo-localization";
 import translations from "../locales/translations";
-import { scheduleNotification, cancelNotification } from "../utils/notificationUtils";
-import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { router } from 'expo-router'
 import { Alert } from "react-native";
 import { migrateOldTodosSafely, migrateStorageKeys } from "../utils/migrateUtils";
 
+// Optional notifications (SDK 55+ requires dev build)
+let scheduleNotification = null;
+let cancelNotification = null;
+let Notifications = null;
+
+try {
+  const notificationUtils = require("../utils/notificationUtils");
+  scheduleNotification = notificationUtils.scheduleNotification;
+  cancelNotification = notificationUtils.cancelNotification;
+  Notifications = require("expo-notifications");
+} catch (error) {
+  console.warn("⚠️ Notifications not available:", error.message);
+  // Provide dummy functions so app doesn't crash
+  scheduleNotification = async () => null;
+  cancelNotification = async () => null;
+}
+
 
 
 // Bildirimlerin nasıl işleneceğini tanımla
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+if (Notifications) {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+}
 
 // 📌 **Bildirim Yönlendirme Durumunu İzleyen Hook**
 export function useNotificationListener(setNotificationRedirect) {
   useEffect(() => {
-    if (!setNotificationRedirect) return;
+    if (!setNotificationRedirect || !Notifications) return;
 
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
       const todoId = response.notification.request.content.data.todoId;
@@ -41,13 +58,17 @@ export function useNotificationListener(setNotificationRedirect) {
 
 // Android için özel kanal oluştur
 async function configureAndroidChannel() {
-  if (Platform.OS === "android") {
+  if (!Notifications || Platform.OS !== "android") return;
+
+  try {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: "#FF231F7C",
     });
+  } catch (error) {
+    console.warn("⚠️ Android notification channel config error:", error.message);
   }
 }
 
