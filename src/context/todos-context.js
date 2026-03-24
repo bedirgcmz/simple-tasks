@@ -58,7 +58,6 @@ export const TodoListContext = createContext();
 export const TodoListProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
   const [showCongrats, setShowCongrats] = useState(false);
-  const [dueTime, setDueTime] = useState('00:00');
   const STORAGE_KEY = 'user_todos';
   const STORAGE_USERNAME_KEY = "user_username";
   const STORAGE_USERNAME_LANGUAGE = "user_language";
@@ -592,7 +591,6 @@ const updateAllInGroup = async (groupId, newTodos, options = { skipNotification:
     deleteTodo,
     updateTodo,
     updateTodoFully,
-    setDueTime, 
     showCongrats, 
     setShowCongrats,
     language, 
