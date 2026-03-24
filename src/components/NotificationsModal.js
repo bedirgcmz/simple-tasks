@@ -7,11 +7,11 @@ import { router } from "expo-router";
 
 
 const NotificationModal = () => {
-  const { todos, t } = useTodoListContext(); 
+  const { todos, t } = useTodoListContext();
   const [showModal, setShowModal] = useState(false);
   const [storedDay, setStoredDay] = useState("");
-  const STORAGE_REMIND_KEY = 'reminder_time_for_today';
- const STORAGE_DAY_KEY = 'last_checked_day';
+  const STORAGE_REMIND_KEY = 'app_reminder_time_for_today';
+  const STORAGE_DAY_KEY = 'app_last_checked_day';
 
   const today = new Date().toISOString().split('T')[0]; 
 
@@ -37,9 +37,11 @@ const NotificationModal = () => {
       }
 
       // Bugüne ait yapılması gereken görevleri filtrele
-      const todayTasks = todos.filter(
-        (todo) => todo.dueDate.split('T')[0] === today && todo.status === "pending"
-      );
+      const todayTasks = todos.filter((todo) => {
+        // Safe dueDate parsing - handle both formats (YYYY-MM-DD and YYYY-MM-DDThh:mm:ss)
+        const dueDateStr = todo.dueDate.includes('T') ? todo.dueDate.split('T')[0] : todo.dueDate;
+        return dueDateStr === today && todo.status === "pending";
+      });
 
       if (todayTasks.length > 0) {
         setShowModal(true);

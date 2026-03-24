@@ -16,15 +16,12 @@ const TabsLayout = () => {
   // Kullanıcının saat dilimini al
   const userTimezone = moment.tz.guess();
   const isToday = (date) => {
-    // 📌 Tarih formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
-    // const formattedDate = date.replace(/:/g, "-");
-  
     // 📌 `date` değişkenini yerel saat dilimiyle `moment` nesnesine çevir
     const checkDate = moment.tz(date, "YYYY-MM-DD", userTimezone).startOf("day");
-  
+
     // 📌 Bugünün tarihini yerel saat dilimiyle al ve saatlerini sıfırla
     const today = moment().tz(userTimezone).startOf("day");
-  
+
     // 📌 Günleri karşılaştır (sadece gün bazında!)
     return checkDate.isSame(today, "day");
   };

@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatToShortDate } from "./date-utils";
 import { useEffect } from "react";
 
-const STORAGE_KEY = "scheduledNotifications";
+const STORAGE_KEY = "app_scheduled_notifications";
 
 // AsyncStorage'dan tüm bildirimleri silmek için
 Notifications.addNotificationReceivedListener(async (notification) => {

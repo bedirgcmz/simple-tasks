@@ -3,12 +3,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment-timezone'; // moment-timezone'ı kullandık
 import * as Localization from "expo-localization";
 import translations from "../locales/translations";
-import { scheduleNotification, cancelNotification } from "../utils/notificationUtils"; 
+import { scheduleNotification, cancelNotification } from "../utils/notificationUtils";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { router } from 'expo-router'
 import { Alert } from "react-native";
-import { migrateOldTodosSafely } from "../utils/migrateUtils";
+import { migrateOldTodosSafely, migrateStorageKeys } from "../utils/migrateUtils";
 
 
 
@@ -61,8 +61,8 @@ export const TodoListProvider = ({ children }) => {
   const [dueTime, setDueTime] = useState('00:00');
   const STORAGE_KEY = 'user_todos';
   const STORAGE_USERNAME_KEY = "user_username";
-  const STORAGE_USERNAME_LANGUAGE = "user_language_simpletask";
-  const STORAGE_USERNAME_IMAGE = "user_image_simpletask";
+  const STORAGE_USERNAME_LANGUAGE = "user_language";
+  const STORAGE_USERNAME_IMAGE = "user_image";
   const STORAGE_USER_CATEGORIES = "user_custom_categories";
   const [userCategories, setUserCategories] = useState([]); // Kullanıcı kategorileri
   const locales = Localization.getLocales?.() ?? [];
@@ -77,33 +77,40 @@ export const TodoListProvider = ({ children }) => {
 
 //  useEffect içinde async fonksiyon ile resim ve dil secimini baslangicta yukle
 useEffect(() => {
-  const loadUserLanguage = async () => {
-    try {
-      const storedUserLanguage = await AsyncStorage.getItem(STORAGE_USERNAME_LANGUAGE);
-      if (storedUserLanguage && ["en", "sv", "de", "tr"].includes(storedUserLanguage)) {
-        setLanguage(storedUserLanguage); //  Kayıtlı dili yükle
-      } else {
-        await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, defaultLanguage);
-        setLanguage(defaultLanguage); //  Geçerli dili ata
+  const initializeApp = async () => {
+    // 📌 Run storage keys migration once
+    await migrateStorageKeys();
+
+    // Load user settings
+    const loadUserLanguage = async () => {
+      try {
+        const storedUserLanguage = await AsyncStorage.getItem(STORAGE_USERNAME_LANGUAGE);
+        if (storedUserLanguage && ["en", "sv", "de", "tr"].includes(storedUserLanguage)) {
+          setLanguage(storedUserLanguage); //  Kayıtlı dili yükle
+        } else {
+          await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, defaultLanguage);
+          setLanguage(defaultLanguage); //  Geçerli dili ata
+        }
+      } catch (error) {
+        console.error("❌ Error loading language:", error);
       }
-    } catch (error) {
-      console.error("❌ Error loading language:", error);
-    }
-  };
-  const loadUserImage = async () => {
-    try {
-      const storedUserImage = await AsyncStorage.getItem(STORAGE_USERNAME_IMAGE);
-      if (storedUserImage) {
-        setUserIconImage(storedUserImage); //  Kayıtlı resmi yükle
-      } else {
-        await AsyncStorage.setItem(STORAGE_USERNAME_IMAGE, userIconImage);
+    };
+    const loadUserImage = async () => {
+      try {
+        const storedUserImage = await AsyncStorage.getItem(STORAGE_USERNAME_IMAGE);
+        if (storedUserImage) {
+          setUserIconImage(storedUserImage); //  Kayıtlı resmi yükle
+        } else {
+          await AsyncStorage.setItem(STORAGE_USERNAME_IMAGE, userIconImage);
+        }
+      } catch (error) {
+        console.error("❌ Error loading language:", error);
       }
-    } catch (error) {
-      console.error("❌ Error loading language:", error);
-    }
+    };
+    await loadUserLanguage();
+    await loadUserImage();
   };
-  loadUserLanguage();
-  loadUserImage()
+  initializeApp();
 }, []);
 
 useEffect(() => {

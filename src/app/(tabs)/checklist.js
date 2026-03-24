@@ -7,6 +7,8 @@ import { useTodoListContext } from "../../context/todos-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Platform } from "react-native";
 
+const STORAGE_KEY = "user_todo_groups"; // 📌 Standardized AsyncStorage key
+
 const TodoApp = () => {
   const { t, language } = useTodoListContext();
   const [groups, setGroups] = useState([]);
@@ -28,8 +30,8 @@ const LIST_TRANSLATIONS = {
 
 const updateGroupNamesOnLanguageChange = async (newLanguage, setGroups) => {
   try {
-    const storedData = await AsyncStorage.getItem("todoGroups");
-    
+    const storedData = await AsyncStorage.getItem(STORAGE_KEY);
+
     if (!storedData || storedData === "[]" || storedData.trim() === "") return;
 
     let groups = JSON.parse(storedData);
@@ -40,12 +42,12 @@ const updateGroupNamesOnLanguageChange = async (newLanguage, setGroups) => {
     });
 
     // 📌 Güncellenmiş listeyi AsyncStorage'a kaydet
-    await AsyncStorage.setItem("todoGroups", JSON.stringify(updatedGroups));
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedGroups));
 
-    // 📌 State güncelle 
+    // 📌 State güncelle
     setGroups(updatedGroups);
     setCurrentGroupId(updatedGroups[0].id);
- 
+
   } catch (error) {
     console.error("❌ Error updating group names:", error);
   }
@@ -58,7 +60,7 @@ useEffect(() => {
   
 
   const loadData = async () => {
-    const storedData = await AsyncStorage.getItem("todoGroups");
+    const storedData = await AsyncStorage.getItem(STORAGE_KEY);
     if (storedData) {
       setGroups(JSON.parse(storedData));
     } else {
@@ -67,7 +69,7 @@ useEffect(() => {
   };
 
   const saveData = async (newGroups) => {
-    await AsyncStorage.setItem("todoGroups", JSON.stringify(newGroups));
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newGroups));
   };
 
   const addTodo = () => {
