@@ -32,7 +32,6 @@ const Header = () => {
     icon21: require("../../assets/images/user-icons/k9.png"),
     icon22: require("../../assets/images/user-icons/k10.png"),
     icon23: require("../../assets/images/user-icons/k11.png"),
-    icon23: require("../../assets/images/user-icons/k11.png"),
     icon24: require("../../assets/images/user-icons/default.png"),
   };
   

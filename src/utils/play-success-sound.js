@@ -1,30 +1,20 @@
-// import { Audio } from "expo-av";
+import * as Haptics from "expo-haptics";
 
-// export const playSuccessSound = async () => {
-//   try {
-//     const { sound } = await Audio.Sound.createAsync(require("../../assets/sounds/success.mp3"));
-//     await sound.playAsync();
-//   } catch (error) {
-//     console.error("Ses çalınırken bir hata oluştu:", error);
-//   }
-// };
-
-
-
-// export const playCorrectSound = async () => {
-//   try {
-//     const { sound } = await Audio.Sound.createAsync(require("../../assets/sounds/correct.mp3"));
-//     await sound.playAsync();
-//   } catch (error) {
-//     console.error("Ses çalınırken bir hata oluştu:", error);
-//   }
-// };
-
-
+// Haptics feedback instead of audio (expo-av causes native crash on SDK 55)
 export const playSuccessSound = async () => {
-  return;
+  try {
+    // Success pattern: medium + success haptic
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  } catch (error) {
+    console.warn("Haptics error:", error);
+  }
 };
 
 export const playCorrectSound = async () => {
-  return;
+  try {
+    // Correct pattern: light + light haptic
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Light);
+  } catch (error) {
+    console.warn("Haptics error:", error);
+  }
 };

@@ -319,19 +319,50 @@ const loadTodos = async () => {
     return;
     }
 
-    // 🚀 Eğer son todo ise, silmeyi iptal et ve kullanıcıya uyarı göster
+    // 🚀 Eğer son todo ise, fallback todo oluştur
     if (todos.length === 1) {
-        // alert(t("Last_todo_alert"));
+      try {
+        const lastTodo = todos[0];
+        if (lastTodo.id === id) {
+          // Fallback todo oluştur (silinen todo'nun yerine default)
+          const fallbackTodo = {
+            id: Date.now().toString(),
+            title: t("New_Task"),
+            description: "",
+            category: lastTodo.category || "Work",
+            dueDate: new Date().toISOString().split("T")[0],
+            dueTime: "09:00:00",
+            reminderTime: "5 minutes before",
+            status: "pending",
+            isRecurring: false,
+            repeatGroupId: null,
+            repeatDays: null,
+            notificationId: null,
+          };
+
+          // Bildirimi iptal et
+          if (lastTodo.notificationId) {
+            await cancelNotification(lastTodo.notificationId);
+          }
+
+          // Fallback todo'yu kaydet
+          setTodos([fallbackTodo]);
+          await saveTodos([fallbackTodo]);
+          return;
+        }
+      } catch (error) {
+        console.error("❌ Error creating fallback todo:", error);
         Alert.alert(t("Last_todo_alert"));
         return;
+      }
     }
     try {
-  
+
       const todoToDelete = todos.find((todo) => todo.id === id);
       if (todoToDelete) {
         await cancelNotification(todoToDelete.notificationId); // 📌 Önce bildirimi iptal et
       }
-  
+
       const updatedTodos = todos.filter((todo) => todo.id !== id);
       setTodos(updatedTodos);
       await saveTodos(updatedTodos);
