@@ -33,13 +33,13 @@ const TabsLayout = () => {
   
     const todaysTodos = todos.filter((todo) => {
       if (!todo?.dueDate || typeof todo.dueDate !== "string") return false;
-  
-      if (!validFormat.test(todo.dueDate.trim())) {
-        console.error("Tarih Okunamadı:", todo.dueDate);
-        return false;
-      }
-  
-      return isToday(todo.dueDate) && todo.status !== "done";
+
+      // Normalize ISO timestamps (e.g. "2026-03-25T10:16:58.327Z") to date-only
+      const dateStr = todo.dueDate.includes('T') ? todo.dueDate.split('T')[0] : todo.dueDate.trim();
+
+      if (!validFormat.test(dateStr)) return false;
+
+      return isToday(dateStr) && todo.status !== "done";
     });
   
     setTodayToDos(todaysTodos);

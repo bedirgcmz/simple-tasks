@@ -309,7 +309,6 @@ const AddTodoPage = () => {
                   onPress={() => {
                     Keyboard.dismiss();
                     setShowDatePicker(true);
-                    setDueDate(new Date());
                   }}
                   style={{
                     ...glassField,
@@ -352,7 +351,7 @@ const AddTodoPage = () => {
 
                 {showDatePicker && (
                   <DateTimePicker
-                    value={dueDate}
+                    value={typeof dueDate === 'string' && dueDate ? new Date(dueDate) : new Date()}
                     mode="date"
                     display="default"
                     style={{

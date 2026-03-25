@@ -44,12 +44,13 @@ const TodoBoardScreen = () => {
   };
 
   const validFormat = /^\d{4}-\d{2}-\d{2}$/;
+  const normalizeDate = (d) => (typeof d === 'string' && d.includes('T') ? d.split('T')[0] : d?.trim());
 
-  // ── Todo filters (unchanged) ────────────────────────────
-  const todaysTodos    = todos.filter((todo) => todo.dueDate && typeof todo.dueDate === 'string' && validFormat.test(todo.dueDate.trim()) && isToday(todo.dueDate));
-  const tomorrowsTodos = todos.filter((todo) => todo.dueDate && typeof todo.dueDate === 'string' && validFormat.test(todo.dueDate.trim()) && isTomorrow(todo.dueDate));
-  const nextDaysTodos  = todos.filter((todo) => todo.dueDate && typeof todo.dueDate === 'string' && validFormat.test(todo.dueDate.trim()) && isNextDays(todo.dueDate) && !isTomorrow(todo.dueDate));
-  const pastDaysTodos  = todos.filter((todo) => todo.dueDate && typeof todo.dueDate === 'string' && validFormat.test(todo.dueDate.trim()) && isPastDays(todo.dueDate));
+  // ── Todo filters ────────────────────────────────────────
+  const todaysTodos    = todos.filter((todo) => { const d = normalizeDate(todo.dueDate); return d && validFormat.test(d) && isToday(d); });
+  const tomorrowsTodos = todos.filter((todo) => { const d = normalizeDate(todo.dueDate); return d && validFormat.test(d) && isTomorrow(d); });
+  const nextDaysTodos  = todos.filter((todo) => { const d = normalizeDate(todo.dueDate); return d && validFormat.test(d) && isNextDays(d) && !isTomorrow(d); });
+  const pastDaysTodos  = todos.filter((todo) => { const d = normalizeDate(todo.dueDate); return d && validFormat.test(d) && isPastDays(d); });
   const completedTodos = todos.filter((todo) => todo.status === "done");
 
   // ── Empty state images (unchanged) ─────────────────────
