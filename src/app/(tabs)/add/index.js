@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StatusBar,
   Keyboard,
-  TouchableWithoutFeedback,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -153,7 +152,6 @@ const AddTodoPage = () => {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <LinearGradient
           colors={["#02043d", "#370979", "#0386d7"]}
           start={{ x: 0, y: 0 }}
@@ -163,6 +161,7 @@ const AddTodoPage = () => {
           <ScrollView
             contentContainerStyle={{ paddingBottom: 16 }}
             keyboardShouldPersistTaps="handled"
+            onScrollBeginDrag={Keyboard.dismiss}
           >
             <View style={{ paddingHorizontal: 16, flex: 1 }}>
               <AddTodoTabs />
@@ -434,7 +433,6 @@ const AddTodoPage = () => {
             <StatusBar style="light" backgroundColor="transparent" translucent />
           </ScrollView>
         </LinearGradient>
-      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };

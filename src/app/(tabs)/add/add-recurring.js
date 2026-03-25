@@ -8,7 +8,6 @@ import {
   Keyboard,
   Alert,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
   Platform,
   StatusBar,
 } from "react-native";
@@ -184,7 +183,6 @@ const AddRecurringTodoPage = () => {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <LinearGradient
           colors={["#02043d", "#3f127e", "#0671b4"]}
           start={{ x: 0, y: 0 }}
@@ -194,6 +192,7 @@ const AddRecurringTodoPage = () => {
           <ScrollView
             contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
             keyboardShouldPersistTaps="handled"
+            onScrollBeginDrag={Keyboard.dismiss}
           >
             <AddTodoTabs />
 
@@ -440,7 +439,6 @@ const AddRecurringTodoPage = () => {
           </ScrollView>
           <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
         </LinearGradient>
-      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };

@@ -35,7 +35,7 @@ const Chart = () => {
           sectionAutoFocus
           radius={70}
           innerRadius={60}
-          innerCircleColor={'#0c0820'}
+          innerCircleColor={'#250f68'}
           centerLabelComponent={() => {
             return (
               <View style={{justifyContent: 'center', alignItems: 'center'}}>
