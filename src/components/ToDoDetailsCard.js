@@ -140,7 +140,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle, setIsLoading }) => {
       </Text>
 
       {/* MAIN CARD */}
-      <PremiumCard className="mb-4">
+      <PremiumCard className="mb-4" borderColor="rgba(255,255,255,0.22)">
 
         {/* ── STATUS BANNER ── */}
         <LinearGradient
@@ -242,7 +242,7 @@ const ToDoDetailsCard = ({ pTodoId, pPageTitle, setIsLoading }) => {
                 Description
               </Text>
             </View>
-            <Text className="text-white/85 text-base leading-6 ml-5">
+            <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 15, lineHeight: 22, marginLeft: 20 }}>
               {todo.description}
             </Text>
           </View>

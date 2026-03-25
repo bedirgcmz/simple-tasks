@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { useTodoListContext } from '../context/todos-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from "expo-router";
 
 
@@ -13,32 +14,26 @@ const NotificationModal = () => {
   const STORAGE_REMIND_KEY = 'app_reminder_time_for_today';
   const STORAGE_DAY_KEY = 'app_last_checked_day';
 
-  const today = new Date().toISOString().split('T')[0]; 
+  const today = new Date().toISOString().split('T')[0];
 
   const checkTodosForToday = async () => {
     try {
       let lastCheckedDay = await AsyncStorage.getItem(STORAGE_DAY_KEY);
 
-      // Eğer gün ilk kez kaydediliyorsa veya farklı bir günse güncelle
       if (!lastCheckedDay || lastCheckedDay !== today) {
         await AsyncStorage.setItem(STORAGE_DAY_KEY, today);
         await AsyncStorage.removeItem(STORAGE_REMIND_KEY);
-        setStoredDay(today); 
-      } 
+        setStoredDay(today);
+      }
 
-      // Daha önce hatırlatma saati kaydedilmiş mi kontrol et
       const storedReminderTime = await AsyncStorage.getItem(STORAGE_REMIND_KEY);
       if (storedReminderTime) {
         const reminderTime = new Date(storedReminderTime);
         const now = new Date();
-        
-        // Eğer hatırlatma zamanı hala geçerli ise, modalı gösterme
         if (now < reminderTime) return;
       }
 
-      // Bugüne ait yapılması gereken görevleri filtrele
       const todayTasks = todos.filter((todo) => {
-        // Safe dueDate parsing - handle both formats (YYYY-MM-DD and YYYY-MM-DDThh:mm:ss)
         const dueDateStr = todo.dueDate.includes('T') ? todo.dueDate.split('T')[0] : todo.dueDate;
         return dueDateStr === today && todo.status === "pending";
       });
@@ -51,7 +46,6 @@ const NotificationModal = () => {
     }
   };
 
-  // useEffect içinde async fonksiyon doğrudan kullanılmaz, o yüzden içeride çağırıyoruz.
   useEffect(() => {
     const fetchData = async () => {
       await checkTodosForToday();
@@ -59,32 +53,27 @@ const NotificationModal = () => {
     fetchData();
   }, [todos]);
 
-  // "Remind me again" seçeneği
   const remindMeAgain = async () => {
     try {
       const remindTime = new Date();
-      remindTime.setHours(remindTime.getHours() + 2); // Şimdiden 2 saat sonrası
-      // remindTime.setMinutes(remindTime.getMinutes() + 1); // Şimdiden 1 dakika sonrası
+      remindTime.setHours(remindTime.getHours() + 2);
       await AsyncStorage.setItem(STORAGE_REMIND_KEY, remindTime.toISOString());
-      setShowModal(false); // Modalı kapat
+      setShowModal(false);
     } catch (error) {
       console.error('Error setting reminder:', error);
     }
   };
 
-  // "Do not remind me again" seçeneği
   const doNotRemind = async () => {
     try {
       const endOfDay = new Date();
-      endOfDay.setHours(23, 59, 59, 999); // Gün sonuna kadar ertele
+      endOfDay.setHours(23, 59, 59, 999);
       await AsyncStorage.setItem(STORAGE_REMIND_KEY, endOfDay.toISOString());
       setShowModal(false);
     } catch (error) {
       console.error('Error saving reminder status:', error);
     }
   };
-
-
 
   const todayToDos = todos.filter(
     (todo) => todo.dueDate === today && todo.status === "pending"
@@ -94,51 +83,130 @@ const NotificationModal = () => {
     <Modal
       visible={showModal}
       transparent={true}
-      animationType="slide"
+      animationType="fade"
       onRequestClose={() => setShowModal(false)}
     >
-      <View className="flex-1 bg-black/50 justify-center items-center">
-        <View className="bg-[#d7c8f3] w-4/5 pt-4 pb-16 rounded-lg">
-          <View className="items-center mb-4  px-4 ">
-            <Ionicons name="notifications" size={50} color="#6a0dad" />
-            <Text className="text-lg font-bold text-center mt-2">
-            {t("Notification_modal_1")}
-            </Text>
-          </View>
-          <Text className="text-sm text-gray-600 text-center mb-6  px-4 ">
-          {t("Notification_modal_2")} <Text className="font-bold text-md">{todayToDos.length}</Text> 
-          </Text>
-          <View className="flex-row justify-between  px-4 ">
-            <TouchableOpacity
-              className="bg-purple-700 px-4 py-2 rounded-lg"
-              onPress={remindMeAgain}
+      {/* Backdrop */}
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => setShowModal(false)}
+        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.65)', justifyContent: 'center', alignItems: 'center' }}
+      >
+        {/* Card — stop propagation */}
+        <TouchableOpacity activeOpacity={1} style={{ width: '82%' }}>
+          <View
+            style={{
+              borderRadius: 20,
+              overflow: 'hidden',
+              borderWidth: 1,
+              borderColor: 'rgba(255,255,255,0.14)',
+              shadowColor: '#000',
+              shadowOpacity: 0.6,
+              shadowRadius: 24,
+              shadowOffset: { width: 0, height: 10 },
+              elevation: 16,
+            }}
+          >
+            <LinearGradient
+              colors={['#130b30', '#0b1a45']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
+              style={{ borderRadius: 20 }}
             >
-              <Text className="text-white text-center font-semibold">
-              {t("Notification_modal_3")}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="bg-red-500 px-4 py-2 rounded-lg"
-              onPress={doNotRemind}
-            >
-              <Text className="text-white text-center font-semibold">
-              {t("Notification_modal_4")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-            <TouchableOpacity   
-             onPress={() => {
-                router.push({ pathname: `dynamicday/${today}`, params: { from: 'home' } })
-                setShowModal(false);
-                doNotRemind()
-              }}
-            className="flex-row justify-center items-center bg-[#6a0dad] mt-4 p-2 w-full rounded-b-lg  border-gray-400 absolute bottom-0 left-0 w-full">
-               <Text className="text-[#d7c8f3] text-center font-semibold pr-3"> {t("Notification_modal_5")}
-               </Text>
-               <Ionicons name="caret-forward-outline" size={20} color="#d7c8f3" />
+              {/* Header */}
+              <View style={{ alignItems: 'center', paddingTop: 28, paddingHorizontal: 20, paddingBottom: 16 }}>
+                {/* Icon glow ring */}
+                <View style={{
+                  width: 64, height: 64, borderRadius: 32,
+                  backgroundColor: 'rgba(251,191,36,0.12)',
+                  borderWidth: 1.5, borderColor: 'rgba(251,191,36,0.35)',
+                  alignItems: 'center', justifyContent: 'center',
+                  marginBottom: 14,
+                  shadowColor: '#fbbf24', shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 0 },
+                }}>
+                  <Ionicons name="notifications" size={30} color="#fbbf24" />
+                </View>
+
+                <Text style={{ color: 'white', fontSize: 17, fontWeight: '800', textAlign: 'center', marginBottom: 8 }}>
+                  {t("Notification_modal_1")}
+                </Text>
+
+                <Text style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, textAlign: 'center', lineHeight: 19 }}>
+                  {t("Notification_modal_2")}{' '}
+                  <Text style={{ color: '#fbbf24', fontWeight: '800', fontSize: 15 }}>
+                    {todayToDos.length}
+                  </Text>
+                </Text>
+              </View>
+
+              {/* Divider */}
+              <View style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginHorizontal: 16 }} />
+
+              {/* Buttons */}
+              <View style={{ flexDirection: 'row', gap: 10, padding: 16 }}>
+                {/* Remind later */}
+                <TouchableOpacity
+                  onPress={remindMeAgain}
+                  style={{
+                    flex: 1,
+                    backgroundColor: 'rgba(96,165,250,0.14)',
+                    borderWidth: 1, borderColor: 'rgba(96,165,250,0.30)',
+                    borderRadius: 12, paddingVertical: 11,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Ionicons name="time-outline" size={16} color="#93c5fd" style={{ marginBottom: 3 }} />
+                  <Text style={{ color: '#93c5fd', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
+                    {t("Notification_modal_3")}
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Dismiss */}
+                <TouchableOpacity
+                  onPress={doNotRemind}
+                  style={{
+                    flex: 1,
+                    backgroundColor: 'rgba(248,113,113,0.14)',
+                    borderWidth: 1, borderColor: 'rgba(248,113,113,0.30)',
+                    borderRadius: 12, paddingVertical: 11,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Ionicons name="close-circle-outline" size={16} color="#fca5a5" style={{ marginBottom: 3 }} />
+                  <Text style={{ color: '#fca5a5', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
+                    {t("Notification_modal_4")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Go to today CTA */}
+              <TouchableOpacity
+                onPress={() => {
+                  router.push({ pathname: `dynamicday/${today}`, params: { from: 'home' } });
+                  setShowModal(false);
+                  doNotRemind();
+                }}
+                style={{ marginHorizontal: 16, marginBottom: 20 }}
+              >
+                <LinearGradient
+                  colors={['#fb923c', '#ea580c']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={{
+                    borderRadius: 14, paddingVertical: 13,
+                    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  }}
+                >
+                  <Text style={{ color: 'white', fontSize: 14, fontWeight: '800' }}>
+                    {t("Notification_modal_5")}
+                  </Text>
+                  <Ionicons name="caret-forward-outline" size={16} color="white" />
+                </LinearGradient>
               </TouchableOpacity>
-        </View>
-      </View>
+            </LinearGradient>
+          </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 };

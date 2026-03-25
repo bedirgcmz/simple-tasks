@@ -173,7 +173,7 @@ const QuickAddTodoModal = ({ visible, onClose, selectedDate }) => {
             <View style={{
               backgroundColor: 'rgba(255,255,255,0.06)',
               borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
-              borderRadius: 12, padding: 10,
+              borderRadius: 12, padding: 10, marginBottom: 10,
               flexDirection: 'row', flexWrap: 'wrap', gap: 4,
             }}>
               {getCategories().map((item) => (
@@ -184,7 +184,6 @@ const QuickAddTodoModal = ({ visible, onClose, selectedDate }) => {
             </View>
 
             {/* Time */}
-            <SectionLabel icon="time-outline" label={t("Select_a_due_time") ?? "Time"} />
             <TimePicker setDueTime={setDueTime} defaultTime={dueTime} />
 
             {/* Reminder */}
