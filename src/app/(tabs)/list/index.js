@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Image, StatusBar } from "react-native"; // ScrollView kept for outer scroll
+import { View, Text, ScrollView, Image, StatusBar, TouchableOpacity } from "react-native";
 import { useTodoListContext } from "../../../context/todos-context";
 import TodoCard from "../../../components/TodoCard";
 import TodoDoneAnimation from "../../../components/TodoDoneAnimation";
@@ -11,6 +11,10 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 const TodoBoardScreen = () => {
   const { todos, t } = useTodoListContext();
   const [isLoading, setIsLoading] = useState(false);
+  const [collapsed, setCollapsed] = useState({ "past-days": true, "completed": true });
+
+  const toggleCollapse = (key) =>
+    setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }));
 
   // ── Date helpers (unchanged) ────────────────────────────
   const userTimezone = moment.tz.guess();
@@ -131,6 +135,7 @@ const TodoBoardScreen = () => {
       >
         {sections.map((section) => {
           const doneCount = section.todos.filter((t) => t.status === "done").length;
+          const isCollapsed = !!collapsed[section.key];
 
           return (
             <View
@@ -140,17 +145,20 @@ const TodoBoardScreen = () => {
                 borderWidth: 1,
                 borderColor: section.borderColor,
                 borderRadius: 18,
-                padding: 14,
-                paddingBottom: 18,
                 marginBottom: 10,
                 shadowColor: "#000",
                 shadowOpacity: 0.30,
                 shadowRadius: 10,
                 shadowOffset: { width: 0, height: 4 },
+                overflow: 'hidden',
               }}
             >
-              {/* Section header */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+              {/* ── Section header (tappable) ── */}
+              <TouchableOpacity
+                activeOpacity={0.75}
+                onPress={() => toggleCollapse(section.key)}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 6, padding: 14, paddingBottom: isCollapsed ? 14 : 4 }}
+              >
                 <Ionicons name={section.icon} size={16} color={section.accentColor} />
                 <Text style={{ color: 'white', fontSize: 15, fontWeight: '700', flex: 1 }}>
                   {section.title}
@@ -166,38 +174,47 @@ const TodoBoardScreen = () => {
                     shadowRadius: 4,
                   }} />
                 )}
-              </View>
 
-              {/* Counter */}
-              <Text style={{ color: 'rgba(255,255,255,0.40)', fontSize: 12, marginBottom: 10, marginLeft: 22 }}>
-                {section.isCompleted
-                  ? `${section.todos.length} ${t("Done")}`
-                  : `${doneCount}/${section.todos.length} ${t("Done")}`}
-              </Text>
+                {/* Counter badge */}
+                <Text style={{ color: 'rgba(255,255,255,0.40)', fontSize: 12 }}>
+                  {section.isCompleted
+                    ? `${section.todos.length} ${t("Done")}`
+                    : `${doneCount}/${section.todos.length} ${t("Done")}`}
+                </Text>
 
-              {/* Content */}
-              {section.todos.length > 0 ? (
-                <View>
-                  {section.todos.map((todo) => (
-                    <TodoCard
-                      key={todo.id}
-                      todo={todo}
-                      fromText="list"
-                      setIsLoading={setIsLoading}
-                    />
-                  ))}
-                </View>
-              ) : (
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 4 }}>
-                  <Text style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
-                    {section.message}
-                  </Text>
-                  {section.image && (
-                    <Image
-                      source={emptyImages[section.image]}
-                      style={{ width: 80, height: 40 }}
-                      resizeMode="contain"
-                    />
+                {/* Chevron */}
+                <Ionicons
+                  name={isCollapsed ? "chevron-down" : "chevron-up"}
+                  size={14}
+                  color="rgba(255,255,255,0.40)"
+                />
+              </TouchableOpacity>
+
+              {/* ── Collapsible content ── */}
+              {!isCollapsed && (
+                <View style={{ paddingHorizontal: 14, paddingBottom: 14 }}>
+                  {section.todos.length > 0 ? (
+                    section.todos.map((todo) => (
+                      <TodoCard
+                        key={todo.id}
+                        todo={todo}
+                        fromText="list"
+                        setIsLoading={setIsLoading}
+                      />
+                    ))
+                  ) : (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 4 }}>
+                      <Text style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
+                        {section.message}
+                      </Text>
+                      {section.image && (
+                        <Image
+                          source={emptyImages[section.image]}
+                          style={{ width: 80, height: 40 }}
+                          resizeMode="contain"
+                        />
+                      )}
+                    </View>
                   )}
                 </View>
               )}
