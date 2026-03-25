@@ -38,7 +38,7 @@ const translations = {
       Category_input_placeholder: "Enter category name..",
       Create: "Create",
       Category_exists_alert: "This category already exists",
-      Personal_Categories: "Personal Categories",
+      Personal_Categories: "Manage Personal Categories",
       No_Categories_Found: "No Categories Found",
       Confirm_Delete_Category: "Confirm Delete Category",
       // category
@@ -214,7 +214,7 @@ const translations = {
       Category_input_placeholder: "Kategori adı girin..",
       Create: "Oluştur",
       Category_exists_alert: "Bu kategori zaten mevcut",
-      Personal_Categories: "Kişisel Kategoriler",
+      Personal_Categories: "Kişisel Kategorileri Yönet",
       No_Categories_Found: "Hiç Kategori Bulunamadı",
       Confirm_Delete_Category: "Kategoriyi Silmeyi Onayla",
 
@@ -388,7 +388,7 @@ const translations = {
       Category_input_placeholder: "Ange kategorinamn..",
       Create: "Skapa",
       Category_exists_alert: "Den här kategorin finns redan",
-      Personal_Categories: "Personliga Kategorier",
+      Personal_Categories: "Hantera personliga kategorier",
       No_Categories_Found: "Inga Kategorier Hittades",
       Confirm_Delete_Category: "Bekräfta Radering av Kategori",
 
@@ -565,7 +565,7 @@ const translations = {
       Category_input_placeholder: "Kategorienamen eingeben..",
       Create: "Erstellen",
       Category_exists_alert: "Diese Kategorie existiert bereits",
-      Personal_Categories: "Persönliche Kategorien",
+      Personal_Categories: "Pers. Kategorien verwalten",
       No_Categories_Found: "Keine Kategorien Gefunden",
       Confirm_Delete_Category: "Löschen der Kategorie Bestätigen",
 

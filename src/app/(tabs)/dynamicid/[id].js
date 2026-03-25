@@ -31,7 +31,7 @@ const TaskScreen = () => {
 
   return (
     <LinearGradient
-      colors={["#07051a", "#130b30", "#0b1a45"]}
+      colors={["#02043d", "#3f127e", "#0671b4"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0.4, y: 1 }}
       style={{ flex: 1, paddingTop: 44 }}

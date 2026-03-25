@@ -132,7 +132,7 @@ const TodoApp = () => {
 
   return (
     <LinearGradient
-      colors={["#02043d", "#370979", "#009dff"]}
+      colors={["#02043d", "#370979", "#0386d7"]}
       style={{ flex: 1, padding: 7, justifyContent: "flex-start" }}
     >
       <View style={{ padding: 16, paddingTop: 48, paddingBottom: 260 }}>

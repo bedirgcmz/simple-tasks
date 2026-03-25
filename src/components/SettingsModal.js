@@ -8,11 +8,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserIconImageModal from "./UserIconImageModal";
 import UserCategoriesModal from "./UserCategoriesModal";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LANG_LABELS = { en: 'EN', tr: 'TR', sv: 'SV', de: 'DE' };
 
 const SettingsModal = ({ visible, onClose }) => {
   const { setLanguage, t, username, setUsername, updateUsername, language, translateTodosCategories, STORAGE_USERNAME_LANGUAGE, userIconImage } = useTodoListContext();
+  const insets = useSafeAreaInsets();
   const [isEnableUsername, setIsEnableUsername] = useState(false);
   const [isUserIconImageModalOpen, setIsUserIconImageModalOpen] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -50,10 +52,10 @@ const SettingsModal = ({ visible, onClose }) => {
           style={{ width: '62%', height: '100%' }}
         >
           <LinearGradient
-            colors={["#07051a", "#130b30", "#0b1a45"]}
+            colors={["#02043d", "#3f127e", "#0671b4"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0.5, y: 1 }}
-            style={{ flex: 1, paddingTop: 54, paddingHorizontal: 18, paddingBottom: 36 }}
+            style={{ flex: 1, paddingTop: 54, paddingHorizontal: 18, paddingBottom: Math.max(insets.bottom, 10) + 55 }}
           >
             {/* ── Header ── */}
             <View style={{
@@ -162,7 +164,7 @@ const SettingsModal = ({ visible, onClose }) => {
               }}
             >
               <Ionicons name="folder-open-outline" size={15} color="#c4b5fd" />
-              <Text style={{ color: '#c4b5fd', fontSize: 13, fontWeight: '600' }}>
+              <Text style={{ color: '#c4b5fd', fontSize: 12, fontWeight: '600' }}>
                 {t("Personal_Categories")}
               </Text>
             </TouchableOpacity>
