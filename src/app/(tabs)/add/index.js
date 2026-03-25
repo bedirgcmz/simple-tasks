@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StatusBar,
-  ImageBackground,
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
@@ -155,10 +154,11 @@ const AddTodoPage = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ImageBackground
-          source={require("../../../../assets/images/bg-add.jpg")}
-          resizeMode="cover"
-          style={{ flex: 1, paddingTop: 4, paddingBottom: 80 }}
+        <LinearGradient
+          colors={["#07051a", "#130b30", "#0b1a45"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.4, y: 1 }}
+          style={{ flex: 1, paddingTop: 40, paddingBottom: 80 }}
         >
           <ScrollView
             contentContainerStyle={{ paddingBottom: 16 }}
@@ -434,7 +434,7 @@ const AddTodoPage = () => {
             </View>
             <StatusBar style="light" backgroundColor="transparent" translucent />
           </ScrollView>
-        </ImageBackground>
+        </LinearGradient>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
