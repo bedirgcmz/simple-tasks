@@ -6,7 +6,7 @@ import { calculateDaysLeft } from "../utils/date-utils";
 import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
 import { playSuccessSound } from "../utils/play-success-sound";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { getStatusColor } from "../theme/themeColors";
 
 const TodoCard = ({ todo, fromText, setIsLoading }) => {

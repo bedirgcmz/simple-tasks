@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTodoListContext } from "../context/todos-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { calculateDaysLeft, calculateReminderDateTime, shouldShowOffIcon } from "../utils/date-utils";
 
 const MONTH_NAMES = {
