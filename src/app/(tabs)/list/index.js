@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Image, StatusBar } from "react-native";
+import { View, Text, ScrollView, Image, StatusBar } from "react-native"; // ScrollView kept for outer scroll
 import { useTodoListContext } from "../../../context/todos-context";
 import TodoCard from "../../../components/TodoCard";
 import TodoDoneAnimation from "../../../components/TodoDoneAnimation";
@@ -177,7 +177,7 @@ const TodoBoardScreen = () => {
 
               {/* Content */}
               {section.todos.length > 0 ? (
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View>
                   {section.todos.map((todo) => (
                     <TodoCard
                       key={todo.id}
@@ -186,7 +186,7 @@ const TodoBoardScreen = () => {
                       setIsLoading={setIsLoading}
                     />
                   ))}
-                </ScrollView>
+                </View>
               ) : (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 4 }}>
                   <Text style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
