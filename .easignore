@@ -34,3 +34,33 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# --- Big / generated ---
+node_modules
+.expo
+android
+ios
+
+# --- Inspect & local artifacts ---
+inspect-output
+inspect-prebuild
+inspect-postbuild
+out_apks
+out.apks
+tools
+
+# --- OS / logs ---
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# --- Build outputs ---
+*.apk
+*.aab
+*.apks
+
+# --- Misc ---
+*.hprof
+EOF

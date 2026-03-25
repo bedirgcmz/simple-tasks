@@ -1,8 +1,23 @@
-import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 
+// expo-notifications is NOT available in Expo Go on Android (SDK 53+)
+const isExpoGo = Constants.executionEnvironment === "storeClient";
+
 export async function registerForPushNotificationsAsync() {
+  if (isExpoGo) {
+    console.warn("⚠️ Push notifications not available in Expo Go");
+    return null;
+  }
+
+  let Notifications;
+  try {
+    Notifications = require("expo-notifications");
+  } catch (error) {
+    console.warn("⚠️ expo-notifications not available:", error.message);
+    return null;
+  }
+
   let token;
 
   if (Device.isDevice) {

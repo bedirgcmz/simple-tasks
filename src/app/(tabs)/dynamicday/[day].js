@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams, router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -11,78 +11,106 @@ import LottieView from "lottie-react-native";
 
 const DaysTodos = () => {
   const { day } = useLocalSearchParams();
-  const [thisDaysTodos, setThisDaysTodos] = useState([])
+  const [thisDaysTodos, setThisDaysTodos] = useState([]);
   const { todos, t } = useTodoListContext();
   const [modalVisible, setModalVisible] = useState(false);
-  const [rotated, setRotated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const ThisDayTodos = () => {
-    
-    const filteredTodos = todos.filter((todo) => todo.dueDate === day);
-    setThisDaysTodos(filteredTodos) ;
-  }
-
   useEffect(() => {
-    ThisDayTodos();
-  }, [day, todos])
+    setThisDaysTodos(todos.filter((todo) => todo.dueDate === day));
+  }, [day, todos]);
 
-
+  const doneCount = thisDaysTodos.filter((t) => t.status === 'done').length;
 
   return (
     <LinearGradient
-    colors={["#01061b", "#431127", "#931e36"]}
-      style={{ flex: 1, padding: 7, justifyContent: "start" }}
+      colors={["#02043d", "#3f127e", "#0671b4"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0.4, y: 1 }}
+      style={{ flex: 1, paddingTop: 44 }}
     >
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
 
-    <ScrollView className="mt-12 z-10 max-h-[75%] px-2 pr-3"
-    contentContainerStyle={{flexDirection: "row", flexWrap: "wrap", alignItems:"start", justifyContent: "space-between", paddingBottom:20}}
-    >
-      {thisDaysTodos.length !== 0 && 
-      <View className="text-center pt-4 pb-2 flex-col items-center justify-centerv w-full">
-        <Text className="font-bold text-yellow-600 text-lg">{day}</Text>
-        <Text className="text-white text-lg text center">{t("todos_of_the_day")}</Text>
-      </View>}
-        <TodoDoneAnimation />
-      
-      {thisDaysTodos.map((todo, index) => (
-        <View key={index} className="mb-4 w-[47%] ml-[4px] mr-[-8px] mb-3">
-          <TodoCard todo={todo} bgColor={"bg-[#bb4d0015]"} fromText={day} setIsLoading={setIsLoading}/>
-        </View>
-      ))}
-      {
-        thisDaysTodos.length === 0 && (
-          <View className="flex-1 items-center justify-center pt-8">
-            <Text className="text-2xl text-white text-center mb-3">{t("No_ToDos_found")}</Text>
-            <Text className="text-2xl text-yellow-600">{day}</Text>
-          </View>
-        )
-      }
-    </ScrollView>
-      <TouchableOpacity
-            className="bg-[#001d3d] h-10 w-[110px] pb-2 pr-4 rounded-full items-center flex-row gap-2 justify-center absolute bottom-[110px] right-[36%] z-30" 
+      {/* ── Header ── */}
+      <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <TouchableOpacity
             onPress={() => router.back()}
-            
+            style={{
+              flexDirection: 'row', alignItems: 'center', gap: 4,
+              backgroundColor: 'rgba(255,255,255,0.08)',
+              borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)',
+              borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6,
+            }}
           >
-            <Ionicons name="chevron-back-outline" size={24} color="white" />
-            <Text className="text-white text-md font-bold">{t("Back_Button")}</Text>
+            <Ionicons name="chevron-back-outline" size={16} color="rgba(255,255,255,0.70)" />
+            <Text style={{ color: 'rgba(255,255,255,0.70)', fontSize: 13, fontWeight: '600' }}>
+              {t("Back_Button")}
+            </Text>
+          </TouchableOpacity>
 
-      </TouchableOpacity>
-      <TouchableOpacity
-        className={`bg-[#001d3d] w-14 h-14 rounded-full items-center justify-center absolute bottom-[80px] right-5 z-50 transform transition-transform duration-300 ease-in-out${
-          rotated ? "rotate-45" : "rotate-0"
-        }`}
-        onPress={() => {
-          setRotated(true);
-          setModalVisible(true);
+          {thisDaysTodos.length > 0 && (
+            <Text style={{ color: 'rgba(255,255,255,0.40)', fontSize: 12 }}>
+              {doneCount}/{thisDaysTodos.length} {t("Done")}
+            </Text>
+          )}
+        </View>
+
+        {/* Date title */}
+        <View style={{ marginTop: 14 }}>
+          <Text style={{ color: '#fbbf24', fontSize: 13, fontWeight: '600', marginBottom: 2 }}>
+            {day}
+          </Text>
+          <Text style={{ color: 'white', fontSize: 20, fontWeight: '800' }}>
+            {t("todos_of_the_day")}
+          </Text>
+        </View>
+      </View>
+
+      {/* ── Todo grid ── */}
+      <ScrollView
+        contentContainerStyle={{
+          flexDirection: 'row', flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          paddingHorizontal: 12, paddingBottom: 120,
         }}
       >
-        {/* <Text className="text-4xl text-white">+</Text> */}
+        <TodoDoneAnimation />
+
+        {thisDaysTodos.map((todo, index) => (
+          <View key={index} style={{ width: '48%', marginBottom: 10 }}>
+            <TodoCard todo={todo} fromText={day} setIsLoading={setIsLoading} />
+          </View>
+        ))}
+
+        {thisDaysTodos.length === 0 && (
+          <View style={{ flex: 1, alignItems: 'center', paddingTop: 80, gap: 10 }}>
+            <Ionicons name="calendar-outline" size={48} color="rgba(255,255,255,0.18)" />
+            <Text style={{ color: 'rgba(255,255,255,0.35)', fontSize: 15, textAlign: 'center' }}>
+              {t("No_ToDos_found")}
+            </Text>
+            <Text style={{ color: '#fbbf24', fontSize: 13, fontWeight: '600' }}>{day}</Text>
+          </View>
+        )}
+      </ScrollView>
+
+      {/* ── FAB (add) ── */}
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+        style={{
+          position: 'absolute', bottom: 100, right: 20, zIndex: 50,
+          width: 56, height: 56, borderRadius: 28,
+          backgroundColor: 'rgba(251,146,60,0.20)',
+          borderWidth: 1.5, borderColor: 'rgba(251,146,60,0.50)',
+          alignItems: 'center', justifyContent: 'center',
+          shadowColor: '#fb923c', shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 4 },
+        }}
+      >
         <LottieView
           source={require("../../../../assets/data/plusIcon.json")}
           autoPlay
           loop
-          speed={.6}
+          speed={0.6}
           style={{ width: 60, height: 60 }}
         />
       </TouchableOpacity>
@@ -90,25 +118,20 @@ const DaysTodos = () => {
       <QuickAddTodoModal
         visible={modalVisible}
         selectedDate={day}
-        onClose={() => {
-          setModalVisible(false);
-          setRotated(false);
-        }}
+        onClose={() => setModalVisible(false)}
       />
-      {
-        isLoading &&
+
+      {isLoading && (
         <LottieView
-            source={require("../../../../assets/data/loadingAddTodo.json")}
-            className="absolute left-[35%] top-[45%] z-[3333]"
-            autoPlay
-            loop
-            speed={1.2}
-            style={{ width: 140, height: 140 }}
-          />
-      }
+          source={require("../../../../assets/data/loadingAddTodo.json")}
+          style={{ position: 'absolute', left: '35%', top: '45%', width: 140, height: 140, zIndex: 3333 }}
+          autoPlay
+          loop
+          speed={1.2}
+        />
+      )}
     </LinearGradient>
+  );
+};
 
-  )
-}
-
-export default DaysTodos
+export default DaysTodos;

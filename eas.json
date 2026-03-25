@@ -6,6 +6,7 @@
   },
   "build": {
     "development": {
+      "node": "20.19.4",
       "developmentClient": true,
       "distribution": "internal",
       "android": {
@@ -13,15 +14,18 @@
       }
     },
     "preview": {
+      "node": "20.19.4",
       "distribution": "internal",
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
+      "node": "20.19.4",
       "autoIncrement": true,
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "app-bundle",
+        "image": "sdk-55"
       }
     }
   },

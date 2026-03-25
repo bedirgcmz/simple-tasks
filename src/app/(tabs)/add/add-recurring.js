@@ -7,6 +7,9 @@ import {
   ScrollView,
   Keyboard,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTodoListContext } from "../../../context/todos-context";
@@ -21,52 +24,49 @@ import uuid from "react-native-uuid";
 import CustomRemindPicker from "../../../components/CustomRemindPicker";
 import translations from "../../../locales/translations";
 import { scheduleNotification } from "../../../utils/notificationUtils";
-import { testNotificationLog } from "../../../utils/test";
 import { playCorrectSound } from "../../../utils/play-success-sound";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { LinearGradient } from "expo-linear-gradient";
 
+// ── Shared styles ──────────────────────────────────────────
+const glassField = {
+  backgroundColor: 'rgba(255,255,255,0.08)',
+  borderWidth: 1,
+  borderColor: 'rgba(255,255,255,0.15)',
+  borderRadius: 14,
+};
+
+const SectionLabel = ({ icon, label }) => (
+  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+    <Ionicons name={icon} size={13} color="#60a5fa" />
+    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '600', letterSpacing: 1.5, textTransform: 'uppercase' }}>
+      {label}
+    </Text>
+  </View>
+);
+
+// ── Weekday data ───────────────────────────────────────────
 const weekDays = {
   en: [
-    { id: 1, label: "Mon" },
-    { id: 2, label: "Tue" },
-    { id: 3, label: "Wed" },
-    { id: 4, label: "Thu" },
-    { id: 5, label: "Fri" },
-    { id: 6, label: "Sat" },
-    { id: 0, label: "Sun" },
+    { id: 1, label: "Mon" }, { id: 2, label: "Tue" }, { id: 3, label: "Wed" },
+    { id: 4, label: "Thu" }, { id: 5, label: "Fri" }, { id: 6, label: "Sat" }, { id: 0, label: "Sun" },
   ],
   tr: [
-    { id: 1, label: "Pzt" },
-    { id: 2, label: "Sal" },
-    { id: 3, label: "Çar" },
-    { id: 4, label: "Per" },
-    { id: 5, label: "Cum" },
-    { id: 6, label: "Cmt" },
-    { id: 0, label: "Paz" },
+    { id: 1, label: "Pzt" }, { id: 2, label: "Sal" }, { id: 3, label: "Çar" },
+    { id: 4, label: "Per" }, { id: 5, label: "Cum" }, { id: 6, label: "Cmt" }, { id: 0, label: "Paz" },
   ],
   sv: [
-    { id: 1, label: "Mån" },
-    { id: 2, label: "Tis" },
-    { id: 3, label: "Ons" },
-    { id: 4, label: "Tors" },
-    { id: 5, label: "Fre" },
-    { id: 6, label: "Lör" },
-    { id: 0, label: "Sön" },
+    { id: 1, label: "Mån" }, { id: 2, label: "Tis" }, { id: 3, label: "Ons" },
+    { id: 4, label: "Tors" }, { id: 5, label: "Fre" }, { id: 6, label: "Lör" }, { id: 0, label: "Sön" },
   ],
   de: [
-    { id: 1, label: "Mo" },
-    { id: 2, label: "Di" },
-    { id: 3, label: "Mi" },
-    { id: 4, label: "Do" },
-    { id: 5, label: "Fr" },
-    { id: 6, label: "Sa" },
-    { id: 0, label: "So" },
+    { id: 1, label: "Mo" }, { id: 2, label: "Di" }, { id: 3, label: "Mi" },
+    { id: 4, label: "Do" }, { id: 5, label: "Fr" }, { id: 6, label: "Sa" }, { id: 0, label: "So" },
   ],
 };
 
-
 const AddRecurringTodoPage = () => {
-  const { addTodo, t, getCategories, addUserCategory, language, todos } =
-    useTodoListContext();
+  const { addTodo, t, getCategories, addUserCategory, language } = useTodoListContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedDays, setSelectedDays] = useState([]);
@@ -76,56 +76,41 @@ const AddRecurringTodoPage = () => {
   const [category, setCategory] = useState("");
   const [reminderTime, setReminderTime] = useState("5 minutes before");
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
-  const doneRefCat = useRef();
   const [opacity, setOpacity] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
+  const doneRefTit = useRef();
+  const doneRefDec = useRef();
+  const doneRefCat = useRef();
+  const doneRefEndDate = useRef();
+  const successRef = useRef();
 
+  // ── Logic (unchanged) ──────────────────────────────────
   const handleReminderChange = (selectedLabel) => {
-    let englishValue = "5 minutes before"; // Default value
-
-    if (
-      selectedLabel === translations[language].reminderTime._5_minutes_before
-    ) {
+    let englishValue = "5 minutes before";
+    if (selectedLabel === translations[language].reminderTime._5_minutes_before) {
       englishValue = "5 minutes before";
-    } else if (
-      selectedLabel === translations[language].reminderTime._10_minutes_before
-    ) {
+    } else if (selectedLabel === translations[language].reminderTime._10_minutes_before) {
       englishValue = "10 minutes before";
-    } else if (
-      selectedLabel === translations[language].reminderTime._30_minutes_before
-    ) {
+    } else if (selectedLabel === translations[language].reminderTime._30_minutes_before) {
       englishValue = "30 minutes before";
-    } else if (
-      selectedLabel === translations[language].reminderTime._1_hour_before
-    ) {
+    } else if (selectedLabel === translations[language].reminderTime._1_hour_before) {
       englishValue = "1 hour before";
-    } else if (
-      selectedLabel === translations[language].reminderTime._2_hours_before
-    ) {
+    } else if (selectedLabel === translations[language].reminderTime._2_hours_before) {
       englishValue = "2 hours before";
-    } else if (
-      selectedLabel === translations[language].reminderTime._6_hours_before
-    ) {
+    } else if (selectedLabel === translations[language].reminderTime._6_hours_before) {
       englishValue = "6 hours before";
-    } else if (
-      selectedLabel === translations[language].reminderTime._1_day_before
-    ) {
+    } else if (selectedLabel === translations[language].reminderTime._1_day_before) {
       englishValue = "1 day before";
-    } else if (
-      selectedLabel === translations[language].reminderTime._1_week_before
-    ) {
+    } else if (selectedLabel === translations[language].reminderTime._1_week_before) {
       englishValue = "1 week before";
     }
-
     setReminderTime(englishValue);
   };
 
   const toggleDay = (day) => {
-    setSelectedDays((prevDays) =>
-      prevDays.includes(day)
-        ? prevDays.filter((d) => d !== day)
-        : [...prevDays, day]
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
   };
 
@@ -134,9 +119,7 @@ const AddRecurringTodoPage = () => {
       Alert.alert(t("Fill_all_fields"), t("non_optional_field"));
       return;
     }
-
     setIsLoading(true);
-
     const groupId = uuid.v4();
     const createdTodos = [];
     const today = moment().startOf("day");
@@ -148,24 +131,18 @@ const AddRecurringTodoPage = () => {
       if (selectedDays.includes(currentDay)) {
         const baseTodo = {
           id: uuid.v4(),
-          title,
-          description,
-          category,
+          title, description, category,
           status: "pending",
           createdAt: moment().toISOString(),
           dueDate: current.format("YYYY-MM-DD"),
-          dueTime,
-          reminderTime,
+          dueTime, reminderTime,
           completedAt: null,
           isRecurring: true,
           repeatGroupId: groupId,
           repeatDays: selectedDays,
         };
-
         const notificationId = await scheduleNotification(baseTodo, t, language);
-        const finalTodo = { ...baseTodo, notificationId };
-
-        createdTodos.push(finalTodo);
+        createdTodos.push({ ...baseTodo, notificationId });
       }
       current.add(1, "day");
     }
@@ -178,15 +155,10 @@ const AddRecurringTodoPage = () => {
     playCorrectSound();
     playSuccess();
     Alert.alert(t("Recurring_todos_added"));
-    // router.push("/filter");
     setTimeout(() => {
       router.push({ pathname: `/filter`, params: { from: category } });
     }, 500);
   };
-  const doneRefTit = useRef();
-  const doneRefDec = useRef();
-  const doneRefEndDate = useRef();
-  const doneRefDat = useRef();
 
   const handleCategorySelection = (selectedCategory) => {
     if (selectedCategory === "New Category") {
@@ -198,240 +170,276 @@ const AddRecurringTodoPage = () => {
     }
   };
 
-  const successRef = useRef();
   const playSuccess = () => {
-      setOpacity(1); // Görünür yap
-      successRef?.current?.reset();
-      successRef?.current?.play();
-
-      setTimeout(() => {
-        setOpacity(0); // Opaklık sıfırlanır, gizlenir
-      }, 1500); // Animasyonun süresine göre ayarla
-    
+    setOpacity(1);
+    successRef?.current?.reset();
+    successRef?.current?.play();
+    setTimeout(() => setOpacity(0), 1500);
   };
 
+  // ── Render ─────────────────────────────────────────────
   return (
-    <ScrollView className="flex-1 bg-[#0d1b2a]"
-    contentContainerStyle={{ padding: 16, paddingBottom: 110 }}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <AddTodoTabs />
+        <LinearGradient
+          colors={["#02043d", "#3f127e", "#0671b4"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.4, y: 1 }}
+          style={{ flex: 1, paddingTop: 40, paddingBottom: 80 }}
+        >
+          <ScrollView
+            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+            keyboardShouldPersistTaps="handled"
+            onScrollBeginDrag={Keyboard.dismiss}
+          >
+            <AddTodoTabs />
 
-      <View className="relative ">
-      <TextInput
-        placeholder={t("Title_input")}
-        placeholderTextColor="gray"
-        value={title}
-        onChangeText={setTitle}
-        className="bg-gray-700 p-3 rounded-md text-white mt-4"
-        maxLength={60}
-      />
-          {title !== "" && (
+            {/* ── TITLE ─────────────────────────────── */}
+            <View style={{ marginTop: 20 }}>
+              <SectionLabel icon="pencil-outline" label={t("Title_input")} />
+              <View style={{ ...glassField, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, marginBottom: 4 }}>
+                <Ionicons name="pencil-outline" size={15} color="rgba(255,255,255,0.35)" />
+                <TextInput
+                  placeholder={t("Title_input")}
+                  placeholderTextColor="rgba(255,255,255,0.30)"
+                  value={title}
+                  onChangeText={setTitle}
+                  maxLength={60}
+                  style={{ flex: 1, color: 'white', paddingVertical: 13, paddingLeft: 8, fontSize: 15 }}
+                />
+                {title !== "" && (
                   <LottieView
-                    style={{ width: 27, height: 27, opacity: 1 }}
-                    className="absolute right-0 top-[20px] z-40"
+                    style={{ width: 24, height: 24 }}
                     source={require("../../../../assets/data/done2.json")}
                     ref={doneRefTit}
-                    loop={false}
-                    autoPlay={true}
-                    speed={2}
+                    loop={false} autoPlay speed={2}
                   />
                 )}
               </View>
-       <Text className="text-gray-400 text-right text-[12px] mb-2">
+              <Text style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, textAlign: 'right', marginBottom: 12 }}>
                 {title.length}/60
               </Text>
+            </View>
 
-              <View>
-
-              <TextInput
-                placeholder={t("Description_input")}
-                placeholderTextColor="gray"
-                value={description}
-                onChangeText={setDescription}
-                className="bg-gray-700 p-3 rounded-md text-white"
-                multiline
-                maxLength={200}
-              />
-              {description !== "" && (
-                <LottieView
-                  style={{ width: 27, height: 27, opacity: 1 }}
-                  className="absolute right-0 top-[5px] z-40"
-                  source={require("../../../../assets/data/done2.json")}
-                  ref={doneRefDec}
-                  loop={false}
-                  autoPlay={true}
-                  speed={2}
-                />
-              )}
+            {/* ── DESCRIPTION ───────────────────────── */}
+            <View style={{ marginBottom: 4 }}>
+              <SectionLabel icon="document-text-outline" label={t("Description_input")} />
+              <View style={{ ...glassField, paddingHorizontal: 12, paddingTop: 4 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
+                  <Ionicons name="document-text-outline" size={15} color="rgba(255,255,255,0.35)" style={{ marginTop: 13 }} />
+                  <TextInput
+                    placeholder={t("Description_input")}
+                    placeholderTextColor="rgba(255,255,255,0.30)"
+                    value={description}
+                    onChangeText={setDescription}
+                    multiline
+                    maxLength={200}
+                    style={{ flex: 1, color: 'white', paddingVertical: 13, fontSize: 14, minHeight: 60 }}
+                  />
+                  {description !== "" && (
+                    <LottieView
+                      style={{ width: 24, height: 24, marginTop: 10 }}
+                      source={require("../../../../assets/data/done2.json")}
+                      ref={doneRefDec}
+                      loop={false} autoPlay speed={2}
+                    />
+                  )}
+                </View>
               </View>
-              <Text className="text-gray-400 text-right text-[12px]">
+              <Text style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, textAlign: 'right', marginTop: 4, marginBottom: 16 }}>
                 {description.length}/200
               </Text>
+            </View>
 
-      <Text className="text-white text-md font-bold mb-2">{t("Select_a_category")}</Text>
-      <View className="flex-row flex-wrap items-center justify-start bg-gray-700 py-2 rounded-lg">
-        {getCategories()?.map((item) => (
-          <TouchableOpacity
-            key={item}
-            onPress={() => handleCategorySelection(item)}
-          >
-            <FilterByCategory
-              categoryName={item}
-              selectedCategory={category}
-              bgColor="bg-gray-700"
-              textColor="text-gray-400"
-            />
-          </TouchableOpacity>
-        ))}
-        <TouchableOpacity
-          onPress={() => handleCategorySelection("New Category")}
-          className="bg-blue-500 px-2 py-[3px] mb-1 rounded-md mx-1"
-        >
-          <Text className="text-white">{t("Create_Category")} +</Text>
-        </TouchableOpacity>
-        {category !== "" && (
-          <LottieView
-            style={{ width: 27, height: 27, opacity: 1 }}
-            className="absolute right-0 top-[0px] z-40"
-            source={require("../../../../assets/data/done2.json")}
-            ref={doneRefCat}
-            loop={false}
-            autoPlay={true}
-            speed={2}
-          />
-        )}
-      </View>
-
-      <CategoryModal
-        isVisible={isCategoryModalVisible}
-        onClose={() => setIsCategoryModalVisible(false)}
-        onAddCategory={addUserCategory}
-        setCategory={setCategory}
-        t={t}
-      />
-
-      <Text className="text-white text-md font-bold mb-2 mt-4">
-        {t("Select_repeat_days")}
-      </Text>
-      <View className="flex-row flex-wrap">
-        {weekDays[language].map((day) => (
-          <TouchableOpacity
-            key={day.id}
-            onPress={() => toggleDay(day.id)}
-            className={`px-4 py-2 m-1 rounded-md ${
-              selectedDays.includes(day.id) ? "bg-blue-500" : "bg-gray-700"
-            }`}
-          >
-            <Text
-              className={`text-gray-400 ${
-                selectedDays.includes(day.id) ? "text-white" : ""
-              }`}
-            >
-              {day.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <TimePicker
-        setDueTime={setDueTime}
-        defaultTime={dueTime}
-        bgColor="bg-gray-700"
-        textColor="text-white"
-      />
-
-      <Text className="text-white text-md text-left w-full font-bold mb-2">
-        {t("Select_a_remind_time")}
-      </Text>
-      <CustomRemindPicker
-        bgColor="bg-gray-700"
-        textColor="text-white"
-        options={Object.values(translations[language].reminderTime)}
-        selectedValue={
-          translations[language].reminderTime[
-            Object.keys(translations["en"].reminderTime).find(
-              (key) => translations["en"].reminderTime[key] === reminderTime
-            )
-          ] || translations[language].reminderTime._5_minutes_before
-        }
-        onValueChange={handleReminderChange}
-      />
-
-      <Text className="text-white text-md font-bold mb-2 mt-4">
-        {t("Select_repeat_end_date")}
-      </Text>
-      <View>
-        <TouchableOpacity
-          onPress={() => setShowDatePicker(true)}
-          className="bg-gray-700 p-3 rounded-md text-white"
-        >
-          <Text className="text-white">
-            {repeatEndDate
-              ? moment(repeatEndDate).format("YYYY-MM-DD")
-              : t("Select_a_date")}
-          </Text>
-        </TouchableOpacity>
-        {repeatEndDate !== null && (
+            {/* ── CATEGORY ──────────────────────────── */}
+            <View style={{ marginBottom: 16 }}>
+              <SectionLabel icon="folder-outline" label={t("Select_a_category")} />
+              <View style={{ ...glassField, padding: 12, flexDirection: 'row', flexWrap: 'wrap', position: 'relative' }}>
+                {getCategories()?.map((item) => (
+                  <TouchableOpacity key={item} onPress={() => handleCategorySelection(item)}>
+                    <FilterByCategory categoryName={item} selectedCategory={category} />
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity
+                  onPress={() => handleCategorySelection("New Category")}
+                  style={{
+                    backgroundColor: 'rgba(167,139,250,0.20)',
+                    borderWidth: 1,
+                    borderColor: 'rgba(167,139,250,0.40)',
+                    borderRadius: 20,
+                    paddingHorizontal: 12,
+                    paddingVertical: 5,
+                    marginBottom: 6,
+                    marginRight: 6,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
+                  <Ionicons name="add" size={14} color="#c4b5fd" />
+                  <Text style={{ color: '#c4b5fd', fontSize: 13, fontWeight: '600' }}>
+                    {t("Create_Category")}
+                  </Text>
+                </TouchableOpacity>
+                {category !== "" && (
                   <LottieView
-                    style={{ width: 27, height: 27, opacity: 1 }}
-                    className="absolute right-0 top-[5px] z-40"
+                    style={{ width: 24, height: 24, position: 'absolute', right: 4, top: 4 }}
                     source={require("../../../../assets/data/done2.json")}
-                    ref={doneRefEndDate}
-                    loop={false}
-                    autoPlay={true}
-                    speed={2}
+                    ref={doneRefCat}
+                    loop={false} autoPlay speed={2}
                   />
                 )}
-      </View>
-      {showDatePicker && (
-        <DateTimePicker
-          textColor="white"
-          style={{ color: "white" }}
-          value={repeatEndDate || new Date()}
-          mode="date"
-          display="default"
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false);
-            if (selectedDate) setRepeatEndDate(selectedDate);
-          }}
-        />
-      )}
+              </View>
+            </View>
 
-      <TouchableOpacity
-          onPress={() => {
-            handleAddRecurringTodo();
-            Keyboard.dismiss();
-          }}
-        className="bg-red-400 p-4 rounded-md mt-6 h-[52px]"
-      >
-        {
-          isLoading ? (
-            <LottieView
-            source={require("../../../../assets/data/loadingAddTodo.json")}
-            className="absolute left-[42%] top-[-16px]"
-            autoPlay
-            loop
-            speed={1.2}
-            style={{ width: 80, height: 80 }}
-          />
-          ) : (
-            <Text className="text-white text-center font-bold">
-              {t("Add_Recurring_Todos")}
-            </Text>
-          )
-        }
-         <LottieView
-                  style={{ width: 45, height: 45, opacity: opacity }}
-                  className="absolute left-0"
+            <CategoryModal
+              isVisible={isCategoryModalVisible}
+              onClose={() => setIsCategoryModalVisible(false)}
+              onAddCategory={addUserCategory}
+              setCategory={setCategory}
+              t={t}
+            />
+
+            {/* ── REPEAT DAYS ───────────────────────── */}
+            <View style={{ marginBottom: 16 }}>
+              <SectionLabel icon="repeat-outline" label={t("Select_repeat_days")} />
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                {weekDays[language]?.map((day) => {
+                  const isSelected = selectedDays.includes(day.id);
+                  return (
+                    <TouchableOpacity
+                      key={day.id}
+                      onPress={() => toggleDay(day.id)}
+                      style={{
+                        paddingHorizontal: 14,
+                        paddingVertical: 8,
+                        borderRadius: 12,
+                        backgroundColor: isSelected ? 'rgba(96,165,250,0.25)' : 'rgba(255,255,255,0.08)',
+                        borderWidth: 1,
+                        borderColor: isSelected ? 'rgba(96,165,250,0.55)' : 'rgba(255,255,255,0.14)',
+                      }}
+                    >
+                      <Text style={{
+                        color: isSelected ? '#93c5fd' : 'rgba(255,255,255,0.55)',
+                        fontWeight: isSelected ? '700' : '500',
+                        fontSize: 13,
+                      }}>
+                        {day.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* ── TIME PICKER ───────────────────────── */}
+            <TimePicker setDueTime={setDueTime} defaultTime={dueTime} />
+
+            {/* ── REMINDER ──────────────────────────── */}
+            <View style={{ marginBottom: 16 }}>
+              <SectionLabel icon="notifications-outline" label={t("Select_a_remind_time")} />
+              <CustomRemindPicker
+                options={Object.values(translations[language].reminderTime)}
+                selectedValue={
+                  translations[language].reminderTime[
+                    Object.keys(translations["en"].reminderTime).find(
+                      (key) => translations["en"].reminderTime[key] === reminderTime
+                    )
+                  ] || translations[language].reminderTime._5_minutes_before
+                }
+                onValueChange={handleReminderChange}
+              />
+            </View>
+
+            {/* ── REPEAT END DATE ───────────────────── */}
+            <View style={{ marginBottom: 28 }}>
+              <SectionLabel icon="calendar-outline" label={t("Select_repeat_end_date")} />
+              <TouchableOpacity
+                onPress={() => setShowDatePicker(true)}
+                style={{
+                  ...glassField,
+                  borderColor: repeatEndDate ? 'rgba(96,165,250,0.35)' : 'rgba(255,255,255,0.15)',
+                  paddingHorizontal: 14,
+                  paddingVertical: 13,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <Ionicons
+                  name="calendar-outline"
+                  size={16}
+                  color={repeatEndDate ? '#60a5fa' : 'rgba(255,255,255,0.35)'}
+                />
+                <Text style={{
+                  flex: 1,
+                  color: repeatEndDate ? 'white' : 'rgba(255,255,255,0.35)',
+                  fontWeight: repeatEndDate ? '600' : '400',
+                  fontSize: 15,
+                }}>
+                  {repeatEndDate ? moment(repeatEndDate).format("YYYY-MM-DD") : t("Select_a_date")}
+                </Text>
+                {repeatEndDate !== null && (
+                  <LottieView
+                    style={{ width: 24, height: 24 }}
+                    source={require("../../../../assets/data/done2.json")}
+                    ref={doneRefEndDate}
+                    loop={false} autoPlay speed={2}
+                  />
+                )}
+              </TouchableOpacity>
+
+              {showDatePicker && (
+                <DateTimePicker
+                  value={repeatEndDate || new Date()}
+                  mode="date"
+                  display="default"
+                  style={{ backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 14, marginTop: 8 }}
+                  onChange={(_event, selectedDate) => {
+                    setShowDatePicker(false);
+                    if (selectedDate) setRepeatEndDate(selectedDate);
+                  }}
+                />
+              )}
+            </View>
+
+            {/* ── ADD BUTTON ────────────────────────── */}
+            <LinearGradient
+              colors={['#fb923c', '#ea580c']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ borderRadius: 16, overflow: 'hidden' }}
+            >
+              <TouchableOpacity
+                onPress={() => { handleAddRecurringTodo(); Keyboard.dismiss(); }}
+                style={{ height: 56, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
+              >
+                {isLoading ? (
+                  <LottieView
+                    source={require("../../../../assets/data/loadingAddTodo.json")}
+                    autoPlay loop speed={1.2}
+                    style={{ width: 80, height: 80, position: 'absolute' }}
+                  />
+                ) : (
+                  <Text style={{ color: 'white', fontWeight: '700', fontSize: 16, letterSpacing: 0.3 }}>
+                    {t("Add_Recurring_Todos")}
+                  </Text>
+                )}
+                <LottieView
+                  style={{ width: 45, height: 45, opacity, position: 'absolute', left: 0 }}
                   source={require("../../../../assets/data/success.json")}
                   ref={successRef}
-                  loop={false}
-                  autoPlay={false}
-                  speed={1.5}
+                  loop={false} autoPlay={false} speed={1.5}
                 />
-      
-      </TouchableOpacity>
-    </ScrollView>
+              </TouchableOpacity>
+            </LinearGradient>
+
+          </ScrollView>
+          <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+        </LinearGradient>
+    </KeyboardAvoidingView>
   );
 };
 

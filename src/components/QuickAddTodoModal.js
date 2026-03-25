@@ -1,5 +1,4 @@
-// components/QuickAddTodoModal.js
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   View,
@@ -10,6 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import LottieView from "lottie-react-native";
 import { useTodoListContext } from "../context/todos-context";
 import uuid from "react-native-uuid";
@@ -17,8 +18,27 @@ import TimePicker from "./TimePicker";
 import CustomRemindPicker from "./CustomRemindPicker";
 import FilterByCategory from "./FilterByCategory";
 import translations from "../locales/translations";
-import moment from "moment-timezone";
 import { scheduleNotification } from "../utils/notificationUtils";
+
+const SectionLabel = ({ icon, label }) => (
+  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8, marginTop: 14 }}>
+    <Ionicons name={icon} size={13} color="rgba(255,255,255,0.45)" />
+    <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.7 }}>
+      {label}
+    </Text>
+  </View>
+);
+
+const glassField = {
+  backgroundColor: 'rgba(255,255,255,0.07)',
+  borderWidth: 1,
+  borderColor: 'rgba(255,255,255,0.13)',
+  borderRadius: 12,
+  paddingHorizontal: 14,
+  paddingVertical: 11,
+  color: 'white',
+  fontSize: 15,
+};
 
 const QuickAddTodoModal = ({ visible, onClose, selectedDate }) => {
   const { t, addTodo, language, getCategories } = useTodoListContext();
@@ -27,8 +47,6 @@ const QuickAddTodoModal = ({ visible, onClose, selectedDate }) => {
   const [category, setCategory] = useState("");
   const [dueTime, setDueTime] = useState("12:00");
   const [reminderTime, setReminderTime] = useState("5 minutes before");
-
-  const successRef = useRef();
 
   const handleReminderChange = (selectedLabel) => {
     const options = translations[language].reminderTime;
@@ -60,67 +78,138 @@ const QuickAddTodoModal = ({ visible, onClose, selectedDate }) => {
 
     const notificationId = await scheduleNotification(newTodo, t, language);
     addTodo({ ...newTodo, notificationId });
-    onClose(); // modal'ı kapat
 
-    // State reset (opsiyonel)
     setTitle("");
     setDescription("");
     setCategory("");
     setDueTime("12:00");
     setReminderTime("5 minutes before");
+    onClose();
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1 justify-end">
-        <View className="bg-[#d7c8f3] rounded-t-2xl p-4 max-h-[95%] pb-16">
-            <TouchableOpacity onPress={onClose} className="absolute right-3 top-[-36px] bg-gray-400 rounded-full z-234888 w-8 h-8 text-centerflex items-center justify-center"><Text className="text-white bg-red font-bold">X</Text></TouchableOpacity>
-          <ScrollView showsVerticalScrollIndicator={false}>
+    <Modal visible={visible} animationType="slide" transparent statusBarTranslucent>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, justifyContent: 'flex-end' }}
+      >
+        {/* Backdrop */}
+        <TouchableOpacity
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.55)' }}
+          activeOpacity={1}
+          onPress={onClose}
+        />
+
+        {/* Sheet */}
+        <View style={{
+          backgroundColor: '#0e0a28',
+          borderTopLeftRadius: 24, borderTopRightRadius: 24,
+          borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1,
+          borderColor: 'rgba(255,255,255,0.12)',
+          maxHeight: '92%',
+          paddingBottom: Platform.OS === 'ios' ? 36 : 20,
+        }}>
+          {/* Handle bar */}
+          <View style={{ alignItems: 'center', paddingTop: 10, paddingBottom: 6 }}>
+            <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.20)' }} />
+          </View>
+
+          {/* Header */}
+          <View style={{
+            flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+            paddingHorizontal: 18, paddingBottom: 12,
+            borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)',
+          }}>
+            <View>
+              <Text style={{ color: 'white', fontSize: 16, fontWeight: '800' }}>{t("Add_ToDo")}</Text>
+              <Text style={{ color: '#fbbf24', fontSize: 12, fontWeight: '600', marginTop: 2 }}>{selectedDate}</Text>
+            </View>
+            <TouchableOpacity
+              onPress={onClose}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.08)',
+                borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
+                borderRadius: 20, width: 32, height: 32,
+                alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <Ionicons name="close" size={16} color="rgba(255,255,255,0.70)" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 20 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Title */}
+            <SectionLabel icon="pencil-outline" label={t("Title_input")} />
             <TextInput
               placeholder={t("Title_input")}
+              placeholderTextColor="rgba(255,255,255,0.30)"
               value={title}
               onChangeText={setTitle}
-              className="bg-white p-3 rounded mb-2"
+              style={glassField}
               maxLength={60}
             />
+            <Text style={{ color: 'rgba(255,255,255,0.30)', fontSize: 11, textAlign: 'right', marginTop: 4 }}>
+              {title.length}/60
+            </Text>
+
+            {/* Description */}
+            <SectionLabel icon="document-text-outline" label={t("Description_input")} />
             <TextInput
               placeholder={t("Description_input")}
+              placeholderTextColor="rgba(255,255,255,0.30)"
               value={description}
               onChangeText={setDescription}
-              className="bg-white p-3 rounded mb-2"
+              style={[glassField, { minHeight: 70, textAlignVertical: 'top' }]}
               multiline
               maxLength={200}
-
             />
-            <Text className="text-gray-700 font-bold mb-2">{t("Select_a_category")}</Text>
-            <View className="flex-row flex-wrap bg-white p-2 rounded mb-2">
+
+            {/* Category */}
+            <SectionLabel icon="folder-outline" label={t("Select_a_category")} />
+            <View style={{
+              backgroundColor: 'rgba(255,255,255,0.06)',
+              borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
+              borderRadius: 12, padding: 10, marginBottom: 10,
+              flexDirection: 'row', flexWrap: 'wrap', gap: 4,
+            }}>
               {getCategories().map((item) => (
-                <TouchableOpacity key={item} onPress={() => setCategory(item)} className="mr-2 mb-1">
+                <TouchableOpacity key={item} onPress={() => setCategory(item)}>
                   <FilterByCategory categoryName={item} selectedCategory={category} />
                 </TouchableOpacity>
               ))}
             </View>
 
-            <TimePicker setDueTime={setDueTime} defaultTime={false} bgColor="bg-white" textColor="text-gray-700" />
+            {/* Time */}
+            <TimePicker setDueTime={setDueTime} defaultTime={dueTime} />
 
-            <Text className="text-gray-700 font-bold mt-2 mb-1">{t("Select_a_remind_time")}</Text>
+            {/* Reminder */}
+            <SectionLabel icon="notifications-outline" label={t("Select_a_remind_time")} />
             <CustomRemindPicker
-              bgColor="bg-white"
-              textColor="text-gray-700"
               options={Object.values(translations[language].reminderTime)}
               selectedValue={
                 translations[language].reminderTime[
-                  Object.keys(translations["en"].reminderTime).find((key) => translations["en"].reminderTime[key] === reminderTime)
+                  Object.keys(translations["en"].reminderTime).find(
+                    (key) => translations["en"].reminderTime[key] === reminderTime
+                  )
                 ]
               }
               onValueChange={handleReminderChange}
             />
 
-            <TouchableOpacity
-              onPress={handleAdd}
-              className="bg-red-400  py-3 mt-4 rounded items-center justify-center"
-            >
-              <Text className="text-white font-bold">{t("Add_ToDo")}</Text>
+            {/* Add button */}
+            <TouchableOpacity onPress={handleAdd} style={{ marginTop: 20 }}>
+              <LinearGradient
+                colors={['#fb923c', '#ea580c']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={{ borderRadius: 14, paddingVertical: 14, alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Text style={{ color: 'white', fontSize: 15, fontWeight: '800' }}>{t("Add_ToDo")}</Text>
+              </LinearGradient>
             </TouchableOpacity>
           </ScrollView>
         </View>

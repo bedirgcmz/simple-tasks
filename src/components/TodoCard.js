@@ -1,16 +1,16 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import {  FontAwesome5 } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { calculateDaysLeft, truncateText } from "../utils/date-utils";
+import { calculateDaysLeft } from "../utils/date-utils";
 import { router } from 'expo-router'
 import { useTodoListContext } from '../context/todos-context';
-import {playSuccessSound} from "../utils/play-success-sound";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { playSuccessSound } from "../utils/play-success-sound";
+import { MaterialIcons } from '@expo/vector-icons';
+import { getStatusColor } from "../theme/themeColors";
 
-
-const TodoCard = ({ todo, bgColor, fromText, setIsLoading }) => {
-  const {  deleteTodo, updateTodo, setShowCongrats, t, deleteAllInGroup } = useTodoListContext();
+const TodoCard = ({ todo, fromText, setIsLoading }) => {
+  const { deleteTodo, updateTodo, setShowCongrats, t, deleteAllInGroup } = useTodoListContext();
 
   const handleDelete = () => {
     if (todo.repeatGroupId) {
@@ -22,7 +22,7 @@ const TodoCard = ({ todo, bgColor, fromText, setIsLoading }) => {
             text: t("Only_This"),
             onPress: async () => {
               setIsLoading(true)
-              await deleteTodo(todo.id); // Tek todo’yu sil
+              await deleteTodo(todo.id);
               setIsLoading(false)
             },
             style: "default",
@@ -31,7 +31,7 @@ const TodoCard = ({ todo, bgColor, fromText, setIsLoading }) => {
             text: t("Delete_All"),
             onPress: async () => {
               setIsLoading(true)
-              await deleteAllInGroup(todo.repeatGroupId); // Tüm grubu ve bildirimleri sil
+              await deleteAllInGroup(todo.repeatGroupId);
               setIsLoading(false)
             },
             style: "destructive",
@@ -66,69 +66,121 @@ const TodoCard = ({ todo, bgColor, fromText, setIsLoading }) => {
 
   const handleUpdate = () => {
     if (todo.repeatGroupId) {
-      router.push({
-        pathname: `/edit-recurring/${todo.id}`,
-        params: { from: "list" },
-      })
+      router.push({ pathname: `/edit-recurring/${todo.id}`, params: { from: "list" } })
     } else {
-      router.push({
-        pathname: `/edit/${todo.id}`,
-        params: { from: "list" },
-      })
+      router.push({ pathname: `/edit/${todo.id}`, params: { from: "list" } })
     }
   }
 
+  const isDone = todo.status === "done";
+  const statusColor = getStatusColor(todo.status);
+  const daysLeft = calculateDaysLeft(todo, t);
+
   return (
     <TouchableOpacity
-      className={`pt-3 mr-4 w-40 min-h-[190px] flex-col justify-between z-10 relative
-      rounded-lg shadow-xl border border-gray-700 ${bgColor} bgg-[#2f3e46]`}
+      activeOpacity={0.80}
       onPress={() => router.push({ pathname: `/dynamicid/${todo.id}`, params: { from: fromText } })}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.06)',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.10)',
+        borderRadius: 14,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        marginBottom: 7,
+        gap: 10,
+      }}
     >
-      {
-                todo.isRecurring && 
-              <View className="absolute right-2 top-1">
-                  <MaterialIcons name="event-repeat" size={18} color="white" />
-              </View>
-              }
-         <TouchableOpacity className="absolute bottom-[23px] left-[12px]"
-        onPress={() => 
-          {
-            updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" })
-            todo.status === "done" ?  "" : playSuccessSound()
-            setShowCongrats(todo.status === "done" ? false : true)
-          }
-        }
-         >
-            {todo.status === "done" ? (
-              <Ionicons name="checkbox" size={20} color="#fe9092" />
-            ) : (
-              <Ionicons name="square-outline" size={20} color="#e9ecef" />
-            )}
-          </TouchableOpacity>
-        <View className="px-3 flex-row justify-between items-center mb-2">
-          <Text className="text-[13px] font-bold text-white">{truncateText(todo.title, 24)}</Text>
+      {/* ── Checkbox ── */}
+      <TouchableOpacity
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        onPress={() => {
+          updateTodo(todo.id, { ...todo, status: todo.status === "done" ? "pending" : "done" });
+          todo.status === "done" ? "" : playSuccessSound();
+          setShowCongrats(todo.status === "done" ? false : true);
+        }}
+      >
+        {isDone ? (
+          <Ionicons name="checkmark-circle" size={22} color="#4ade80" />
+        ) : (
+          <Ionicons name="ellipse-outline" size={22} color="rgba(255,255,255,0.30)" />
+        )}
+      </TouchableOpacity>
+
+      {/* ── Main content ── */}
+      <View style={{ flex: 1, gap: 3 }}>
+        {/* Title row */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <Text
+            numberOfLines={1}
+            style={{
+              flex: 1,
+              color: isDone ? 'rgba(255,255,255,0.35)' : 'white',
+              fontSize: 14,
+              fontWeight: '600',
+              textDecorationLine: isDone ? 'line-through' : 'none',
+            }}
+          >
+            {todo.title}
+          </Text>
+
+          {todo.isRecurring && (
+            <MaterialIcons name="event-repeat" size={13} color="#60a5fa" />
+          )}
         </View>
-        <Text className="px-3 text-[#f8f9fa] text-[12px] flex-1">{truncateText(todo.description, 60)}</Text>
-        <View className="px-3 text-[12px] mb-1 text-white justify-start items-center flex-row">
-          <Ionicons name="time" size={18} color="white" />
-          <View className=" pl-2 flex-1 flex-row justify-between">
-            <Text className="text-[12px] text-white tracking-tighter ">{todo.dueDate}</Text><Text className="font-bold tracking-tighter  text-[12px] text-white">{todo.dueTime.slice(0, 5)}</Text>
+
+        {/* Description — optional, 1 line */}
+        {!!todo.description && (
+          <Text
+            numberOfLines={1}
+            style={{ color: 'rgba(255,255,255,0.38)', fontSize: 12 }}
+          >
+            {todo.description}
+          </Text>
+        )}
+
+        {/* Date + days-left chip */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
+          <Ionicons name="calendar-outline" size={11} color="rgba(255,255,255,0.35)" />
+          <Text style={{ color: 'rgba(255,255,255,0.40)', fontSize: 11 }}>
+            {todo.dueDate}
+            {todo.dueTime ? `  ·  ${todo.dueTime.slice(0, 5)}` : ''}
+          </Text>
+
+          {/* Status pill */}
+          <View style={{
+            marginLeft: 'auto',
+            backgroundColor: `${statusColor}22`,
+            borderWidth: 1,
+            borderColor: `${statusColor}55`,
+            borderRadius: 20,
+            paddingHorizontal: 8,
+            paddingVertical: 2,
+          }}>
+            <Text style={{ color: statusColor, fontSize: 10, fontWeight: '700' }}>
+              {daysLeft}
+            </Text>
           </View>
         </View>
-        <View className="px-3 flex-row mt-2 mb-2 items-center justify-end">
-          <TouchableOpacity className="mr-4"
-            onPress={handleUpdate} // Edit ekranına yönlendirme
-          >
-            <FontAwesome5 name="edit" size={16} color="#e9ecef" />
-          </TouchableOpacity>
-          <TouchableOpacity 
+      </View>
+
+      {/* ── Action icons ── */}
+      <View style={{ gap: 8 }}>
+        <TouchableOpacity
+          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+          onPress={handleUpdate}
+        >
+          <MaterialCommunityIcons name="pencil-outline" size={16} color="rgba(147,197,253,0.70)" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
           onPress={handleDelete}
-          
-          >
-            <FontAwesome5 name="trash" size={16} color="#e9ecef" />
-          </TouchableOpacity>
-        </View>
-        <Text className="text-black text-center text-xs bg-[#ced4da] z-[11] w-full rounded-b-lg">{calculateDaysLeft(todo, t)}</Text>
+        >
+          <MaterialCommunityIcons name="trash-can-outline" size={16} color="rgba(248,113,113,0.70)" />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
 };

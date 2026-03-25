@@ -5,24 +5,23 @@ import { useTodoListContext } from './../../context/todos-context';
 import { View } from 'react-native';
 import moment from "moment-timezone";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 
 const TabsLayout = () => {
   const { todos } = useTodoListContext(); // Context'ten todos alınıyor
   const [todayToDos, setTodayToDos] = useState([])
+  const insets = useSafeAreaInsets();
 
   // Kullanıcının saat dilimini al
   const userTimezone = moment.tz.guess();
   const isToday = (date) => {
-    // 📌 Tarih formatını düzelt ("YYYY:MM:DD" → "YYYY-MM-DD")
-    // const formattedDate = date.replace(/:/g, "-");
-  
     // 📌 `date` değişkenini yerel saat dilimiyle `moment` nesnesine çevir
     const checkDate = moment.tz(date, "YYYY-MM-DD", userTimezone).startOf("day");
-  
+
     // 📌 Bugünün tarihini yerel saat dilimiyle al ve saatlerini sıfırla
     const today = moment().tz(userTimezone).startOf("day");
-  
+
     // 📌 Günleri karşılaştır (sadece gün bazında!)
     return checkDate.isSame(today, "day");
   };
@@ -34,13 +33,13 @@ const TabsLayout = () => {
   
     const todaysTodos = todos.filter((todo) => {
       if (!todo?.dueDate || typeof todo.dueDate !== "string") return false;
-  
-      if (!validFormat.test(todo.dueDate.trim())) {
-        console.error("Tarih Okunamadı:", todo.dueDate);
-        return false;
-      }
-  
-      return isToday(todo.dueDate) && todo.status !== "done";
+
+      // Normalize ISO timestamps (e.g. "2026-03-25T10:16:58.327Z") to date-only
+      const dateStr = todo.dueDate.includes('T') ? todo.dueDate.split('T')[0] : todo.dueDate.trim();
+
+      if (!validFormat.test(dateStr)) return false;
+
+      return isToday(dateStr) && todo.status !== "done";
     });
   
     setTodayToDos(todaysTodos);
@@ -91,7 +90,7 @@ const TabsLayout = () => {
           backgroundColor: "#0d1b2a", // Tab bar arka plan rengi
           height: 45, // Tab bar yüksekliği
           position: "absolute",
-          bottom: 20, // Tab barın alt kenarı
+          bottom: Math.max(insets.bottom, 10), // Tab barın alt kenarı
           borderWidth: 1,
           borderTopWidth: 0.5, // Tab barın üstündeki sınır
           borderTopColor: "#adb5bd", // Sınır rengi

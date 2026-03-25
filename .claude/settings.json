@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(sed -i '' 's/\"\"#07051a\"\", \"\"#130b30\"\", \"\"#0b1a45\"\"/\"\"#02043d\"\", \"\"#3f127e\"\", \"\"#0671b4\"\"/g' src/components/SettingsModal.js \"src/app/\\(tabs\\)/edit/[id].js\" \"src/app/\\(tabs\\)/dynamicid/[id].js\" \"src/app/\\(tabs\\)/dynamicday/[day].js\" \"src/app/\\(tabs\\)/index.js\" \"src/app/\\(tabs\\)/filter/index.js\")",
+      "Bash(sed -i '' 's/\"\"#02043d\"\", \"\"#4b1499\"\", \"\"#0474ba\"\"/\"\"#02043d\"\", \"\"#3f127e\"\", \"\"#0671b4\"\"/g' \"src/app/\\(tabs\\)/add/add-recurring.js\" \"src/app/\\(tabs\\)/add/index.js\" \"src/app/\\(tabs\\)/list/index.js\" \"src/app/\\(tabs\\)/checklist.js\")"
+    ]
+  }
+}

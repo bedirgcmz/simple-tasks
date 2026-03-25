@@ -3,28 +3,37 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment-timezone'; // moment-timezone'ı kullandık
 import * as Localization from "expo-localization";
 import translations from "../locales/translations";
-import { scheduleNotification, cancelNotification } from "../utils/notificationUtils"; 
-import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { router } from 'expo-router'
 import { Alert } from "react-native";
-import { testNotificationLog } from '../utils/test';
-import { migrateOldTodosSafely } from "../utils/migrateUtils";
+import { migrateOldTodosSafely, migrateStorageKeys } from "../utils/migrateUtils";
+
+// Dummy notification functions (SDK 55+ Expo Go doesn't support notifications)
+const scheduleNotification = async () => {
+  console.warn("⚠️ Notifications not available in Expo Go (use dev build)");
+  return null;
+};
+
+const cancelNotification = async () => {
+  console.warn("⚠️ Notifications not available in Expo Go (use dev build)");
+  return null;
+};
+
+// Dummy Notifications object for Expo Go compatibility
+const Notifications = {
+  addNotificationResponseReceivedListener: () => ({ remove: () => {} }),
+  setNotificationChannelAsync: async () => null,
+  AndroidImportance: { MAX: 5 },
+};
 
 
-// Bildirimlerin nasıl işleneceğini tanımla
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+
+// Notifications only available with dev build (not in Expo Go)
 
 // 📌 **Bildirim Yönlendirme Durumunu İzleyen Hook**
 export function useNotificationListener(setNotificationRedirect) {
   useEffect(() => {
-    if (!setNotificationRedirect) return;
+    if (!setNotificationRedirect || !Notifications) return;
 
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
       const todoId = response.notification.request.content.data.todoId;
@@ -41,16 +50,21 @@ export function useNotificationListener(setNotificationRedirect) {
 
 // Android için özel kanal oluştur
 async function configureAndroidChannel() {
-  if (Platform.OS === "android") {
+  if (Platform.OS !== "android") return;
+
+  try {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: "#FF231F7C",
     });
+  } catch (error) {
+    console.warn("⚠️ Android notification channel config error:", error.message);
   }
 }
 
+// Safe call - no await needed for dummy version
 configureAndroidChannel();
 
 export const TodoListContext = createContext();
@@ -58,50 +72,58 @@ export const TodoListContext = createContext();
 export const TodoListProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
   const [showCongrats, setShowCongrats] = useState(false);
-  const [dueTime, setDueTime] = useState('00:00');
   const STORAGE_KEY = 'user_todos';
   const STORAGE_USERNAME_KEY = "user_username";
-  const STORAGE_USERNAME_LANGUAGE = "user_language_simpletask";
-  const STORAGE_USERNAME_IMAGE = "user_image_simpletask";
+  const STORAGE_USERNAME_LANGUAGE = "user_language";
+  const STORAGE_USERNAME_IMAGE = "user_image";
   const STORAGE_USER_CATEGORIES = "user_custom_categories";
   const [userCategories, setUserCategories] = useState([]); // Kullanıcı kategorileri
-  const deviceLanguage = Localization.locale.split("-")[0]; // Cihazın varsayılan dili
-  const defaultLanguage = ["en", "sv", "de", "tr"].includes(deviceLanguage) ? deviceLanguage : "en"; 
+  const locales = Localization.getLocales?.() ?? [];
+  const deviceLanguage = locales[0]?.languageCode || locales[0]?.languageTag?.split("-")[0] || "en";
+  const defaultLanguage = ["en", "sv", "de", "tr"].includes(deviceLanguage) ? deviceLanguage : "en";
   const [language, setLanguage] = useState(defaultLanguage); // Başlangıçta geçerli bir dil ata
   const [notificationRedirect, setNotificationRedirect] = useState(null); // 📌 Bildirim yönlendirme durumu
   const [username, setUsername] = useState("");
   const [userIconImage, setUserIconImage] = useState("icon24");
-  const t = (key) => translations[language][key] || key;
+  const [isTodosReady, setIsTodosReady] = useState(false);
+  const t = (key) => translations?.[language]?.[key] || key;
 
 //  useEffect içinde async fonksiyon ile resim ve dil secimini baslangicta yukle
 useEffect(() => {
-  const loadUserLanguage = async () => {
-    try {
-      const storedUserLanguage = await AsyncStorage.getItem(STORAGE_USERNAME_LANGUAGE);
-      if (storedUserLanguage && ["en", "sv", "de", "tr"].includes(storedUserLanguage)) {
-        setLanguage(storedUserLanguage); //  Kayıtlı dili yükle
-      } else {
-        await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, defaultLanguage);
-        setLanguage(defaultLanguage); //  Geçerli dili ata
+  const initializeApp = async () => {
+    // 📌 Run storage keys migration once
+    await migrateStorageKeys();
+
+    // Load user settings
+    const loadUserLanguage = async () => {
+      try {
+        const storedUserLanguage = await AsyncStorage.getItem(STORAGE_USERNAME_LANGUAGE);
+        if (storedUserLanguage && ["en", "sv", "de", "tr"].includes(storedUserLanguage)) {
+          setLanguage(storedUserLanguage); //  Kayıtlı dili yükle
+        } else {
+          await AsyncStorage.setItem(STORAGE_USERNAME_LANGUAGE, defaultLanguage);
+          setLanguage(defaultLanguage); //  Geçerli dili ata
+        }
+      } catch (error) {
+        console.error("❌ Error loading language:", error);
       }
-    } catch (error) {
-      console.error("❌ Error loading language:", error);
-    }
-  };
-  const loadUserImage = async () => {
-    try {
-      const storedUserImage = await AsyncStorage.getItem(STORAGE_USERNAME_IMAGE);
-      if (storedUserImage) {
-        setUserIconImage(storedUserImage); //  Kayıtlı resmi yükle
-      } else {
-        await AsyncStorage.setItem(STORAGE_USERNAME_IMAGE, userIconImage);
+    };
+    const loadUserImage = async () => {
+      try {
+        const storedUserImage = await AsyncStorage.getItem(STORAGE_USERNAME_IMAGE);
+        if (storedUserImage) {
+          setUserIconImage(storedUserImage); //  Kayıtlı resmi yükle
+        } else {
+          await AsyncStorage.setItem(STORAGE_USERNAME_IMAGE, userIconImage);
+        }
+      } catch (error) {
+        console.error("❌ Error loading language:", error);
       }
-    } catch (error) {
-      console.error("❌ Error loading language:", error);
-    }
+    };
+    await loadUserLanguage();
+    await loadUserImage();
   };
-  loadUserLanguage();
-  loadUserImage()
+  initializeApp();
 }, []);
 
 useEffect(() => {
@@ -273,26 +295,6 @@ const deleteUserCategory = async (categoryToDelete) => {
   };
 
 
-// const loadTodos = async () => {
-//   try {
-//     const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
-
-//     if (storedTodos && storedTodos !== "[]") { 
-//       const parsedTodos = JSON.parse(storedTodos);
-//       if (Array.isArray(parsedTodos) && parsedTodos.length > 0) {
-//         setTodos(parsedTodos);
-//       }
-//     } else { 
-//       const defaultTodos = [initialTodo];
-//       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(defaultTodos));
-//       setTodos(defaultTodos);
-//     }
-//   } catch (error) {
-//     console.error("❌ Error loading todos:", error);
-//   }
-// };
-
-
 const loadTodos = async () => {
   try {
     const storedTodos = await AsyncStorage.getItem(STORAGE_KEY);
@@ -337,38 +339,58 @@ const loadTodos = async () => {
     return;
     }
 
-    // 🚀 Eğer son todo ise, silmeyi iptal et ve kullanıcıya uyarı göster
+    // 🚀 Eğer son todo ise, fallback todo oluştur
     if (todos.length === 1) {
-        // alert(t("Last_todo_alert"));
+      try {
+        const lastTodo = todos[0];
+        if (lastTodo.id === id) {
+          // Fallback todo oluştur (silinen todo'nun yerine default)
+          const fallbackTodo = {
+            id: Date.now().toString(),
+            title: t("New_Task"),
+            description: "",
+            category: lastTodo.category || "Work",
+            dueDate: new Date().toISOString().split("T")[0],
+            dueTime: "09:00:00",
+            reminderTime: "5 minutes before",
+            status: "pending",
+            isRecurring: false,
+            repeatGroupId: null,
+            repeatDays: null,
+            notificationId: null,
+          };
+
+          // Bildirimi iptal et
+          if (lastTodo.notificationId) {
+            await cancelNotification(lastTodo.notificationId);
+          }
+
+          // Fallback todo'yu kaydet
+          setTodos([fallbackTodo]);
+          await saveTodos([fallbackTodo]);
+          return;
+        }
+      } catch (error) {
+        console.error("❌ Error creating fallback todo:", error);
         Alert.alert(t("Last_todo_alert"));
         return;
+      }
     }
     try {
-      // console.log(`🗑 Deleting todo: ${id}`);
-  
+
       const todoToDelete = todos.find((todo) => todo.id === id);
       if (todoToDelete) {
-        // console.log(todoToDelete);
         await cancelNotification(todoToDelete.notificationId); // 📌 Önce bildirimi iptal et
       }
-  
+
       const updatedTodos = todos.filter((todo) => todo.id !== id);
       setTodos(updatedTodos);
       await saveTodos(updatedTodos);
-      // testNotificationLog(updatedTodos);
-  
-      // // 📋 **Silinen todo’nun bildirim kayıtlarını tekrar kontrol et**
-      // const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
-      // console.log("📋 Scheduled Notifications AFTER DELETE:", JSON.stringify(scheduledNotifications, null, 2));
-  
     } catch (error) {
       console.log("❌ Error in deleteTodo:", error);
     }
   };
 
-  // useEffect(() => {
-  //   // testNotificationLog(todos)
-  // },[todos])
 
   const updateTodo = async (id, updates) => {
     const currentTodo = todos.find((t) => t.id === id);
@@ -476,27 +498,6 @@ const loadTodos = async () => {
   
 
 
-  // const deleteAllInGroup = async (groupId) => {
-  //   try {
-  //     const groupTodos = todos.filter((todo) => todo.repeatGroupId === groupId);
-  
-  //     // 📛 Bildirimleri iptal et
-  //     for (const todo of groupTodos) {
-  //       if (todo.notificationId) {
-  //         await cancelNotification(todo.notificationId);
-  //       }
-  //     }
-  
-  //     // ✅ Todos listesini filtrele
-  //     const updated = todos.filter((todo) => todo.repeatGroupId !== groupId);
-  //     setTodos(updated);
-  //     await saveTodos(updated);
-  //   } catch (error) {
-  //     console.error("❌ deleteAllInGroup içinde hata:", error);
-  //   }
-  // };
-  
-
 const updateAllInGroup = async (groupId, newTodos, options = { skipNotification: false }) => {
   const oldGroupTodos = todos.filter((t) => t.repeatGroupId === groupId);
 
@@ -561,26 +562,24 @@ const updateAllInGroup = async (groupId, newTodos, options = { skipNotification:
     useEffect(() => {
       const initApp = async () => {
         const loadedTodos = await loadTodos(); // önce kesinlikle datayı al
-    
         const migratedTodos = await migrateOldTodosSafely(loadedTodos); // migrasyonu uygula
         setTodos(migratedTodos); // en son state'e ata
-    
         await saveTodos(migratedTodos); // dosyaya kaydet
         await loadUsername(); // diğer ayarları yap
+        setIsTodosReady(true);
       };
       initApp();
     }, []);
 
-
   useEffect(() => {
+    if (!isTodosReady) return;
+  
     const translateCategories = async () => {
       await translateTodosCategories(language);
     };
+  
     translateCategories();
-  }, [language]);
-  
-  
-
+  }, [language, isTodosReady]);
 
    // 📌 **Bildirim Dinleyiciyi Burada Kullan**
    useNotificationListener(setNotificationRedirect);
@@ -606,7 +605,6 @@ const updateAllInGroup = async (groupId, newTodos, options = { skipNotification:
     deleteTodo,
     updateTodo,
     updateTodoFully,
-    setDueTime, 
     showCongrats, 
     setShowCongrats,
     language, 
@@ -629,7 +627,8 @@ const updateAllInGroup = async (groupId, newTodos, options = { skipNotification:
     getCategories,
     deleteUserCategory,
     deleteAllInGroup,
-    updateAllInGroup
+    updateAllInGroup,
+    isTodosReady
   };
 
   return <TodoListContext.Provider value={value}>{children}</TodoListContext.Provider>;

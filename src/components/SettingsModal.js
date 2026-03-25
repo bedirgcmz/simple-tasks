@@ -1,49 +1,23 @@
-
-
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StatusBar, TextInput, Linking, Image } from "react-native";
 import { useTodoListContext } from "../context/todos-context";
+import { USER_ICONS } from "../utils/userIconsMap";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserIconImageModal from "./UserIconImageModal";
 import UserCategoriesModal from "./UserCategoriesModal";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+const LANG_LABELS = { en: 'EN', tr: 'TR', sv: 'SV', de: 'DE' };
 
 const SettingsModal = ({ visible, onClose }) => {
-  const { setLanguage, t, username, setUsername, updateUsername, language, translateTodosCategories, STORAGE_USERNAME_LANGUAGE, userIconImage, setUserIconImage } = useTodoListContext();
-  const [isEnableUsername, setIsEnableUsername] = useState(false)
+  const { setLanguage, t, username, setUsername, updateUsername, language, translateTodosCategories, STORAGE_USERNAME_LANGUAGE, userIconImage } = useTodoListContext();
+  const insets = useSafeAreaInsets();
+  const [isEnableUsername, setIsEnableUsername] = useState(false);
   const [isUserIconImageModalOpen, setIsUserIconImageModalOpen] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const userIcons = {
-    icon1: require("../../assets/images/user-icons/e1.png"),
-    icon2: require("../../assets/images/user-icons/e2.png"),
-    icon3: require("../../assets/images/user-icons/e3.png"),
-    icon4: require("../../assets/images/user-icons/e4.png"),
-    icon5: require("../../assets/images/user-icons/e5.png"),
-    icon6: require("../../assets/images/user-icons/e6.png"),
-    icon7: require("../../assets/images/user-icons/e7.png"),
-    icon8: require("../../assets/images/user-icons/e8.png"),
-    icon9: require("../../assets/images/user-icons/e9.png"),
-    icon10: require("../../assets/images/user-icons/e10.png"),
-    icon11: require("../../assets/images/user-icons/e11.png"),
-    icon12: require("../../assets/images/user-icons/e12.png"),
-    icon13: require("../../assets/images/user-icons/k1.png"),
-    icon14: require("../../assets/images/user-icons/k2.png"),
-    icon15: require("../../assets/images/user-icons/k3.png"),
-    icon16: require("../../assets/images/user-icons/k4.png"),
-    icon17: require("../../assets/images/user-icons/k5.png"),
-    icon18: require("../../assets/images/user-icons/k6.png"),
-    icon19: require("../../assets/images/user-icons/k7.png"),
-    icon20: require("../../assets/images/user-icons/k8.png"),
-    icon21: require("../../assets/images/user-icons/k9.png"),
-    icon22: require("../../assets/images/user-icons/k10.png"),
-    icon23: require("../../assets/images/user-icons/k11.png"),
-    icon24: require("../../assets/images/user-icons/default.png"),
-  };
 
   const changeLanguage = async (lang) => {
     try {
@@ -58,110 +32,180 @@ const SettingsModal = ({ visible, onClose }) => {
 
   const changeUserName = () => {
     updateUsername(username);
-    setIsEnableUsername(false)
-  }
-
-
-  const BuyMeACoffee = () => {
-    Linking.openURL("https://buymeacoffee.com/bedirgcmzr");
+    setIsEnableUsername(false);
   };
+
   return (
-    <Modal animationType="slide" transparent visible={visible}  statusBarTranslucent={true}>
-      <View className="flex-1 bg-black/50 justify-center items-start">
-        <View className="w-3/5 h-full bg-white items-center">
-      <LinearGradient
-    colors={["#004e64", "#002855", "#3a0ca3"]}
-      style={{ flex: 1, padding: 18, paddingTop: 50, justifyContent: "start", width: "100%", alignItems: "center" }}
+    <Modal animationType="slide" transparent visible={visible} statusBarTranslucent>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+
+      {/* Backdrop */}
+      <TouchableOpacity
+        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.55)' }}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        {/* Drawer panel — stop propagation so taps inside don't close */}
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {}}
+          style={{ width: '62%', height: '100%' }}
+        >
+          <LinearGradient
+            colors={["#02043d", "#3f127e", "#0671b4"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            style={{ flex: 1, paddingTop: 54, paddingHorizontal: 18, paddingBottom: Math.max(insets.bottom, 10) + 55 }}
           >
-            <View className="flex-row justify-between items-center w-full mb-6 border-b-2 border-white pb-2">
-              <Text className="text-lg font-bold text-white">{t("Settings")}</Text>
-              <Ionicons name="settings" size={18} color="white" />
+            {/* ── Header ── */}
+            <View style={{
+              flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+              marginBottom: 28,
+              borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.10)',
+              paddingBottom: 14,
+            }}>
+              <Text style={{ color: 'white', fontSize: 16, fontWeight: '800' }}>{t("Settings")}</Text>
+              <Ionicons name="settings" size={16} color="rgba(255,255,255,0.55)" />
             </View>
-            <View className=" justify-between items-start w-full mb-8">
-              {/* <FontAwesome name="user-circle-o" size={24} color="black"/> */}
-              <TouchableOpacity onPress={() => setIsUserIconImageModalOpen(true)}  className=" border border-[#ff5400] w-16 h-16 flex items-center justify-center relative rounded-full p-1">
-                <Image source={userIcons[userIconImage]} className="w-8 h-full rounded-full" />
-                <Text className="absolute bottom-[-3px] right-[-3px] border border-white rounded-full p-[2px]">
-                  {/* <Ionicons name="settings-sharp" size={16} color="white"/> */}
-                  <MaterialCommunityIcons name="pencil" size={14} color="white" />
+
+            {/* ── Avatar ── */}
+            <View style={{ alignItems: 'flex-start', marginBottom: 20 }}>
+              <TouchableOpacity
+                onPress={() => setIsUserIconImageModalOpen(true)}
+                style={{
+                  width: 60, height: 60, borderRadius: 30,
+                  borderWidth: 2, borderColor: 'rgba(96,165,250,0.50)',
+                  backgroundColor: 'rgba(96,165,250,0.10)',
+                  alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                <Image source={USER_ICONS[userIconImage]} style={{ width: 36, height: 36, borderRadius: 18 }} />
+                <View style={{
+                  position: 'absolute', bottom: -2, right: -2,
+                  backgroundColor: 'rgba(30,20,60,0.90)',
+                  borderRadius: 10, padding: 2,
+                  borderWidth: 1, borderColor: 'rgba(255,255,255,0.20)',
+                }}>
+                  <MaterialCommunityIcons name="pencil" size={11} color="rgba(255,255,255,0.80)" />
+                </View>
+              </TouchableOpacity>
+              <UserIconImageModal
+                setIsUserIconImageModalOpen={setIsUserIconImageModalOpen}
+                isUserIconImageModalOpen={isUserIconImageModalOpen}
+              />
+            </View>
+
+            {/* ── Username ── */}
+            <View style={{
+              flexDirection: 'row', alignItems: 'center',
+              backgroundColor: isEnableUsername ? 'rgba(96,165,250,0.10)' : 'rgba(255,255,255,0.06)',
+              borderWidth: 1,
+              borderColor: isEnableUsername ? 'rgba(96,165,250,0.45)' : 'rgba(255,255,255,0.12)',
+              borderRadius: 12, paddingHorizontal: 12, paddingVertical: 4,
+              marginBottom: 28,
+            }}>
+              <TextInput
+                placeholder={t("Type_Your_Name")}
+                placeholderTextColor="rgba(255,255,255,0.30)"
+                style={{ flex: 1, color: 'white', fontSize: 14, paddingVertical: 7 }}
+                value={username}
+                onChangeText={setUsername}
+                editable={isEnableUsername}
+                maxLength={17}
+              />
+              {isEnableUsername ? (
+                <TouchableOpacity onPress={changeUserName}>
+                  <Ionicons name="checkmark-circle" size={22} color="#4ade80" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={() => setIsEnableUsername(true)}>
+                  <MaterialCommunityIcons name="pencil" size={18} color="rgba(255,255,255,0.45)" />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* ── Language ── */}
+            <Text style={{ color: 'rgba(255,255,255,0.55)', fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 10, textTransform: 'uppercase' }}>
+              {t("Language")}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap', marginBottom: 28 }}>
+              {["en", "tr", "sv", "de"].map((lang) => {
+                const isActive = language === lang;
+                return (
+                  <TouchableOpacity
+                    key={lang}
+                    onPress={() => changeLanguage(lang)}
+                    style={{
+                      paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20,
+                      backgroundColor: isActive ? 'rgba(96,165,250,0.22)' : 'rgba(255,255,255,0.07)',
+                      borderWidth: 1,
+                      borderColor: isActive ? 'rgba(96,165,250,0.55)' : 'rgba(255,255,255,0.13)',
+                    }}
+                  >
+                    <Text style={{
+                      color: isActive ? '#93c5fd' : 'rgba(255,255,255,0.55)',
+                      fontSize: 12, fontWeight: isActive ? '700' : '500',
+                    }}>
+                      {LANG_LABELS[lang]}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {/* ── Personal Categories ── */}
+            <TouchableOpacity
+              onPress={() => setIsModalVisible(true)}
+              style={{
+                flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+                backgroundColor: 'rgba(167,139,250,0.12)',
+                borderWidth: 1, borderColor: 'rgba(167,139,250,0.35)',
+                borderRadius: 12, paddingVertical: 10, marginBottom: 10,
+              }}
+            >
+              <Ionicons name="folder-open-outline" size={15} color="#c4b5fd" />
+              <Text style={{ color: '#c4b5fd', fontSize: 12, fontWeight: '600' }}>
+                {t("Personal_Categories")}
+              </Text>
+            </TouchableOpacity>
+            <UserCategoriesModal isVisible={isModalVisible} onClose={() => setIsModalVisible(false)} t={t} />
+
+            {/* ── Bottom actions ── */}
+            <View style={{ marginTop: 'auto' }}>
+              {/* Buy Me a Coffee */}
+              <TouchableOpacity
+                onPress={() => Linking.openURL("https://buymeacoffee.com/bedirgcmzr")}
+                style={{
+                  flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  backgroundColor: 'rgba(180,120,60,0.18)',
+                  borderWidth: 1, borderColor: 'rgba(180,120,60,0.40)',
+                  borderRadius: 12, paddingVertical: 10, marginBottom: 10,
+                }}
+              >
+                <Text style={{ fontSize: 14 }}>☕</Text>
+                <Text style={{ color: '#fde68a', fontSize: 12, fontWeight: '600' }}>{t("Buy_Me")}</Text>
+              </TouchableOpacity>
+
+              {/* Close */}
+              <TouchableOpacity
+                onPress={onClose}
+                style={{
+                  flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  backgroundColor: 'rgba(255,255,255,0.07)',
+                  borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
+                  borderRadius: 12, paddingVertical: 10,
+                }}
+              >
+                <Ionicons name="close" size={16} color="rgba(255,255,255,0.70)" />
+                <Text style={{ color: 'rgba(255,255,255,0.70)', fontSize: 13, fontWeight: '600' }}>
+                  {t("Exit_Setting")}
                 </Text>
               </TouchableOpacity>
-              <UserIconImageModal setIsUserIconImageModalOpen={setIsUserIconImageModalOpen}  isUserIconImageModalOpen={isUserIconImageModalOpen}/>
-              <View className="w-full flex-row justify-between items-center">
-                <TextInput placeholder={t("Type_Your_Name")}
-                placeholderTextColor="#6c757d"
-                className={`text-white w-4/5 pl-0 mt-2 border-gray-600 ${isEnableUsername ? "border border-blue-600 px-2": ""} py-1 rounded-md`}
-                    value={username}
-                    onChangeText={setUsername}
-                    editable={isEnableUsername}
-                  maxLength={17}
-
-                    />
-                  {
-                    isEnableUsername ? (
-                      <TouchableOpacity onPress={changeUserName} className="p-2 pt-3">
-                        <Ionicons name="checkmark" size={24} color="white" />
-                      </TouchableOpacity>
-                    ) : (
-                      <TouchableOpacity onPress={() => setIsEnableUsername(true)} className="p-2 pt-3">
-                        <MaterialCommunityIcons name="pencil" size={22} color="white" />
-                      </TouchableOpacity>
-                    )
-                  }
-                  {/* <FontAwesome name="edit" size={20} color="white" /> */}
-              </View>
             </View>
 
-            <Text className="text-start w-full font-bold text-white mb-2">{t("Language")}</Text>
-            <View className="flex-row justify-between w-full">
-              {["en", "tr", "sv", "de"].map((lang) => (
-                <TouchableOpacity 
-                  key={lang} 
-                  onPress={() => changeLanguage(lang)}
-                  className="bg-[#00417f69] border-gray-400 px-2 py-1 rounded items-center my-1 relative"
-                >
-                  <Text className="text-white text-base">{lang.toUpperCase()}</Text>
-                  {language === lang && <View className="h-[6px] w-[6px] bg-[#f07167]  absolute top-0 right-0 rounded-full">
-                  </View>}
-                </TouchableOpacity>
-              ))}
-            </View>
-            <View className="w-full">
-                  {/* Kullanıcı Kategorileri Butonu */}
-                <TouchableOpacity
-                  onPress={() => setIsModalVisible(true)}
-                  className="mt-8 w-full rounded-lg px-2 py-1  mb-4 border border-gray-400 flex"
-                >
-                  <Text className="text-white text-center">
-                    {t("Personal_Categories")}
-                  </Text>
-                </TouchableOpacity>
-
-                {/* Kategori Yönetim Modali */}
-                <UserCategoriesModal isVisible={isModalVisible} onClose={() => setIsModalVisible(false)} t={t} />
-            </View>
-            <View className="mt-auto mb-8 w-full">
-              <TouchableOpacity
-                  onPress={BuyMeACoffee}
-                  className="mt-4 w-full rounded-lg p-1 bg-[#9c6644] mb-4 border border-gray-400 relative"
-                >
-                  <Text  className="text-[13px] text-center text-[#e6ccb2]">
-                    ☕  {t("Buy_Me")}
-                  </Text>
-                </TouchableOpacity>
-            <TouchableOpacity onPress={onClose} className=" px-2 py-1 w-full border border-gray-500 rounded-lg flex-row items-center justify-center">
-              <Text className="text-md font-bold text-white text-center pr-2">{t("Exit_Setting")}</Text>
-              <Ionicons name="close" size={20} color="white" />
-            </TouchableOpacity>
-
-            </View>
-        </LinearGradient>
-        </View>
-      </View>
-      <StatusBar 
-      style="light"
-      backgroundColor="transparent"
-      translucent={true} />
+          </LinearGradient>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 };

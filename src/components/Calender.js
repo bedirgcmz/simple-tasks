@@ -71,11 +71,23 @@ const Calender = () => {
   const markedDates = processTodos();
 
   return (
-    <View className="px-4 mt-6 rounded-lg">
+    <View style={{
+      marginHorizontal: 16,
+      marginTop: 24,
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.12)',
+      overflow: 'hidden',
+      shadowColor: '#a78bfa',
+      shadowOpacity: 0.18,
+      shadowRadius: 20,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 8,
+    }}>
       <Calendar
         key={calendarKey} // Takvimi tamamen yeniden oluştur
         p
-        style={{ borderRadius: 10, height: 365, elevation: 5 }}
+        style={{ borderRadius: 18, height: 365 }}
         onDayPress={(day) =>  router.push({ pathname: `dynamicday/${day.dateString}`, params: { from: 'home' } }) } 
         markedDates={{
           ...markedDates,

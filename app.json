@@ -2,12 +2,11 @@
   "expo": {
     "name": "SimpleTasks",
     "slug": "simple-task",
-    "scheme": "your-app-scheme",
+    "scheme": "simple-task",
     "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -33,7 +32,18 @@
     },
     "plugins": [
       "expo-router",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "targetSdkVersion": 35,
+            "compileSdkVersion": 36,
+            "buildToolsVersion": "36.0.0"
+          }
+        }
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "extra": {
       "router": {

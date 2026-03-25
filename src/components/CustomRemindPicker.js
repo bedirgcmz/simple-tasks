@@ -2,50 +2,110 @@ import React, { useRef, useState } from 'react';
 import { Modal, Text, View, TouchableOpacity, FlatList } from 'react-native';
 import { useTodoListContext } from '../context/todos-context';
 import LottieView from "lottie-react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-const CustomRemindPicker = ({ options, selectedValue, onValueChange, bgColor, textColor,  }) => {
+const CustomRemindPicker = ({ options, selectedValue, onValueChange }) => {
   const { t } = useTodoListContext();
   const [modalVisible, setModalVisible] = useState(false);
-  const doneRefRim = useRef()
+  const doneRefRim = useRef();
 
   return (
     <View>
-      <TouchableOpacity onPress={() => setModalVisible(true)} className={`${bgColor} p-3 rounded-md`}>
-        <Text className={`text-center ${textColor}`}>{selectedValue || "Select an option"}</Text>
+      {/* Trigger button */}
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1,
+          borderColor: 'rgba(251,191,36,0.28)',
+          borderRadius: 14,
+          paddingHorizontal: 14,
+          paddingVertical: 13,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8,
+        }}
+      >
+        <Ionicons name="notifications-outline" size={16} color="#fbbf24" />
+        <Text style={{ color: 'white', fontWeight: '600', flex: 1 }}>
+          {selectedValue || t("Select_a_remind_time")}
+        </Text>
         <LottieView
-          style={{ width: 27, height: 27, opacity: 1}}
-          className="absolute right-0 top-[5px] z-40"
+          style={{ width: 24, height: 24 }}
           source={require('../../assets/data/done2.json')}
           ref={doneRefRim}
           loop={false}
           autoPlay={true}
           speed={2}
-          />
+        />
       </TouchableOpacity>
 
+      {/* Bottom sheet modal */}
       <Modal visible={modalVisible} transparent animationType="slide">
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white w-4/5 p-4 rounded-md">
+        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.65)' }}>
+          <View style={{
+            backgroundColor: 'rgba(12,8,35,0.98)',
+            borderWidth: 1,
+            borderColor: 'rgba(255,255,255,0.12)',
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+            paddingBottom: 32,
+            paddingTop: 8,
+          }}>
+            {/* Handle bar */}
+            <View style={{
+              width: 40, height: 4, borderRadius: 2,
+              backgroundColor: 'rgba(255,255,255,0.20)',
+              alignSelf: 'center', marginBottom: 16,
+            }} />
+
             <FlatList
               data={options}
               keyExtractor={(item) => item}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    onValueChange(item);
-                    setModalVisible(false);
-                  }}
-                  className="p-4 border-b border-gray-200"
-                >
-                  <Text>{item}</Text>
-                </TouchableOpacity>
-              )}
+              renderItem={({ item }) => {
+                const isActive = item === selectedValue;
+                return (
+                  <TouchableOpacity
+                    onPress={() => { onValueChange(item); setModalVisible(false); }}
+                    style={{
+                      paddingHorizontal: 20,
+                      paddingVertical: 14,
+                      borderBottomWidth: 1,
+                      borderBottomColor: 'rgba(255,255,255,0.07)',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Text style={{
+                      color: isActive ? '#fde68a' : 'rgba(255,255,255,0.75)',
+                      fontWeight: isActive ? '700' : '400',
+                      fontSize: 15,
+                    }}>
+                      {item}
+                    </Text>
+                    {isActive && <Ionicons name="checkmark" size={17} color="#fbbf24" />}
+                  </TouchableOpacity>
+                );
+              }}
             />
+
             <TouchableOpacity
               onPress={() => setModalVisible(false)}
-              className="bg-red-400 p-3 mt-2 rounded-md"
+              style={{
+                marginHorizontal: 20,
+                marginTop: 12,
+                paddingVertical: 13,
+                backgroundColor: 'rgba(255,255,255,0.08)',
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.14)',
+                borderRadius: 14,
+                alignItems: 'center',
+              }}
             >
-              <Text className="text-white text-center">{t("Close")}</Text>
+              <Text style={{ color: 'rgba(255,255,255,0.65)', fontWeight: '600' }}>
+                {t("Close")}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
