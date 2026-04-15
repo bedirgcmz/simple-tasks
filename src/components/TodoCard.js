@@ -110,7 +110,7 @@ const TodoCard = ({ todo, fromText, setIsLoading }) => {
       </TouchableOpacity>
 
       {/* ── Main content ── */}
-      <View style={{ flex: 1, gap: 3 }}>
+      <View style={{ flex: 1, gap: 3, minWidth: 0 }}>
         {/* Title row */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
           <Text
@@ -142,24 +142,35 @@ const TodoCard = ({ todo, fromText, setIsLoading }) => {
         )}
 
         {/* Date + days-left chip */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
-          <Ionicons name="calendar-outline" size={11} color="rgba(255,255,255,0.35)" />
-          <Text style={{ color: 'rgba(255,255,255,0.40)', fontSize: 11 }}>
-            {todo.dueDate}
-            {todo.dueTime ? `  ·  ${todo.dueTime.slice(0, 5)}` : ''}
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2, minWidth: 0 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, minWidth: 0 }}>
+            <Ionicons name="calendar-outline" size={11} color="rgba(255,255,255,0.35)" />
+            <Text
+              numberOfLines={1}
+              style={{ color: 'rgba(255,255,255,0.40)', fontSize: 11, marginLeft: 6, flexShrink: 1 }}
+            >
+              {todo.dueDate}
+              {todo.dueTime ? `  ·  ${todo.dueTime.slice(0, 5)}` : ''}
+            </Text>
+          </View>
 
           {/* Status pill */}
           <View style={{
-            marginLeft: 'auto',
             backgroundColor: `${statusColor}22`,
             borderWidth: 1,
             borderColor: `${statusColor}55`,
             borderRadius: 20,
             paddingHorizontal: 8,
             paddingVertical: 2,
+            flexShrink: 1,
+            maxWidth: '48%',
           }}>
-            <Text style={{ color: statusColor, fontSize: 10, fontWeight: '700' }}>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.85}
+              style={{ color: statusColor, fontSize: 10, fontWeight: '700' }}
+            >
               {daysLeft}
             </Text>
           </View>
