@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StatusBar,
   Keyboard,
-  TouchableWithoutFeedback,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -123,53 +122,54 @@ const EditTodoPage = () => {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <LinearGradient
-          colors={["#02043d", "#3f127e", "#0671b4"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0.4, y: 1 }}
-          style={{ flex: 1, paddingTop: 40, paddingBottom: 80 }}
+      <LinearGradient
+        colors={["#02043d", "#3f127e", "#0671b4"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.4, y: 1 }}
+        style={{ flex: 1, paddingTop: 40, paddingBottom: 80 }}
+      >
+        <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 16 }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
+          onScrollBeginDrag={Keyboard.dismiss}
         >
-          <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-          <ScrollView
-            contentContainerStyle={{ paddingBottom: 16 }}
-            keyboardShouldPersistTaps="handled"
-          >
-            <View style={{ paddingHorizontal: 16, flex: 1 }}>
+          <View style={{ paddingHorizontal: 16 }}>
 
-              {/* ── PAGE TITLE ────────────────────────── */}
-              <Text style={{ color: 'white', fontSize: 22, fontWeight: '800', textAlign: 'center', marginBottom: 20, marginTop: 4 }}>
-                {t("Edit_ToDo_Page_Title")}
-              </Text>
+            {/* ── PAGE TITLE ────────────────────────── */}
+            <Text style={{ color: 'white', fontSize: 22, fontWeight: '800', textAlign: 'center', marginBottom: 20, marginTop: 4 }}>
+              {t("Edit_ToDo_Page_Title")}
+            </Text>
 
-              {/* ── TITLE ─────────────────────────────── */}
-              <View style={{ marginBottom: 4 }}>
-                <SectionLabel icon="pencil-outline" label={t("Title_input")} />
-                <View style={{ ...glassField, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, marginBottom: 4 }}>
-                  <Ionicons name="pencil-outline" size={15} color="rgba(255,255,255,0.35)" />
-                  <TextInput
-                    placeholder={t("Title_input")}
-                    placeholderTextColor="rgba(255,255,255,0.30)"
-                    value={title}
-                    onChangeText={setTitle}
-                    maxLength={60}
-                    style={{ flex: 1, color: 'white', paddingVertical: 13, paddingLeft: 8, fontSize: 15 }}
+            {/* ── TITLE ─────────────────────────────── */}
+            <View style={{ marginBottom: 4 }}>
+              <SectionLabel icon="pencil-outline" label={t("Title_input")} />
+              <View style={{ ...glassField, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, marginBottom: 4 }}>
+                <Ionicons name="pencil-outline" size={15} color="rgba(255,255,255,0.35)" />
+                <TextInput
+                  placeholder={t("Title_input")}
+                  placeholderTextColor="rgba(255,255,255,0.30)"
+                  value={title}
+                  onChangeText={setTitle}
+                  maxLength={60}
+                  style={{ flex: 1, color: 'white', paddingVertical: 13, paddingLeft: 8, fontSize: 15 }}
+                />
+                {title !== "" && (
+                  <LottieView
+                    style={{ width: 24, height: 24 }}
+                    source={require('../../../../assets/data/done2.json')}
+                    ref={doneRefTit}
+                    loop={false}
+                    autoPlay={true}
+                    speed={2}
                   />
-                  {title !== "" && (
-                    <LottieView
-                      style={{ width: 24, height: 24 }}
-                      source={require('../../../../assets/data/done2.json')}
-                      ref={doneRefTit}
-                      loop={false}
-                      autoPlay={true}
-                      speed={2}
-                    />
-                  )}
-                </View>
-                <Text style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, textAlign: 'right', marginBottom: 12 }}>
-                  {title.length}/60
-                </Text>
+                )}
               </View>
+              <Text style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, textAlign: 'right', marginBottom: 12 }}>
+                {title.length}/60
+              </Text>
+            </View>
 
               {/* ── DESCRIPTION ───────────────────────── */}
               <View style={{ marginBottom: 4 }}>
@@ -387,10 +387,9 @@ const EditTodoPage = () => {
                 </TouchableOpacity>
               </View>
 
-            </View>
-          </ScrollView>
-        </LinearGradient>
-      </TouchableWithoutFeedback>
+          </View>
+        </ScrollView>
+      </LinearGradient>
     </KeyboardAvoidingView>
   );
 };
