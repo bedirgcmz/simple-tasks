@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   View,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -47,6 +48,31 @@ const QuickAddTodoModal = ({ visible, onClose, selectedDate }) => {
   const [category, setCategory] = useState("");
   const [dueTime, setDueTime] = useState("12:00");
   const [reminderTime, setReminderTime] = useState("5 minutes before");
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    if (Platform.OS !== "android") {
+      return undefined;
+    }
+
+    const showSubscription = Keyboard.addListener("keyboardDidShow", (event) => {
+      setKeyboardHeight(event.endCoordinates?.height || 0);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!visible) {
+      setKeyboardHeight(0);
+    }
+  }, [visible]);
 
   const handleReminderChange = (selectedLabel) => {
     const options = translations[language].reminderTime;
@@ -88,10 +114,21 @@ const QuickAddTodoModal = ({ visible, onClose, selectedDate }) => {
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent statusBarTranslucent>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent
+      statusBarTranslucent
+      hardwareAccelerated
+      onRequestClose={onClose}
+    >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1, justifyContent: 'flex-end' }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{
+          flex: 1,
+          justifyContent: 'flex-end',
+          paddingBottom: Platform.OS === "android" ? keyboardHeight : 0,
+        }}
       >
         {/* Backdrop */}
         <TouchableOpacity
@@ -141,6 +178,7 @@ const QuickAddTodoModal = ({ visible, onClose, selectedDate }) => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 20 }}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
           >
             {/* Title */}
             <SectionLabel icon="pencil-outline" label={t("Title_input")} />
